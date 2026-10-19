@@ -1,0 +1,14 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "hist",  "fieldPath": "ev",    "indexes": [] },
+    { "collectionGroup": "hist",  "fieldPath": "cust",  "indexes": [] },
+    { "collectionGroup": "hist",  "fieldPath": "cyl",   "indexes": [] },
+    { "collectionGroup": "cyl",   "fieldPath": "list",  "indexes": [] },
+    { "collectionGroup": "cust",  "fieldPath": "list",  "indexes": [] },
+    { "collectionGroup": "trade", "fieldPath": "lots",  "indexes": [] },
+    { "collectionGroup": "trade", "fieldPath": "sales", "indexes": [] },
+    { "collectionGroup": "bill",  "fieldPath": "inv",   "indexes": [] },
+    { "collectionGroup": "log",   "fieldPath": "recs",  "indexes": [] }
+  ]
+}

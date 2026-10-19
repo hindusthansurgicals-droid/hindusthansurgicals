@@ -1,0 +1,64 @@
+rules_version = '2';
+
+// Cylinder Desk — who can read and change what.
+// Owner: the Google account below. Everyone else needs a role set by the owner
+// (or a manager) in the app's Settings page: manager, staff or viewer.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    function isOwner() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in ['hindusthansurgicals@gmail.com'];
+    }
+
+    function rolesDoc() { return /databases/$(database)/documents/settings/roles; }
+
+    function myRole() {
+      return signedIn() && exists(rolesDoc())
+        ? get(rolesDoc()).data.get('users', {}).get(request.auth.uid, {}).get('role', '')
+        : '';
+    }
+
+    function canRead()   { return isOwner() || myRole() in ['manager', 'staff', 'viewer']; }
+    function canWrite()  { return isOwner() || myRole() in ['manager', 'staff']; }
+    function canManage() { return isOwner() || myRole() == 'manager'; }
+
+    // Each person keeps their own name card; anyone signed in may read names.
+    match /profiles/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // "Last opened" list the owner sees in Settings.
+    match /members/{uid} {
+      allow read: if canManage() || (signedIn() && request.auth.uid == uid);
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Everyone signed in reads roles, so a new person's page opens as soon as a role is set.
+    match /settings/roles {
+      allow read: if signedIn();
+      allow write: if canManage();
+    }
+
+    match /settings/company {
+      allow read: if canRead();
+      allow write: if canManage();
+    }
+
+    // Old Excel history: read-only after the one-time import.
+    match /hist/{doc} {
+      allow read: if canRead();
+      allow write: if isOwner();
+    }
+
+    // Entries, cylinders, customers, billing, purchases and sales, cancelled numbers.
+    match /{col}/{doc} {
+      allow read: if col in ['log', 'cyl', 'cust', 'bill', 'trade', 'reg'] && canRead();
+      allow write: if col in ['log', 'cyl', 'cust', 'bill', 'trade', 'reg'] && canWrite();
+    }
+  }
+}
