@@ -394,9 +394,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.9.0';
+const APP_VERSION=window.CD_VERSION||'3.9.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.9.1','2026-10-20',['Today’s entries (right side) also shows older entries that were changed today']],
  ['3.9.0','2026-10-20',['New entry: “Customer’s own cylinders” — save a DC / MT with just the count (and their numbers as a note), so the DC number is not missing','Shown on entry cards, registers, DC PDF, WhatsApp and Excel exports; not counted in our cylinder tracking','Past gaps: Registers → Missing → “Enter 1002” opens New entry with that number']],
  ['3.8.0','2026-10-20',['Owner sets permissions per person (Settings → People → Permissions): pages, new entries, edit own / anyone’s entries, other branches, new customers, edit customers, save place, see money, downloads','Staff defaults tightened: own branch only, no new customers, no customer edits, no money, no downloads','Staff “edit own entries” now means entries made today (any DC date)','Firestore rules enforce the same limits on the server','Install as an app from Chrome (Install app button / Add to Home screen)']],
  ['3.7.0','2026-10-20',['Phone: number keypad for cylinder numbers with C N A D K buttons','Customer box shows your recent customers first','“You today” count of your DC / MT','Customer signs on the phone (✍ on a DC); printed on the DC PDF','Customer page: 📞 Call, 🧭 Directions, 📍 Save this place (GPS) — after a DC on a phone the app offers to save the place','Staff get Tamil by default']],
@@ -1348,7 +1349,9 @@ VIEWS.entry={
     else $('#f-saved').innerHTML=sv?`<div class="notice info">${ic('check')}<div style="flex:1"><b>Saved.</b> ${esc(TLABEL[sv.t])} ${esc(sv.dc?'#'+sv.dc:'')} · ${esc(sv.title)} · ${sv.cy.length} cylinder${sv.cy.length===1?'':'s'}
       ${sv.t==='DC'?`<div style="margin-top:8px"><button type="button" class="btn sm" data-act="dcpdf" data-doc="${esc(sv.docId)}" data-rid="${esc(sv.rid)}">${ic('dl')}Download DC (PDF)</button></div>`:''}</div></div>`:'';
     const madeToday=r=>r.at?todayISO.call(null)===(()=>{const d=new Date(r.at);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())})():r.d===S.D.today;
-    const mine=S.D.recs.filter(r=>!r.del&&madeToday(r)).sort((a,b)=>(b.at||'').localeCompare(a.at||''));
+    /* made today, or an older entry changed today */
+    const lastAt=r=>(r.ed&&r.ed.at>(r.at||'')?r.ed.at:r.at)||'';
+    const mine=S.D.recs.filter(r=>!r.del&&(madeToday(r)||(r.ed&&madeToday(r.ed)))).sort((a,b)=>lastAt(b).localeCompare(lastAt(a)));
     {const my=S.D.recs.filter(r=>!r.del&&r.by===S.uid&&r.at&&new Date(r.at).toDateString()===new Date().toDateString());const n=t=>my.filter(r=>r.t===t);const c=a=>a.reduce((x,r)=>x+r.cy.length+ownN(r),0);const ta=LANG==='ta';
       const el=$('#f-mine');if(el)el.innerHTML=my.length?`<b>${ta?'இன்று நீங்கள்':'You today'}:</b> <span class="t-dc">${n('DC').length} DC</span> · ${c(n('DC'))} ${ta?'சிலிண்டர்':'cyl'} · <span class="t-mt">${n('MT').length} MT</span> · ${c(n('MT'))} ${ta?'சிலிண்டர்':'cyl'}`:''}
     $('#f-today-n').textContent=mine.length?`${mine.reduce((a,r)=>a+r.cy.length+ownN(r),0)} cylinders in ${mine.length} entries`:'';
