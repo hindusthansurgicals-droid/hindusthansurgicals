@@ -168,6 +168,6 @@ window.FBC={
   },
   signOut:()=>auth.signOut(),
   /* used by the one-time import page */
-  _raw:{fs,auth,enc,userReady,OWNER_EMAILS}
+  _raw:{fs,auth,enc,dec,userReady,OWNER_EMAILS}
 };
 })();

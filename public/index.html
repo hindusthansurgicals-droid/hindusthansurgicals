@@ -45,12 +45,14 @@ a{color:var(--accent)}
 /* shell */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
+.brand>div{min-width:0}
 .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;flex:none}
 .brand-mark svg{width:18px;height:18px}
 .brand h1{font:800 16px/1.1 var(--f-display);letter-spacing:.01em;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand small{display:block;font:500 11px/1.2 var(--f-body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-.top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex:none}
+@media (max-width:600px){.top-right{gap:6px}.top-right .btn.ghost{padding:5px 6px}}
 .who{display:flex;align-items:center;gap:8px;font-size:13px}
 .who img{width:26px;height:26px;border-radius:50%}
 .role-pill{font:600 10.5px/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
@@ -226,6 +228,12 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .dd button{display:flex;width:100%;border:0;background:none;padding:9px 12px;text-align:left;gap:8px;align-items:center}
 .dd button[aria-selected="true"],.dd button:hover{background:var(--surface-2)}
 .dd .sub{margin-left:auto;font-size:12px;color:var(--muted)}
+.dd.pick .dd-h{padding:9px 12px;font-weight:600;font-size:13px;border-bottom:1px solid var(--line);background:var(--warn-bg);color:var(--warn)}
+.dd.pick button{flex-wrap:wrap}
+.dd.pick .pid{font:600 14px var(--f-mono);min-width:64px}
+.dd.pick .pbr{font-weight:600}
+.dd.pick .pst{width:100%;font-size:12px;color:var(--muted);padding-left:72px}
+.dd.pick .best{font:600 10.5px var(--f-body);padding:3px 6px;border-radius:999px;background:var(--ok-bg);color:var(--ok);margin-left:auto}
 .rel{position:relative}
 .loading{display:grid;place-items:center;min-height:50vh;color:var(--muted);text-align:center;gap:8px}
 .spin{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp 0.9s linear infinite;margin:0 auto 10px}
@@ -338,6 +346,8 @@ const invNo=v=>`${v.pre||billCfg().prefix}/${v.br}/${v.no}`;
 const numCmp=(a,b)=>{if(a.t===b.t&&a.br===b.br&&isNum(a.dc)&&isNum(b.dc)&&a.dc!==b.dc)return (+a.dc)-(+b.dc);return (a.at||'')<(b.at||'')?-1:(a.at||'')>(b.at||'')?1:0};
 /* ---------------- Tamil / English ---------------- */
 const TA={
+ 'Cylinder register (old Excel layout)':'சிலிண்டர் பதிவேடு (பழைய Excel அமைப்பு)',
+ 'Import old files':'பழைய file இறக்குமதி',
  'Dashboard':'முகப்பு','New entry':'புதிய பதிவு','Entries':'பதிவுகள்','Registers':'பதிவேடுகள்','Cylinders':'சிலிண்டர்கள்','Customers':'வாடிக்கையாளர்கள்','Follow-up':'பின்தொடர்வு','Mismatches':'பொருந்தாதவை','Billing':'பில்லிங்','Purchases & sales':'வாங்கல் & விற்பனை','Analysis':'பகுப்பாய்வு','Reports':'அறிக்கைகள்','Settings':'அமைப்புகள்','Help':'உதவி',
  'Today at a glance':'இன்றைய நிலை','With customers':'வாடிக்கையாளரிடம்','Godown · full':'குடோன் · நிரம்பியது','Godown · empty':'குடோன் · காலி','At filling':'நிரப்ப சென்றது','Out over 90 days':'90 நாளுக்கு மேல்','Missing':'காணவில்லை','Today':'இன்று','How long with customers':'வாடிக்கையாளரிடம் எத்தனை நாள்','Cylinders by gas':'வாயு வாரியாக சிலிண்டர்கள்','Customers holding the most cylinders':'அதிக சிலிண்டர் வைத்திருப்பவர்கள்',
  'Branch':'கிளை','Customer':'வாடிக்கையாளர்','Holding':'வைத்திருப்பது','Over 90 days':'90 நாளுக்கு மேல்','Last movement':'கடைசி நகர்வு','Gas':'வாயு','Out':'வெளியே','Full':'நிரம்பியது','Empty':'காலி','Filling':'நிரப்புதல்','Total':'மொத்தம்','Status':'நிலை','Since':'முதல்','Days':'நாட்கள்','Date':'தேதி','Remarks':'குறிப்பு','Driver':'ஓட்டுநர்','Vehicle no.':'வாகன எண்','Cylinder numbers':'சிலிண்டர் எண்கள்','Filling plant / supplier':'நிரப்பும் இடம் / சப்ளையர்',
@@ -549,7 +559,7 @@ function dbErr(e){
 }
 
 /* ---------------- shell ---------------- */
-const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['help','Help','help']];
+const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').textContent='Cylinder tracking · '+(S.company.branches||[]).map(brName).join(' · ')}
 function paintShell(){
   paintBrand();
@@ -559,6 +569,7 @@ function paintShell(){
     if(!r)return false;
     if(k==='entry'&&!canEnter())return false;
     if(k==='settings'&&!canManage())return false;
+    if(k==='oldimp'&&!S.isOwner)return false;
     return true;
   }).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
@@ -703,8 +714,9 @@ VIEWS.entry={
           <div class="small muted" id="f-cust-info"></div>
         </div>
         <div class="field" id="f-pl-wrap"><label for="f-pl">Filling plant / supplier</label><input class="inp" id="f-pl" list="dl-pl" value="${esc(f.pl)}" placeholder="eg. Own plant, HS &amp; AP"><datalist id="dl-pl">${datalistVals('pl').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
-        <div class="field"><label for="f-cyl">Cylinder numbers <span class="muted" style="font-weight:400">· type or scan, Enter after each</span></label>
-          <div class="cylbox" id="f-cylbox"><span id="f-chips" class="chips"></span><input id="f-cyl" placeholder="505, C1008, D101" inputmode="text" aria-describedby="f-cyl-help"></div>
+        <div class="field rel"><label for="f-cyl">Cylinder numbers <span class="muted" style="font-weight:400">· type or scan, Enter after each</span></label>
+          <div class="cylbox" id="f-cylbox"><span id="f-chips" class="chips"></span><input id="f-cyl" placeholder="505, C1008, D101" inputmode="text" aria-describedby="f-cyl-help" aria-controls="f-cyl-dd"></div>
+          <div class="dd pick" id="f-cyl-dd" role="listbox" hidden></div>
           <div class="small muted" id="f-cyl-help"></div>
         </div>
         <div id="f-expect"></div>
@@ -754,8 +766,40 @@ VIEWS.entry={
       if(b.dataset.ck)pick(b.dataset.ck);
       else if(b.dataset.new){const ck=await addCustomer(ci.value.trim());if(ck)pick(ck)}});
     const cyIn=$('#f-cyl');
-    const addFrom=txt=>{txt.split(/[\s,;]+/).map(normCyl).filter(Boolean).forEach(id=>{if(!f.cy.includes(id))f.cy.push(id)});f.confirm=false;this.update()};
+    /* Same number used for more than one cylinder (1014 Dharmapuri / K1014 Krishnagiri, 1002 O2 / C1002 CO2):
+       typing just the number asks which one, best match first. */
+    const twins=tok=>{const m=/^(\d+)$/.exec(tok);if(!m)return null;
+      const c=Object.keys(S.cyl).filter(k=>{const x=/^([A-Z]*)(\d+)(-\d+)?$/.exec(k);return x&&x[2]===m[1]});
+      if(!c.length||(c.length===1&&c[0]===tok))return null;return c};
+    const pickScore=id=>{const c=S.cyl[id]||{},st=S.D.state[id]||{};let s=0;
+      if(c.b&&c.b===f.br)s+=2;
+      if(f.t==='DC'&&(st.st==='empty'||st.st==='full'||st.st==='unused'))s+=3;
+      if(f.t==='MT'&&st.st==='out'){s+=1;if(f.ck&&st.ck===f.ck)s+=5}
+      if(f.t==='FS'&&st.st==='empty')s+=3;if(f.t==='FR'&&st.st==='filling')s+=3;
+      if(st.st==='sold'||st.st==='missing')s-=5;return s};
+    const pend=[];let psel=0;const pdd=$('#f-cyl-dd');
+    const showPick=()=>{
+      if(!pend.length){pdd.hidden=true;pdd.innerHTML='';cyIn.setAttribute('aria-expanded','false');return}
+      const {tok,list}=pend[0];const ta=LANG==='ta';
+      pdd.innerHTML=`<div class="dd-h">${ta?`“${esc(tok)}” என்ற எண்ணில் ${list.length} சிலிண்டர்கள் உள்ளன — எது?`:`${list.length} cylinders have the number “${esc(tok)}” — which one?`}</div>`+
+        list.map((id,i)=>{const c=S.cyl[id]||{},st=S.D.state[id]||{};
+          const where=st.st==='out'?(ta?'வாடிக்கையாளரிடம்: ':'With ')+custName(st.ck)+(st.d?' · '+fmtD(st.d):''):st.st==='filling'?(ta?'நிரப்ப சென்றது':'At filling'):st.st==='missing'?(ta?'காணவில்லை':'Missing'):st.st==='sold'?(ta?'விற்றது':'Sold'):st.st==='full'?(ta?'குடோன் · நிரம்பியது':'Godown · full'):st.st==='empty'?(ta?'குடோன் · காலி':'Godown · empty'):(ta?'இன்னும் பயன்படுத்தவில்லை':'Not used yet');
+          return `<button type="button" role="option" data-pick="${esc(id)}" aria-selected="${i===psel}"><span class="pid">${esc(id)}</span><span class="pbr">${esc(c.g||'')}${c.b?' · '+esc(brName(c.b)):''}</span>${i===0&&list.length>1&&pickScore(list[0])>pickScore(list[1])?`<span class="best">${ta?'பொருத்தமானது':'Best match'}</span>`:''}<span class="pst">${esc(where)}</span></button>`}).join('');
+      pdd.hidden=false;cyIn.setAttribute('aria-expanded','true');
+    };
+    const choose=id=>{pend.shift();psel=0;if(id&&!f.cy.includes(id))f.cy.push(id);f.confirm=false;this.update();showPick();cyIn.focus()};
+    pdd.addEventListener('mousedown',e=>{const b=e.target.closest('[data-pick]');if(!b)return;e.preventDefault();choose(b.dataset.pick)});
+    const addFrom=txt=>{txt.split(/[\s,;]+/).map(normCyl).filter(Boolean).forEach(id=>{
+        const tw=twins(id);
+        if(tw){pend.push({tok:id,list:tw.sort((a,b)=>pickScore(b)-pickScore(a)||a.localeCompare(b))});return}
+        if(!f.cy.includes(id))f.cy.push(id)});
+      f.confirm=false;this.update();psel=0;showPick()};
     cyIn.addEventListener('keydown',e=>{
+      if(pend.length&&!cyIn.value.trim()){const n=pend[0].list.length;
+        if(e.key==='ArrowDown'){e.preventDefault();psel=Math.min(n-1,psel+1);showPick();return}
+        if(e.key==='ArrowUp'){e.preventDefault();psel=Math.max(0,psel-1);showPick();return}
+        if(e.key==='Enter'){e.preventDefault();choose(pend[0].list[psel]);return}
+        if(e.key==='Escape'){e.preventDefault();e.stopPropagation();choose(null);return}}
       if(e.key==='Enter'||e.key===','||e.key===' '||e.key==='Tab'&&cyIn.value.trim()){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}}
       else if(e.key==='Backspace'&&!cyIn.value&&f.cy.length){f.cy.pop();this.update()}
     });
@@ -1145,6 +1189,7 @@ VIEWS.rep={
       ${card('day','Day-end report','Everything moved on one day: per branch, per staff, with vehicle, driver and mismatches.',`<div class="field"><label for="r-day">Date</label><input type="date" class="inp" id="r-day" value="${t}"></div>`)}
       ${card('rent','Rent bill','Rent for a month, per customer and cylinder, after the free days. Set rates in Settings.',`<div class="field"><label for="r-month">Month</label><input type="month" class="inp" id="r-month" value="${pms}"></div>`)}
       ${card('labels','Barcode labels','A4 sheet, 24 labels per page (3 × 8, 70 × 37 mm). Stick one on each cylinder and scan it in New entry.',`<div class="row"><div class="field"><label for="r-lg">Gas</label><select class="inp" id="r-lg"><option value="all">All</option>${gases.map(g=>`<option>${esc(g)}</option>`).join('')}</select></div><div class="field"><label for="r-lb">Branch</label><select class="inp" id="r-lb"><option value="all">All</option>${S.company.branches.map(b=>`<option value="${esc(b)}">${esc(brName(b))}</option>`).join('')}</select></div></div><div class="field"><label for="r-ll">Or only these numbers</label><textarea class="inp mono" id="r-ll" placeholder="505, 506, C1008"></textarea></div>`,'Download labels (PDF)')}
+      ${card('register','Cylinder register (old Excel layout)','Same layout as your Excel sheet: one row per cylinder with DC Date · DC Name · MT Date · MT Name, grouped Dharmapuri, Krishnagiri, N2, CO2, Argon, DURO. Includes old history and app entries.')}
       ${card('stock','Stock status','Every cylinder with gas, branch, status, customer, since date, days and test due.')}
       ${card('holding','Customer holdings','One row per customer: cylinders held, over 30, 90 and 180 days, deposit and rent so far.')}
       ${card('aging','Over 90 days','Cylinders with customers for more than 90 days, with phone numbers for follow-up.')}
@@ -1320,7 +1365,7 @@ async function saveFile(name,data){
 async function xlsx(name,sheets){
   try{await loadScript(XLSX_SRC)}catch(e){toast('Could not load the Excel tool. Check your connection.');return}
   const wb=XLSX.utils.book_new();
-  for(const [sn,rows,widths] of sheets){const ws=XLSX.utils.aoa_to_sheet(rows);if(widths)ws['!cols']=widths.map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws,sn.slice(0,31))}
+  for(const [sn,rows,widths,fmt] of sheets){const ws=XLSX.utils.aoa_to_sheet(rows);if(widths)ws['!cols']=widths.map(w=>({wch:w}));if(fmt)fmt(ws);XLSX.utils.book_append_sheet(wb,ws,sn.slice(0,31))}
   const out=XLSX.write(wb,{type:'array',bookType:'xlsx'});
   return await saveFile(name,new Uint8Array(out));
 }
@@ -1331,8 +1376,40 @@ function moveRows(from,to,ck){const rows=[['Date','Type','Cylinder No','Customer
   const all=[];for(const [id,evs] of Object.entries(S.D.tl))for(const e of evs){if(ck&&e.ck!==ck)continue;if(from&&(!e.d||e.d<from))continue;if(to&&(!e.d||e.d>to))continue;all.push([e.d||'',TLABEL[e.t],id,e.ck?custName(e.ck):e.pl||'',e.dc||'',e.src==='old'?'Old Excel':'App',e.br||'',e.vh||'',e.dr||'',e.rm||'',e.flag?(e.vf?'Verified: '+(e.vf.note||''):e.flag):''])}
   all.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);all.forEach(r=>{r[0]=xd(r[0]);rows.push(r)});return rows}
 const MW=[12,12,12,26,8,10,8,14,14,20,30];
+/* Cylinder register in the same layout as the old Excel sheet (one row per cylinder, DC/MT pairs). */
+function registerSheet(){
+  const st=S.D.state,tl=S.D.tl;
+  const ids=Object.keys(st).filter(id=>st[id].known||(tl[id]||[]).length);
+  const parts=id=>{const m=/^([A-Z]*)(\d+)(?:-(\d+))?$/.exec(id);return m?{p:m[1],n:+m[2],x:m[3]||''}:{p:id,n:Infinity,x:''}};
+  const gasLbl=g=>/^CO2/.test(g||'')?(/40/.test(g)?'CO2 (40*KG)':/30/.test(g)?'CO2 (30*KG)':'CO2'):(g||'');
+  const isO2=g=>!g||g==='O2'||g==='?';
+  const secOf=s=>s.st==='sold'?'SOLD CYLINDERS':s.st==='missing'?'MISSING CYLINDERS':isO2(s.g)?(s.b==='KGIRI'?'KRISHNAGIRI':'DHARMAPURI'):/^CO2/.test(s.g)?'CO2':s.g==='Argon'?'ARGON':s.g==='N2'?'N2':s.g==='DURO'?'DURO':String(s.g).toUpperCase();
+  const ORDER=['DHARMAPURI','KRISHNAGIRI','N2','CO2','ARGON','DURO','MISSING CYLINDERS','SOLD CYLINDERS'];
+  const groups={};ids.forEach(id=>{const k=secOf(st[id]);(groups[k]=groups[k]||[]).push(id)});
+  const secs=[...ORDER.filter(k=>groups[k]),...Object.keys(groups).filter(k=>!ORDER.includes(k))];
+  const colA=id=>{const q=parts(id);if(q.p==='D'||!isFinite(q.n))return id;return q.x?q.n+(q.x==='2'?' (New)':' ('+q.x+')'):q.n};
+  const colB=s=>isO2(s.g)?(s.b||'DPI'):s.g==='N2'?(s.b||'N2'):s.g==='DURO'?'DURO':gasLbl(s.g);
+  const body=[];const dates=[];let maxSlots=4;
+  for(const sec of secs){
+    if(sec!=='DHARMAPURI')body.push([sec]);
+    groups[sec].sort((a,b)=>{const x=parts(a),y=parts(b);return x.n-y.n||x.p.localeCompare(y.p)||x.x.localeCompare(y.x)});
+    for(const id of groups[sec]){
+      const row=[colA(id),colB(st[id])];let pos=0;
+      for(const ev of (tl[id]||[])){if(ev.t!=='DC'&&ev.t!=='MT')continue;const want=ev.t==='DC'?0:1;
+        if(pos%2!==want){if(pos===0)row.push('*','*');else row.push(null,null);pos++}
+        row.push(ev.d?dayNum(ev.d)+25569:null,ev.cn||(ev.ck?custName(ev.ck):''));
+        if(ev.d)dates.push([body.length+1,row.length-2]);pos++}
+      maxSlots=Math.max(maxSlots,pos);body.push(row)}
+  }
+  maxSlots+=maxSlots%2;
+  const head=['Dharmapuri','Cylinder Type'];for(let i=0;i<maxSlots;i++)head.push(...(i%2?['MT Date','MT Name']:['DC Date','DC Name']));
+  const widths=[12,14];for(let i=0;i<maxSlots;i++)widths.push(11,18);
+  const fmt=ws=>{for(const [r,c] of dates){const a=XLSX.utils.encode_cell({r,c});if(ws[a]){ws[a].t='n';ws[a].z='dd-mm-yyyy'}}};
+  return ['Cylinder register',[head,...body],widths,fmt];
+}
 async function runReport(k){
   const t=todayISO();
+  if(k==='register')return xlsx(`Cylinder register ${t}.xlsx`,[registerSheet()]);
   if(k==='stock')return xlsx(`Stock status ${t}.xlsx`,[['Stock',stockRows(),[12,10,8,16,26,14,12,7,10]]]);
   if(k==='aging')return xlsx(`Over 90 days ${t}.xlsx`,[['Over 90 days',stockRows(s=>s.st==='out'&&s.days>90),[12,10,8,16,26,14,12,7,10]]]);
   if(k==='holding'){const rows=[['Customer','Type','Phone','Holding','Over 30 days','Over 90 days','Over 180 days','Deposit (₹)','Rent so far (₹)','Cylinders']];
@@ -1346,7 +1423,7 @@ async function runReport(k){
     const ids=list.length?list.filter(id=>S.cyl[id]):Object.values(S.D.state).filter(s=>s.known&&s.st!=='sold'&&(g==='all'||s.g===g)&&(b==='all'||s.b===b)).map(s=>s.id).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
     return labelsPdf(ids)}
   if(k==='backup'){const cust=[['Customer','Type','Phone','Address','Deposit','Rate/day','Free days']];Object.values(S.cust).sort((a,b)=>a.n.localeCompare(b.n)).forEach(c=>cust.push([c.n,c.t||'',c.ph||'',c.ad||'',c.dep||'',c.rate||'',c.free||'']));
-    return xlsx(`Cylinder desk backup ${t}.xlsx`,[['Stock',stockRows(),[12,10,8,16,26,14,12,7,10]],['Customers',cust,[26,12,14,40,9,9,9]],['All movements',moveRows(),MW]])}
+    return xlsx(`Cylinder desk backup ${t}.xlsx`,[registerSheet(),['Stock',stockRows(),[12,10,8,16,26,14,12,7,10]],['Customers',cust,[26,12,14,40,9,9,9]],['All movements',moveRows(),MW]])}
 }
 function custStatement(ck){if(!ck)return;const h=S.D.holding[ck]||[];const c=S.cust[ck]||{};const rows=[[custName(ck)],['Statement date',fmtD(todayISO())],['Phone',c.ph||''],['Cylinders held',h.length],['Deposit held (₹)',c.dep?+c.dep:''],['Rent so far on open cylinders (₹)',Math.round(openRent(ck))||0],[],['Cylinder No','Gas','Since','Days']];
   h.forEach(s=>rows.push([s.id,s.g,xd(s.d),s.days??'']));
@@ -1413,7 +1490,7 @@ async function dcPdf(docId,rid){
 
 /* ---------------- actions ---------------- */
 const A={
-  nav:el=>go(el.dataset.v),
+  nav:el=>{if(el.dataset.v==='oldimp'){location.href='old-files.html';return}go(el.dataset.v)},
   dashbr:el=>{S.ui.dashBr=el.dataset.v;VIEWS.dash.update()},
   testfilter:()=>{S.ui.cylTest='over';S.ui.cylSt='all';go('cyl')},
   ftype:el=>{const f=S.form;const was=f.t;f.t=el.dataset.v;f.confirm=false;if(!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}if(isCust(was)!==isCust(f.t))f.cy=[];VIEWS.entry.update()},
