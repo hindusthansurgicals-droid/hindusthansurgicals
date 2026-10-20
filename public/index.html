@@ -379,9 +379,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.6.0';
+const APP_VERSION=window.CD_VERSION||'3.6.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.6.1','2026-10-20',['Backup file names carry the date and time (eg. Cylinder desk backup 20-10-2026 15-55.json); automatic copies kept 2 days, one per day kept always']],
  ['3.6.0','2026-10-20',['Staff see only New entry, Entries, Customers, Cylinders; on a phone they get big DC / MT / Customers / Cylinders buttons at the bottom','FILL / FULL hidden unless switched on in Settings','Alt+D = DC, Alt+M = MT','MT: “Came back FULL (not used)” — the cylinders go to the godown as full','WhatsApp: send a DC (PDF on phones) or a reminder to the customer; dashboard “Today’s summary” with Send on WhatsApp','Customer page shows bill outstanding ₹','Owner tools: merge look-alike customer names; fix old entries that have no date']],
  ['3.5.4','2026-10-20',['MT: after choosing the customer, their cylinders are listed — tick the ones that came back (or “All came back”); typed numbers tick too, and numbers not in the list can still be typed']],
  ['3.5.3','2026-10-20',['New entry: when “Check before saving” shows, Space ticks “Save anyway” and moves to Save','After saving, the cursor goes to the date and the last date stays (Tab keeps it and goes to the customer)']],
@@ -747,6 +748,10 @@ const kv=(()=>{let dbp=null;const open=()=>dbp||(dbp=new Promise((res,rej)=>{con
 (async()=>{try{BK.dir=await kv.get('bkdir');BK.dirName=BK.dir?BK.dir.name:''}catch(e){}})();
 const canFolder=()=>!!window.showDirectoryPicker;
 async function bkPerm(ask){if(!BK.dir)return false;const o={mode:'readwrite'};try{if(await BK.dir.queryPermission(o)==='granted')return true;if(ask&&await BK.dir.requestPermission(o)==='granted')return true}catch(e){}return false}
+/* 20-10-2026 15-55 (local time; Windows does not allow “:” in file names) */
+const stamp=(d=new Date())=>pad(d.getDate())+'-'+pad(d.getMonth()+1)+'-'+d.getFullYear()+' '+pad(d.getHours())+'-'+pad(d.getMinutes());
+/* automatic copies older than 2 days are removed; the one-per-day files stay */
+async function bkPrune(){try{const lim=Date.now()-48*3600e3;for await(const [name,h] of BK.dir.entries()){if(h.kind!=='file'||!/^Cylinder desk auto /.test(name))continue;const f=await h.getFile();if(f.lastModified<lim)await BK.dir.removeEntry(name)}}catch(e){console.warn(e)}}
 async function bkWrite(name,text){const fh=await BK.dir.getFileHandle(name,{create:true});const w=await fh.createWritable();await w.write(text);await w.close()}
 function bkDownload(name,text){const url=URL.createObjectURL(new Blob([text],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
 async function bkChooseDir(){
@@ -758,14 +763,14 @@ async function bkRun(why){
   if(BK.busy||!window.FBC)return false;BK.busy=true;paintSync();
   try{
     const data=await FBC.backupAll();const text=JSON.stringify(data);const now=new Date();
-    const slot=pad(now.getHours())+'-'+(now.getMinutes()<30?'00':'30');let where;
+    const st=stamp(now);let where;
     if(BK.dir&&await bkPerm(why!=='auto')){
       // 48 rolling half-hour files (last 24 hours) + one file per day (kept)
-      await bkWrite(`Cylinder desk auto ${slot}.json`,text);await bkWrite(`Cylinder desk daily ${todayISO()}.json`,text);where=BK.dirName;
-    }else if(why!=='auto'){bkDownload(`Cylinder desk backup ${todayISO()} ${slot}.json`,text);where='Downloads'}
+      await bkWrite(`Cylinder desk ${why==='auto'?'auto':'backup'} ${st}.json`,text);await bkWrite(`Cylinder desk daily ${st.slice(0,10)}.json`,text);where=BK.dirName;bkPrune();
+    }else if(why!=='auto'){bkDownload(`Cylinder desk backup ${st}.json`,text);where='Downloads'}
     else{BK.due=true;return false}
     BK.last=now.toISOString();BK.due=false;try{localStorage.setItem('cd-bk-last',BK.last)}catch(e){}
-    if(why!=='auto')toast(T2('Backup saved','Backup சேமிக்கப்பட்டது')+' · '+where);
+    if(why!=='auto')toast(T2('Backup saved','Backup சேமிக்கப்பட்டது')+' · '+where+' · '+st);
     return true;
   }catch(e){console.warn(e);toast(T2('Backup failed: ','Backup தோல்வி: ')+((e&&(e.code==='incomplete'?e.message:e.code||e.message))||'error'));return false}
   finally{BK.busy=false;paintSync();if(S.drawer&&S.drawer.sync)paintDrawer()}
@@ -829,7 +834,7 @@ function syncPanel(){
     <label class="small" style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="bk-auto" ${BK.auto?'checked':''}> ${T2('Back up automatically every 30 minutes when something changed (this computer)','ஏதாவது மாறியிருந்தால் 30 நிமிடத்துக்கு ஒருமுறை தானாக backup (இந்தக் கணினி)')}</label>
     <div class="row"><button class="btn primary" data-act="bknow" ${BK.busy?'disabled':''}>${ic('dl')}${T2('Back up now','இப்போது backup')}</button>${canFolder()?`<button class="btn" data-act="bkdir">${BK.dirName?T2('Change folder','Folder மாற்று'):T2('Choose backup folder','Backup folder தேர்வு')}</button>`:''}</div>
     <ul class="small muted" style="margin:12px 0 0;padding-left:18px">
-      <li>${canFolder()?T2('Choose a folder once: backups are written there silently — the last 24 hours (every half hour) plus one file per day.','ஒருமுறை folder தேர்வு செய்யுங்கள்: backup-கள் அங்கே தானாகச் சேமிக்கப்படும் — கடந்த 24 மணி நேரம் (அரை மணிக்கு ஒன்று) + நாளுக்கு ஒரு file.'):T2('On this device backups download as files; you get a reminder every 30 minutes.','இந்த device-இல் backup file-ஆக download ஆகும்; 30 நிமிடத்துக்கு ஒருமுறை நினைவூட்டல் வரும்.')}</li>
+      <li>${canFolder()?T2('Choose a folder once: backups are written there silently with the date and time in the name (eg. Cylinder desk auto 20-10-2026 15-30.json). Automatic copies are kept for 2 days; one file per day (Cylinder desk daily 20-10-2026.json) is kept always.','ஒருமுறை folder தேர்வு செய்யுங்கள்: backup-கள் தேதி, நேரத்துடன் தானாகச் சேமிக்கப்படும் (உதா. Cylinder desk auto 20-10-2026 15-30.json). Automatic நகல்கள் 2 நாள் வைக்கப்படும்; நாளுக்கு ஒரு file (Cylinder desk daily 20-10-2026.json) எப்போதும் இருக்கும்.'):T2('On this device backups download as files; you get a reminder every 30 minutes.','இந்த device-இல் backup file-ஆக download ஆகும்; 30 நிமிடத்துக்கு ஒருமுறை நினைவூட்டல் வரும்.')}</li>
       <li>${T2('Pick a folder inside Google Drive (Drive for desktop) and every backup is also copied to the cloud.','Google Drive (Drive for desktop) உள்ளே ஒரு folder-ஐத் தேர்வு செய்தால், ஒவ்வொரு backup-உம் cloud-க்கும் போகும்.')}</li>
       <li>${T2('After the browser restarts, click “Backup due” once to allow the folder again.','Browser மீண்டும் திறந்த பின், “Backup தேவை” என்பதை ஒருமுறை அழுத்தி folder அனுமதி கொடுங்கள்.')}</li>
       <li>${T2('To restore: open','திரும்பப் பெற:')} <a href="import.html" target="_blank">import.html</a> ${T2('and load the backup file.','திறந்து backup file-ஐ ஏற்றுங்கள்.')}</li></ul></div>`:''}`;
@@ -2119,7 +2124,7 @@ async function boot(){
   bootData();registerMember();watchMembers();
   paintShell();
 }
-if(window.__TEST)window.__T={S,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
+if(window.__TEST)window.__T={BK,bkRun,S,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
 boot();
 })();
 </script>
