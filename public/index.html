@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -238,6 +238,10 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+body.no-editcust .dd .ed{display:none}
+body.no-money .money{display:none}
+.permgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px 14px}
+.permgrid .changed{font-weight:700}
 .prefbar{display:none;gap:6px;margin-top:6px}
 @media (pointer:coarse){.prefbar{display:flex;flex-wrap:wrap}}
 .prefbar button{flex:1 1 44px;min-height:40px;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;font:700 15px var(--f-mono)}
@@ -388,9 +392,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.7.0';
+const APP_VERSION=window.CD_VERSION||'3.8.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.8.0','2026-10-20',['Owner sets permissions per person (Settings → People → Permissions): pages, new entries, edit own / anyone’s entries, other branches, new customers, edit customers, save place, see money, downloads','Staff defaults tightened: own branch only, no new customers, no customer edits, no money, no downloads','Staff “edit own entries” now means entries made today (any DC date)','Firestore rules enforce the same limits on the server','Install as an app from Chrome (Install app button / Add to Home screen)']],
  ['3.7.0','2026-10-20',['Phone: number keypad for cylinder numbers with C N A D K buttons','Customer box shows your recent customers first','“You today” count of your DC / MT','Customer signs on the phone (✍ on a DC); printed on the DC PDF','Customer page: 📞 Call, 🧭 Directions, 📍 Save this place (GPS) — after a DC on a phone the app offers to save the place','Staff get Tamil by default']],
  ['3.6.1','2026-10-20',['Backup file names carry the date and time (eg. Cylinder desk backup 20-10-2026 15-55.json); automatic copies kept 2 days, one per day kept always']],
  ['3.6.0','2026-10-20',['Staff see only New entry, Entries, Customers, Cylinders; on a phone they get big DC / MT / Customers / Cylinders buttons at the bottom','FILL / FULL hidden unless switched on in Settings','Alt+D = DC, Alt+M = MT','MT: “Came back FULL (not used)” — the cylinders go to the godown as full','WhatsApp: send a DC (PDF on phones) or a reminder to the customer; dashboard “Today’s summary” with Send on WhatsApp','Customer page shows bill outstanding ₹','Owner tools: merge look-alike customer names; fix old entries that have no date']],
@@ -519,8 +524,21 @@ const S={
   form:null
 };
 function role(){if(S.isOwner)return 'owner';const r=S.roles[S.uid];return r&&r.role||null}
+/* What each person may do. Owner: everything. Others start from their role's defaults;
+   the owner can switch each item on or off per person (Settings → People → Permissions). */
+const PERMS=[
+ ['Pages','பக்கங்கள்',[['dash','Dashboard','டாஷ்போர்டு'],['entries','Entries list','பதிவுகள் பட்டியல்'],['reg','Registers','பதிவேடுகள்'],['cyl','Cylinders','சிலிண்டர்கள்'],['cust','Customers','வாடிக்கையாளர்கள்'],['fu','Follow-up','பின்தொடர்வு'],['mism','Mismatches','பொருந்தாதவை'],['bill','Billing','பில்'],['trade','Purchases & sales','வாங்கல் / விற்றல்'],['ana','Analysis','பகுப்பாய்வு'],['rep','Reports','அறிக்கைகள்']]],
+ ['Work','வேலை',[['entry','Make new DC / MT entries','புதிய DC / MT பதிவு போடலாம்'],['editOwn','Edit / delete own entries made today','தான் இன்று போட்ட பதிவைத் திருத்த / நீக்க'],['editAny','Edit / delete anyone’s entries, any day','எல்லோர் பதிவையும் எந்த நாளும் திருத்த / நீக்க'],['otherBr','Enter for other branches','மற்ற கிளைக்கும் பதிவு போட'],['newCust','Add new customers','புதிய வாடிக்கையாளர் சேர்க்க'],['editCust','Edit customer details','வாடிக்கையாளர் விவரம் மாற்ற'],['saveLoc','Save customer place (GPS)','வாடிக்கையாளர் இடம் (GPS) சேமிக்க'],['money','See money (dues, deposit, rent, rates)','பணம் பார்க்க (நிலுவை, டெபாசிட், வாடகை)'],['export','Download Excel / reports','Excel / அறிக்கை download']]]];
+const PERM_KEYS=PERMS.flatMap(g=>g[2].map(x=>x[0]));
+const PAGE_KEYS=PERMS[0][2].map(x=>x[0]);
+const PRESET={manager:Object.fromEntries(PERM_KEYS.map(k=>[k,true])),
+  staff:{entries:true,cyl:true,cust:true,entry:true,editOwn:true,saveLoc:true},
+  viewer:{dash:true,entries:true,cyl:true,cust:true}};
+function permsFor(uid){const r=S.roles[uid]||{};const base=PRESET[r.role]||{};const o={};PERM_KEYS.forEach(k=>{o[k]=!!(r.perm&&k in r.perm?r.perm[k]:base[k])});return o}
+function can(k){if(S.isOwner)return true;if(!role())return false;return permsFor(S.uid)[k]}
 const canManage=()=>['owner','manager'].includes(role());
-const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly;
+const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly&&can('entry');
+const madeToday=r=>!!r.at&&new Date(r.at).toDateString()===new Date().toDateString();
 const canView=()=>!!role();
 const myBranch=()=>{const r=S.roles[S.uid];return (r&&r.br)||S.company.branches[0]||'DPI'};
 const brName=b=>(S.company.branchNames||{})[b]||b;
@@ -668,24 +686,55 @@ function dbErr(e){
 const STAFF_NAV=['entry','entries','cust','cyl','help'];
 const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').textContent='Cylinder tracking · '+(S.company.branches||[]).map(brName).join(' · ')}
+function navOk(k){const r=role();
+  if(!r)return false;
+  if(k==='entry')return canEnter();
+  if(k==='settings')return canManage();
+  if(k==='oldimp')return S.isOwner;
+  if(PAGE_KEYS.includes(k))return can(k);
+  return true}
 function paintShell(){
   paintBrand();
   const r=role();
   const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
-  $('#rail').innerHTML=NAV.filter(([k])=>{
-    if(!r)return false;
-    if(k==='entry'&&!canEnter())return false;
-    if(k==='settings'&&!canManage())return false;
-    if(k==='oldimp'&&!S.isOwner)return false;
-    if(r==='staff'&&!STAFF_NAV.includes(k))return false;
-    return true;
-  }).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
-  (r==='staff'?`<div class="tabbar">${[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']].map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button><button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button></div>`:'')+
+  document.body.classList.toggle('no-editcust',!can('editCust'));document.body.classList.toggle('no-money',!can('money'));
+  $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
+  (r==='staff'?`<div class="tabbar">${[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']].map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
-  $('#who').innerHTML='<span id="sync-slot" class="sync-slot"></span>'+(window.FBC?'<button class="btn sm ghost" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+myBranch():'Viewer')}</span>`:''}</div>`:'');
+  $('#who').innerHTML='<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+myBranch():'Viewer')}</span>`:''}</div>`:'');
   paintSync();
 }
+/* Owner: merge this customer into any other one (picked by name). */
+function mergeIntoPanel(from){
+  const F=S.cust[from];if(!F)return;const ta=LANG==='ta';
+  openDrawer({k:'form',render:()=>[`<h3>🔀 ${ta?'இணை':'Merge'} · ${esc(F.n)}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?`“${esc(F.n)}”-இன் எல்லா DC/MT பதிவுகள், பில்கள், பழைய register பதிவுகள் நீங்கள் தேர்வு செய்யும் பெயருக்கு மாறும். பிறகு “${esc(F.n)}” நீக்கப்படும்.`:`All DC/MT entries, bills and old register rows of “${esc(F.n)}” move to the name you pick; then “${esc(F.n)}” is removed.`}</p>
+     <input class="inp" id="mi-q" placeholder="${ta?'சரியான பெயரைத் தேடவும்':'Search the correct name'}" autocomplete="off"><div id="mi-list" style="margin-top:8px"></div>`],
+    after(){const draw=()=>{const q=$('#mi-q').value.trim().toLowerCase();
+        const rows=Object.entries(S.cust).filter(([k,c])=>k!==from&&(!q||c.n.toLowerCase().includes(q))).sort((a,b)=>a[1].n.localeCompare(b[1].n)).slice(0,40);
+        $('#mi-list').innerHTML=rows.map(([k,c])=>`<button type="button" class="btn" style="width:100%;justify-content:space-between;margin-bottom:6px" data-to="${esc(k)}"><span><b>${esc(c.n)}</b> ${brTag(k)}</span><span class="small muted">${(S.D.holding[k]||[]).length} holding · ${(S.D.custMoves[k]||[]).length} moves</span></button>`).join('')||`<div class="muted">${ta?'பெயர் இல்லை':'No match'}</div>`};
+      $('#mi-q').addEventListener('input',draw);draw();$('#mi-q').focus();
+      $('#mi-list').addEventListener('click',async e=>{const b=e.target.closest('[data-to]');if(!b)return;const T=S.cust[b.dataset.to];
+        if(!confirm(ta?`“${F.n}” → “${T.n}”\n${(S.D.custMoves[from]||[]).length} பதிவுகள் மாறும். “${F.n}” நீக்கப்படும். தொடரவா?`:`“${F.n}” → “${T.n}”\n${(S.D.custMoves[from]||[]).length} moves will move. “${F.n}” will be removed. Continue?`))return;
+        try{await mergeCustomers(from,b.dataset.to);closeDrawer();setTimeout(()=>openDrawer({k:'cust',v:b.dataset.to}),400)}catch(err){toast(dbErr(err))}})}});
+}
+/* Owner: switch each permission on/off for one person. */
+function permPanel(id){
+  const r=S.roles[id]||{};const ta=LANG==='ta';const pm=permsFor(id);const base=PRESET[r.role]||{};const nm=(S.profiles[id]||{}).name||id;
+  openDrawer({k:'form',render:()=>[`<h3>${ta?'அனுமதிகள்':'Permissions'} · ${esc(nm)}</h3>`,
+    `<p class="muted" style="margin-top:0">Role: <b>${esc(r.role||'—')}</b>. ${ta?'சாம்பல் குறி = role-இன் இயல்பு. மாற்றியவை தடிமனாகத் தெரியும்.':'Ticks start from the role’s defaults; changed items show in bold.'}</p>
+     <form id="pm-form">${PERMS.map(([g,gt,items])=>`<h4 style="margin:14px 0 6px">${ta?gt:g}</h4><div class="permgrid">${items.map(([k,en,tl])=>`<label class="check${!!base[k]!==pm[k]?' changed':''}"><input type="checkbox" data-pm="${k}" ${pm[k]?'checked':''}> ${esc(ta?tl:en)}</label>`).join('')}</div>`).join('')}
+     <div class="row" style="margin-top:16px"><button class="btn primary" type="submit">${ic('check')}${ta?'சேமி':'Save'}</button><button class="btn" type="button" id="pm-reset">${ta?'Role இயல்புக்குத் திரும்பு':'Back to role defaults'}</button><button class="btn" type="button" data-act="closedrawer">${ta?'ரத்து':'Cancel'}</button></div></form>`],
+    after(){const save=async perm=>{try{await S.db.doc('settings/roles').update({users:{[id]:{perm}}});toast(ta?'அனுமதிகள் சேமிக்கப்பட்டன':'Permissions saved');closeDrawer()}catch(e){toast(dbErr(e))}};
+      $('#pm-form').addEventListener('submit',e=>{e.preventDefault();const o={};$$('[data-pm]').forEach(x=>{o[x.dataset.pm]=x.checked});save(o)});
+      $('#pm-reset').onclick=()=>save(window.FBC&&FBC.DEL?FBC.DEL:null)}});
+}
+/* Install as an app (Chrome offers this once the page qualifies). */
+let INSTALL=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL=e;try{paintShell()}catch(err){}});
+window.addEventListener('appinstalled',()=>{INSTALL=null;try{paintShell();toast(LANG==='ta'?'App நிறுவப்பட்டது — home screen-இல் பார்க்கவும்':'App installed — find it on your home screen')}catch(err){}});
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 /* ---------------- phone helpers for staff ---------------- */
 const isTouch=()=>window.matchMedia&&matchMedia('(pointer:coarse)').matches;
 /* customers this person used most recently (then anyone's) */
@@ -699,6 +748,7 @@ function mapUrl(c){if(c.loc)return `https://www.google.com/maps/dir/?api=1&desti
 /* Save where the customer is, from this phone's GPS. */
 function saveLoc(ck){
   const c=S.cust[ck];if(!c)return;const ta=LANG==='ta';
+  if(!can('saveLoc')){toast(ta?'இடம் சேமிக்க அனுமதி இல்லை.':'Not allowed to save places.');return}
   if(!navigator.geolocation){toast(ta?'இந்த device-இல் location இல்லை.':'Location is not available on this device.');return}
   if(c.loc&&!confirm(ta?`${c.n}-இன் இடம் ஏற்கெனவே ${fmtDT(c.loc.at)} அன்று சேமிக்கப்பட்டது. இப்போது நீங்கள் உள்ள இடத்தால் மாற்றவா?`:`${c.n}'s place was already saved on ${fmtDT(c.loc.at)}. Replace it with where you are now?`))return;
   toast(ta?'இடம் கண்டறிகிறது… வெளியே திறந்த இடத்தில் நிற்கவும்':'Finding your location… stand in the open');
@@ -904,7 +954,7 @@ function refresh(){
   if(S.view==='entry'&&!canEnter())S.view='dash';
   if(S.view==='settings'&&!canManage())S.view='dash';
   if(role()==='staff'&&!S._langAuto){S._langAuto=true;let chosen=null;try{chosen=localStorage.getItem('cd-lang')}catch(e){}if(!chosen&&LANG!=='ta'){setLang('ta');return}}
-  if(role()==='staff'&&!STAFF_NAV.includes(S.view))S.view=canEnter()?'entry':'cust';
+  if(!navOk(S.view)){const f=NAV.find(([k])=>navOk(k));S.view=f?f[0]:'help'}
   document.body.classList.toggle('staff',role()==='staff');
   const V=VIEWS[S.view];
   if(mounted!==S.view){v.innerHTML=V.mount();mounted=S.view;V.after&&V.after()}
@@ -1044,7 +1094,7 @@ function parseTypedDate(v,defYear){
   return t.getUTCDate()===d&&t.getUTCMonth()===m-1?iso:null;
 }
 /* New entry */
-function newForm(){return {t:'DC',d:todayISO(),br:myBranch(),dc:'',dcAuto:false,ck:'',cq:'',pl:'',vh:'',dr:'',cy:[],rm:'',edit:null,confirm:false,busy:false,saved:null}}
+function newForm(){return {t:'DC',d:todayISO(),br:S.isOwner||can('otherBr')?myBranch():myBranch(),dc:'',dcAuto:false,ck:'',cq:'',pl:'',vh:'',dr:'',cy:[],rm:'',edit:null,confirm:false,busy:false,saved:null}}
 function nextDC(br){let mx=0;for(const r of S.D.recs){if(r.br===br&&r.t==='DC'&&!r.del){const n=parseInt(r.dc,10);if(n>mx)mx=n}}return mx?String(mx+1):''}
 const isCust=t=>t==='DC'||t==='MT';
 function chipStatus(id,f){
@@ -1085,7 +1135,7 @@ VIEWS.entry={
         <div class="typepick">${T.map(([k,c,l])=>`<button type="button" class="${c}" data-act="ftype" data-v="${k}" aria-pressed="${f.t===k}"><b>${TSHORT[k]}</b><span>${l}</span></button>`).join('')}</div>
         <div class="row">
           <div class="field"><div class="date-head"><label for="f-date">Date</label><label class="yr" title="Year used when you type only day and month">Year <input id="f-year" class="mono" inputmode="numeric" maxlength="4" tabindex="-1" value="${esc(String(f.edit&&f.d?f.d.slice(0,4):(S.ui.year||new Date().getFullYear())))}"></label></div><div class="datebox"><input class="inp mono" id="f-date" value="${esc(f.d?fmtD(f.d):'')}" placeholder="24-9" inputmode="numeric" autocomplete="off" aria-describedby="f-date-msg"><button type="button" class="btn ghost sm" id="f-date-cal" aria-label="Calendar" tabindex="-1">${ic('cal')}</button><input type="date" id="f-date-pick" value="${esc(f.d)}" max="${todayISO()}" tabindex="-1" aria-hidden="true"></div><div class="small" id="f-date-msg"></div></div>
-          <div class="field"><label for="f-br">Branch</label><select class="inp" id="f-br">${S.company.branches.map(b=>`<option value="${esc(b)}" ${f.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
+          <div class="field"><label for="f-br">Branch</label><select class="inp" id="f-br" ${can('otherBr')?'':'disabled title="Only your branch"'}>${S.company.branches.map(b=>`<option value="${esc(b)}" ${f.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
           <div class="field"><label for="f-dc" id="f-dc-l">DC / receipt no.</label><input class="inp mono" id="f-dc" value="${esc(f.dc)}" placeholder="eg. 245"></div>
         </div>
         <div id="f-no-info"></div>
@@ -1161,7 +1211,7 @@ VIEWS.entry={
       const items=(q?all.filter(([k,c])=>c.n.toLowerCase().includes(q)||(custTown(c)||'').toLowerCase().includes(q)):all).sort((a,b)=>{const ai=a[1].n.toLowerCase().startsWith(q)?0:1,bi=b[1].n.toLowerCase().startsWith(q)?0:1;return ai-bi||sameBr(a[0])-sameBr(b[0])||a[1].n.localeCompare(b[1].n)}).slice(0,10);
       const exact=all.some(([k,c])=>c.n.toLowerCase()===q);
       let html=items.map(([k,c],i)=>`<button type="button" role="option" data-ck="${esc(k)}" aria-selected="${i===sel}"><span class="cn">${esc(c.n)}</span>${brTag(k)}${c.loc?'<span title="Place saved">📍</span>':''}${custTown(c)?`<span class="town">${esc(custTown(c))}</span>`:''}<span class="sub num">${(S.D.holding[k]||[]).length} holding</span><span class="ed" data-ed="${esc(k)}" title="${LANG==='ta'?'திருத்து':'Edit'}">${ic('edit')}</span></button>`).join('');
-      if(q&&!exact)html+=`<button type="button" data-new="1" aria-selected="${items.length===sel}">${ic('plus','style="width:15px;height:15px"')}<span>Add “${esc(ci.value.trim())}” as a new customer</span></button>`;
+      if(q&&!exact&&can('newCust'))html+=`<button type="button" data-new="1" aria-selected="${items.length===sel}">${ic('plus','style="width:15px;height:15px"')}<span>Add “${esc(ci.value.trim())}” as a new customer</span></button>`;
       dd.innerHTML=html;dd.hidden=!html;ci.setAttribute('aria-expanded',String(!!html));
     };
     const pick=ck=>{f.ck=ck;f.cq='';ci.value=custName(ck);dd.hidden=true;ci.setAttribute('aria-expanded','false');this.update();$('#f-cyl').focus()};
@@ -1230,6 +1280,7 @@ VIEWS.entry={
         if(e.key==='Escape'){e.preventDefault();e.stopPropagation();choose(null);return}}
       if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}if(!pend.length)toSave();return}
       if(e.key===' '&&!cyIn.value.trim()&&!pend.length&&onlyNeedsTick()){e.preventDefault();tickAndSave();return}
+      if(e.key===' '&&!cyIn.value.trim()&&!pend.length&&f.cy.some(id=>chipStatus(id,f)[0]==='crit')){e.preventDefault();toast(LANG==='ta'?'பட்டியலில் இல்லாத எண் உள்ளது — நீக்கவும் அல்லது சேர்க்கவும்':'A number is not in the cylinder list — remove it or add it');const w=$('#f-warn');w&&w.scrollIntoView({block:'nearest'});return}
       if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}}
       else if(e.key==='Backspace'&&!cyIn.value&&f.cy.length){f.cy.pop();this.update()}
     });
@@ -1268,8 +1319,8 @@ VIEWS.entry={
     else if(list){const left=list.filter(s=>!f.cy.includes(s.id));
       ex.innerHTML=list.length?`<div class="field"><label>${esc(label)} · tap to add${left.length>1?` · <a href="#" data-act="addall">add all ${left.length}</a>`:''}</label><div class="expect">${list.slice(0,120).map(s=>`<button type="button" data-act="addexp" data-v="${esc(s.id)}" ${f.cy.includes(s.id)?'disabled':''} title="Since ${fmtD(s.d)}">${esc(s.id)} <span class="muted" style="font-family:var(--f-body);font-weight:500">${s.days!=null?s.days+'d':''}</span></button>`).join('')}${list.length>120?`<span class="small muted">+${list.length-120} more</span>`:''}</div></div>`:`<div class="small muted">${esc(label)}: none.</div>`}
     else if(!(f.t==='MT'&&f.ck))ex.innerHTML='';
-    $('#f-warn').innerHTML=probs.length?`<div class="notice warn">${ic('warn')}<div style="display:flex;flex-direction:column;gap:6px"><b>Check before saving</b>${probs.slice(0,30).map(p=>`<div><span class="cyl">${esc(p[0])}</span> ${esc(p[2])}</div>`).join('')}${probs.length>30?`<div class="small muted">+${probs.length-30} more</div>`:''}
-      <label class="check"><input type="checkbox" id="f-confirm" ${f.confirm?'checked':''}> Save anyway. These go to Mismatches for the office to check. <span class="muted small">(Space)</span></label></div></div>`:'';
+    $('#f-warn').innerHTML=probs.length?`<div class="notice warn">${ic('warn')}<div style="display:flex;flex-direction:column;gap:6px"><b>Check before saving</b>${probs.slice(0,30).map(p=>`<div><span class="cyl">${esc(p[0])}</span> ${esc(p[2])}${p[1]==='crit'?` <button type="button" class="btn sm" data-act="rmchip" data-i="${f.cy.indexOf(p[0])}">${LANG==='ta'?'நீக்கு':'Remove'}</button>${canManage()?` <button type="button" class="btn sm" data-act="addcylid" data-v="${esc(p[0])}">+ ${LANG==='ta'?'சிலிண்டர் பட்டியலில் சேர்':'Add to cylinder list'}</button>`:''}`:''}</div>`).join('')}${probs.length>30?`<div class="small muted">+${probs.length-30} more</div>`:''}
+      ${probs.some(p=>p[1]==='crit')?`<div class="small" style="color:var(--crit);font-weight:600">${LANG==='ta'?'சிவப்பு எண் சிலிண்டர் பட்டியலில் இல்லை — அதை நீக்கவும் அல்லது பட்டியலில் சேர்க்கவும். (தவறான எண் சேமிக்கக் கூடாது என்பதற்காக இந்தத் தடை.)':'A number is not in the cylinder list — remove it or add it to the list first. (This stops typing mistakes being saved.)'}</div>`:`<label class="check"><input type="checkbox" id="f-confirm" ${f.confirm?'checked':''}> ${LANG==='ta'?'இருந்தாலும் சேமி. இவை Mismatches-இல் office சரிபார்க்கும்.':'Save anyway. These go to Mismatches for the office to check.'} <span class="muted small">(Space)</span></label>`}</div></div>`:'';
     const cb=$('#f-confirm');if(cb){cb.addEventListener('change',e=>{f.confirm=e.target.checked;VIEWS.entry.updateSave();if(f.confirm){const b=$('#f-save');if(b&&!b.disabled)b.focus()}});
       cb.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();cb.checked=true;f.confirm=true;VIEWS.entry.updateSave();const b=$('#f-save');if(b&&!b.disabled)b.focus()}})}
     this.updateNo();
@@ -1296,6 +1347,7 @@ VIEWS.entry={
     const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length?'Add at least one cylinder':hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
 };
 async function addCustomer(name){
+  if(!can('newCust')){toast(LANG==='ta'?'புதிய வாடிக்கையாளர் சேர்க்க அனுமதி இல்லை. Owner-இடம் கேட்கவும்.':'You are not allowed to add customers. Ask the owner.');return null}
   name=name.replace(/\s+/g,' ').trim();if(!name)return null;
   const ck=slug(name);if(!ck)return null;
   if(S.cust[ck])return ck;
@@ -1324,12 +1376,12 @@ async function saveEntry(){
     const keep={t:f.t,d:f.d,br:f.br,vh:f.vh,dr:f.dr,pl:cust?'':f.pl};
     S.form=Object.assign(newForm(),keep,{saved:{t:body.t,dc:body.dc,title:recTitle(body),cy:body.cy,rid,docId:f.d+'_'+f.br+'_'+S.uid}});
     if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?String(nn):'';S.form.dcAuto=!!nn}
-    if(cust&&isTouch()&&S.cust[body.ck]&&!S.cust[body.ck].loc)S.ui.askLoc=body.ck;
+    if(cust&&isTouch()&&can('saveLoc')&&S.cust[body.ck]&&!S.cust[body.ck].loc)S.ui.askLoc=body.ck;
     toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')));
     mounted=null;refresh();setTimeout(()=>{const c=$('#f-date');c&&c.focus()},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
-function canEditRec(r){if(!canEnter())return false;if(canManage())return true;return r.by===S.uid&&r.d===S.D.today}
+function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readOnly)return false;if(can('editAny'))return true;return can('editOwn')&&r.by===S.uid&&madeToday(r)}
 function entryCard(r){
   const flags=r.cy.filter(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf});
   return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
@@ -1396,7 +1448,7 @@ VIEWS.cyl={
 
 /* Customers */
 VIEWS.cust={
-  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return n?`<button class="btn" data-act="mergeopen">${ic('warn')}${LANG==='ta'?'ஒத்த பெயர்கள்':'Look-alike names'} · ${n}</button>`:''})():''}<button class="btn" data-act="newcust">${ic('plus')}Add customer</button></div>`:''}</div>
+  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return n?`<button class="btn" data-act="mergeopen">${ic('warn')}${LANG==='ta'?'ஒத்த பெயர்கள்':'Look-alike names'} · ${n}</button>`:''})():''}${can('newCust')?`<button class="btn" data-act="newcust">${ic('plus')}Add customer</button>`:''}</div>`:''}</div>
     <div class="panel"><div class="row"><div class="field search"><label for="k-q">Customer</label><div class="rel">${ic('search')}<input class="inp" id="k-q" value="${esc(u.custQ)}" placeholder="Search by name"></div></div>
     <div class="field" style="flex:0 1 auto"><label>Sort</label><div class="seg" id="k-sort"></div></div></div></div><div class="panel" id="k-list"></div>`},
   after(){$('#k-q').addEventListener('input',e=>{S.ui.custQ=e.target.value;this.update()});this.update()},
@@ -1404,7 +1456,7 @@ VIEWS.cust={
     $('#k-sort').innerHTML=[['hold','Holding'],['old','Over 90 days'],['name','Name']].map(([k,l])=>`<button data-act="ksort" data-v="${k}" aria-pressed="${u.custSort===k}">${l}</button>`).join('');
     const rows=Object.entries(S.cust).filter(([k,c])=>!q||c.n.toLowerCase().includes(q)).map(([k,c])=>{const h=S.D.holding[k]||[];return {k,c,h:h.length,o:h.filter(s=>s.days>90).length,last:S.D.lastMove[k]||'',rent:openRent(k)}});
     rows.sort(u.custSort==='name'?(a,b)=>a.c.n.localeCompare(b.c.n):u.custSort==='old'?(a,b)=>b.o-a.o||b.h-a.h:(a,b)=>b.h-a.h||b.last.localeCompare(a.last));
-    const anyRent=rows.some(r=>r.rent>0);
+    const anyRent=can('money')&&rows.some(r=>r.rent>0);
     $('#k-list').innerHTML=rows.length?`<div class="panel-head"><h3>${rows.length} customers</h3><span class="muted">${rows.reduce((a,r)=>a+r.h,0)} cylinders out</span></div><div class="tbl-wrap"><table><thead><tr><th>Customer</th><th>Type</th><th class="r">Holding</th><th class="r">Over 90 days</th>${anyRent?'<th class="r">Rent so far</th>':''}<th class="r">Last movement</th></tr></thead><tbody>
       ${rows.slice(0,300).map(r=>`<tr class="click" data-act="opencust" data-v="${esc(r.k)}"><td><b>${esc(r.c.n)}</b> ${brTag(r.k)}${custTown(r.c)||r.c.ph?`<div class="small muted">${esc([custTown(r.c),r.c.ph].filter(Boolean).join(' · '))}</div>`:''}</td><td class="muted">${esc(r.c.t||'')}</td><td class="r num">${r.h||'<span class="muted">0</span>'}</td><td class="r">${r.o?`<span class="pill crit num">${r.o}</span>`:'<span class="muted">—</span>'}</td>${anyRent?`<td class="r num">${r.rent?rupee(r.rent):'<span class="muted">—</span>'}</td>`:''}<td class="r num muted">${fmtD(r.last)}</td></tr>`).join('')}</tbody></table></div>`
       :`<div class="empty"><b>No customer found</b>Check the spelling or add a new customer.</div>`}
@@ -1687,8 +1739,8 @@ VIEWS.settings={
       <div class="small muted">Check GST rates and HSN codes with your accountant. A customer can have their own refill price (edit the customer).</div>
       <div><button class="btn primary" type="submit">${ic('check')}Save billing</button></div></form>
     </div>
-    ${S.isOwner?`<div class="panel"><div class="panel-head"><h3>People and roles</h3><span class="muted">Share this page with staff from the Share menu, then set their role here.</span></div><div id="s-people"></div>
-      <div class="small muted" style="margin-top:12px"><b>Manager</b>: everything except roles. <b>Staff</b>: new entries, edit own entries on the same day. <b>Viewer</b>: look only. Anyone without a role waits on an access screen.</div></div>`:''}`},
+    ${S.isOwner?`<div class="panel"><div class="panel-head"><h3>People and roles</h3><span class="muted">${LANG==='ta'?'Staff-க்கு app link அனுப்புங்கள். அவர்கள் sign in செய்தவுடன் இங்கே வருவார்கள் — பிறகு role, கிளை, அனுமதிகளைத் தேர்வு செய்யவும்.':'Send staff the app link. Once they sign in they appear here — then set their role, branch and permissions.'}</span></div><div id="s-people"></div>
+      <div class="small muted" style="margin-top:12px"><b>Manager</b>: everything except people &amp; import. <b>Staff</b>: new DC/MT, Entries, Customers, Cylinders; edit own entries made today; own branch only; no new customers, no money, no downloads. <b>Viewer</b>: look only. ${LANG==='ta'?'ஒவ்வொருவருக்கும் “அனுமதிகள்” பொத்தானில் ஒவ்வொன்றையும் on/off செய்யலாம்.':'Use “Permissions” to switch each item on or off for one person.'} Anyone without a role waits on an access screen.</div></div>`:''}`},
   after(){
     const saveCo=async patch=>{try{await S.db.doc('settings/company').set(Object.assign({},S.company,patch));toast('Saved')}catch(err){toast(dbErr(err))}};
     $('#s-co').addEventListener('submit',e=>{e.preventDefault();const bn=Object.assign({},S.company.branchNames);$$('[data-br]').forEach(i=>bn[i.dataset.br]=i.value.trim()||i.dataset.br);
@@ -1705,12 +1757,12 @@ VIEWS.settings={
     this.update()},
   update(){if(!S.isOwner||!$('#s-people'))return;
     const ids=[...new Set([...Object.keys(S.members),...Object.keys(S.roles)])].filter(i=>i!==S.uid);
-    $('#s-people').innerHTML=ids.length?`<div class="tbl-wrap"><table><thead><tr><th>Person</th><th>Last opened</th><th>Role</th><th>Branch</th></tr></thead><tbody>${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td><b data-name="${esc(id)}">${esc(p.name||'New person')}</b></td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
+    $('#s-people').innerHTML=ids.length?`<div class="tbl-wrap"><table><thead><tr><th>Person</th><th>Last opened</th><th>Role</th><th>Branch</th><th>${LANG==='ta'?'அனுமதிகள்':'Permissions'}</th></tr></thead><tbody>${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td><b data-name="${esc(id)}">${esc(p.name||'New person')}</b></td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
       <td><select class="inp" data-role="${esc(id)}" style="min-width:120px"><option value="">No access</option>${['staff','manager','viewer'].map(x=>`<option value="${x}" ${r.role===x?'selected':''}>${x[0].toUpperCase()+x.slice(1)}</option>`).join('')}</select></td>
-      <td><select class="inp" data-rbr="${esc(id)}">${S.company.branches.map(b=>`<option value="${esc(b)}" ${r.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></td></tr>`}).join('')}</tbody></table></div>`
+      <td><select class="inp" data-rbr="${esc(id)}">${S.company.branches.map(b=>`<option value="${esc(b)}" ${r.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></td><td>${r.role?(()=>{const pm=permsFor(id);const n=PERM_KEYS.filter(k=>pm[k]).length;return `<button class="btn sm" data-act="permedit" data-v="${esc(id)}">${ic('set')}${n}/${PERM_KEYS.length}${r.perm?` · <span class="small">${LANG==='ta'?'மாற்றப்பட்டது':'custom'}</span>`:''}</button>`})():'<span class="muted small">—</span>'}</td></tr>`}).join('')}</tbody></table></div>`
       :`<div class="empty"><b>No one else yet</b>When staff open the shared link, they appear here so you can give them a role.</div>`;
     $$('[data-role],[data-rbr]').forEach(sel=>sel.addEventListener('change',async()=>{const id=sel.dataset.role||sel.dataset.rbr;const role=$(`[data-role="${CSS.escape(id)}"]`).value;const br=$(`[data-rbr="${CSS.escape(id)}"]`).value;
-      try{const ref=S.db.doc('settings/roles');const s=await ref.get();const v={role,br};if(s.exists)await ref.update({users:{[id]:v}});else await ref.set({users:{[id]:v}});toast('Role saved')}catch(e){toast(dbErr(e))}}))},
+      try{const ref=S.db.doc('settings/roles');const s=await ref.get();const v={role,br};if(sel.dataset.role&&window.FBC&&FBC.DEL)v.perm=FBC.DEL;if(s.exists)await ref.update({users:{[id]:v}});else await ref.set({users:{[id]:v}});toast('Role saved')}catch(e){toast(dbErr(e))}}))},
   names(){$$('[data-name]').forEach(el=>{const p=S.profiles[el.dataset.name];if(p&&p.name)el.textContent=p.name})}
 };
 function parseTests(txt){const ok=[],bad=[];
@@ -1784,12 +1836,12 @@ function custDrawer(ck){
   const dc=mv.filter(m=>m.t==='DC').length,mt=mv.filter(m=>m.t==='MT').length;const rent=openRent(ck);const rc=h[0]?rentCfg(ck,h[0].g):rentCfg(ck,'O2');
   const head=`<h3>${esc(c.n)}</h3>`;
   let body=`<div class="kv"><div><span>Holding now</span><b class="num">${h.length}</b></div><div><span>Over 90 days</span><b class="num" style="color:${h.filter(s=>s.days>90).length?'var(--crit)':'inherit'}">${h.filter(s=>s.days>90).length}</b></div><div><span>Last movement</span><b class="num">${fmtD(S.D.lastMove[ck])}</b></div>
-    <div><span>Phone</span><b class="mono" style="user-select:all">${c.ph?`<a href="tel:${esc(telOf(c.ph))}">${esc(c.ph)}</a>`:'—'}</b></div><div><span>${LANG==='ta'?'பில் நிலுவை':'Bill outstanding'}</span><b class="num" style="color:${custDue(ck)?'var(--crit)':'inherit'}">${custDue(ck)?rupee(custDue(ck)):'—'}</b></div><div><span>Deposit held</span><b class="num">${c.dep?rupee(+c.dep):'—'}</b></div><div><span>Rent so far (open)</span><b class="num">${rent?rupee(rent):'—'}</b></div>
-    <div><span>Type</span><b>${esc(c.t||'—')}</b></div><div><span>Total DC / MT</span><b class="num">${dc} / ${mt}</b></div><div><span>Free days · rate</span><b class="num">${rc.free} · ${c.rate!=null&&c.rate!==''?rupee(+c.rate)+'/day':'default'}</b></div></div>
+    <div><span>Phone</span><b class="mono" style="user-select:all">${c.ph?`<a href="tel:${esc(telOf(c.ph))}">${esc(c.ph)}</a>`:'—'}</b></div><div class="money"><span>${LANG==='ta'?'பில் நிலுவை':'Bill outstanding'}</span><b class="num" style="color:${custDue(ck)?'var(--crit)':'inherit'}">${custDue(ck)?rupee(custDue(ck)):'—'}</b></div><div class="money"><span>Deposit held</span><b class="num">${c.dep?rupee(+c.dep):'—'}</b></div><div class="money"><span>Rent so far (open)</span><b class="num">${rent?rupee(rent):'—'}</b></div>
+    <div><span>Type</span><b>${esc(c.t||'—')}</b></div><div><span>Total DC / MT</span><b class="num">${dc} / ${mt}</b></div><div class="money"><span>Free days · rate</span><b class="num">${rc.free} · ${c.rate!=null&&c.rate!==''?rupee(+c.rate)+'/day':'default'}</b></div></div>
     ${c.ad?`<div class="small muted">${esc(c.ad)}</div>`:''}
     ${c.fu?`<div class="notice info">${ic('info')}<div>Last follow-up ${fmtDT(c.fu.at)} by <span data-name="${esc(c.fu.by)}">${esc(personName(c.fu.by))}</span>: ${esc(c.fu.note||'')}</div></div>`:''}
-    <div class="row loc-row">${c.ph?`<a class="btn sm" href="tel:${esc(telOf(c.ph))}">📞 ${LANG==='ta'?'அழை':'Call'}</a>`:''}${mapUrl(c)?`<a class="btn sm" href="${esc(mapUrl(c))}" target="_blank" rel="noopener">🧭 ${c.loc?(LANG==='ta'?'வழி காட்டு':'Directions'):(LANG==='ta'?'Map-இல் தேடு':'Search map')}</a>`:''}${canEnter()?`<button class="btn sm" data-act="saveloc" data-v="${esc(ck)}">📍 ${c.loc?(LANG==='ta'?'இடத்தை மாற்று':'Update place'):(LANG==='ta'?'இந்த இடத்தைச் சேமி':'Save this place')}</button>`:''}${c.loc?`<span class="small muted">📍 ±${c.loc.acc||'?'} m · ${fmtDT(c.loc.at)} · <span data-name="${esc(c.loc.by)}">${esc(personName(c.loc.by))}</span></span>`:''}</div>
-    <div class="row">${canEnter()?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button><button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm wa" data-act="wamsg" data-v="${esc(ck)}">${ic('wa')}${LANG==='ta'?'WhatsApp நினைவூட்டல்':'WhatsApp reminder'}</button><button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button></div>
+    <div class="row loc-row">${c.ph?`<a class="btn sm" href="tel:${esc(telOf(c.ph))}">📞 ${LANG==='ta'?'அழை':'Call'}</a>`:''}${mapUrl(c)?`<a class="btn sm" href="${esc(mapUrl(c))}" target="_blank" rel="noopener">🧭 ${c.loc?(LANG==='ta'?'வழி காட்டு':'Directions'):(LANG==='ta'?'Map-இல் தேடு':'Search map')}</a>`:''}${can('saveLoc')&&role()!=='viewer'?`<button class="btn sm" data-act="saveloc" data-v="${esc(ck)}">📍 ${c.loc?(LANG==='ta'?'இடத்தை மாற்று':'Update place'):(LANG==='ta'?'இந்த இடத்தைச் சேமி':'Save this place')}</button>`:''}${c.loc?`<span class="small muted">📍 ±${c.loc.acc||'?'} m · ${fmtDT(c.loc.at)} · <span data-name="${esc(c.loc.by)}">${esc(personName(c.loc.by))}</span></span>`:''}</div>
+    <div class="row">${canEnter()?`${can('editCust')?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button>`:''}<button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm wa" data-act="wamsg" data-v="${esc(ck)}">${ic('wa')}${LANG==='ta'?'WhatsApp நினைவூட்டல்':'WhatsApp reminder'}</button><button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button>${S.isOwner?`<button class="btn sm" data-act="mergeinto" data-v="${esc(ck)}">🔀 ${LANG==='ta'?'வேறு பெயருடன் இணை':'Merge into another'}</button>`:''}</div>
     ${custHistory(ck,h)}`;
   return [head,body];
 }
@@ -1849,6 +1901,7 @@ function rentLines(a,b){const A=dayNum(a),B=dayNum(b)+1;const lines=[];
 
 /* ---------------- exports ---------------- */
 async function saveFile(name,data){
+  if(/\.(xlsx|csv|json)$/i.test(name)&&!can('export')){toast(LANG==='ta'?'Download செய்ய அனுமதி இல்லை.':'You are not allowed to download files.');return false}
   if(!S.dl){toast('Downloads are not available in this view');return false}
   try{await S.dl.save({filename:name,data});toast('Saved '+name);return true}catch(e){if(e&&e.code!=='declined')toast('Could not save the file ('+(e&&e.code||'error')+')');return false}
 }
@@ -2049,6 +2102,9 @@ async function dcPdf(docId,rid,ret){
 const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
+  permedit:el=>permPanel(el.dataset.v),
+  mergeinto:el=>mergeIntoPanel(el.dataset.v),
+  install:async()=>{if(!INSTALL){toast(LANG==='ta'?'Chrome மெனு (⋮) → “Add to Home screen / Install app”':'Chrome menu (⋮) → “Install app”');return}INSTALL.prompt();try{await INSTALL.userChoice}catch(e){}INSTALL=null;paintShell()},
   saveloc:el=>saveLoc(el.dataset.v),
   noloc:()=>{S.ui.askLoc=null;VIEWS.entry.update()},
   mergeopen:()=>openDrawer({k:'form',render:mergePanel}),
@@ -2111,8 +2167,9 @@ const A={
       async()=>{const note=$('#v-note').value.trim();if(!note){toast('Write a short note first');return}try{await patchRec(doc,rid,{vf:{[cyl]:{by:S.uid,at:new Date().toISOString(),note}}});toast('Marked as verified');closeDrawer()}catch(e){toast(dbErr(e))}},'Verify')},
   newcust:()=>custForm(null),
   editcust:el=>custForm(el.dataset.v),
-  addcyl:()=>{const gases=['O2','CO2 30kg','CO2 40kg','N2','Argon','DURO'];
-    formDrawer('Add cylinder',`<div class="field"><label for="n-id">Cylinder number</label><input class="inp mono" id="n-id" required placeholder="eg. 2701 or C3040"></div><div class="row"><div class="field"><label for="n-g">Gas</label><select class="inp" id="n-g">${gases.map(g=>`<option>${g}</option>`).join('')}</select></div><div class="field"><label for="n-b">Branch</label><select class="inp" id="n-b"><option value="">—</option>${S.company.branches.map(b=>`<option value="${esc(b)}">${esc(brName(b))}</option>`).join('')}</select></div></div><div class="field"><label for="n-td">Next hydro-test due</label><input class="inp" type="month" id="n-td"></div><div class="field"><label for="n-r">Note</label><input class="inp" id="n-r" placeholder="eg. Purchased from HS & AP, batch 48990"></div><p class="small muted">Use C for CO2 (C3040), N for N2, A for Argon, so numbers never clash.</p>`,
+  addcylid:el=>{const id=el.dataset.v;A.addcyl(null,null,{id,g:{C:'CO2 30kg',N:'N2',A:'Argon',D:'DURO'}[id[0]]||'O2',b:S.form?S.form.br:''})},
+  addcyl:(el,ev,P={})=>{const gases=['O2','CO2 30kg','CO2 40kg','N2','Argon','DURO'];
+    formDrawer('Add cylinder',`<div class="field"><label for="n-id">Cylinder number</label><input class="inp mono" id="n-id" required placeholder="eg. 2701 or C3040" value="${esc(P.id||'')}"></div><div class="row"><div class="field"><label for="n-g">Gas</label><select class="inp" id="n-g">${gases.map(g=>`<option ${P.g===g?'selected':''}>${g}</option>`).join('')}</select></div><div class="field"><label for="n-b">Branch</label><select class="inp" id="n-b"><option value="">—</option>${S.company.branches.map(b=>`<option value="${esc(b)}" ${P.b===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div></div><div class="field"><label for="n-td">Next hydro-test due</label><input class="inp" type="month" id="n-td"></div><div class="field"><label for="n-r">Note</label><input class="inp" id="n-r" placeholder="eg. Purchased from HS & AP, batch 48990"></div><p class="small muted">Use C for CO2 (C3040), N for N2, A for Argon, so numbers never clash.</p>`,
       async()=>{const id=normCyl($('#n-id').value);if(!id){toast('Type the number');return}if(S.cyl[id]){toast(id+' is already in the list');return}
         try{await S.db.doc('cyl/m1').update({list:{[id]:{g:$('#n-g').value,b:$('#n-b').value,r:$('#n-r').value.trim(),td:$('#n-td').value||'',add:{by:S.uid,at:new Date().toISOString()}}}});toast('Added '+id);closeDrawer()}catch(e){toast(dbErr(e))}},'Add cylinder')},
   cylmark:async el=>{const id=el.dataset.v;const src=S.cylSrc[id]||'m1';try{await S.db.doc('cyl/'+src).update({list:{[id]:{r:el.dataset.m}}});toast(el.dataset.m?id+' marked '+el.dataset.m.toLowerCase():'Mark cleared')}catch(e){toast(dbErr(e))}}
@@ -2160,7 +2217,8 @@ Object.assign(A,{
   backupnow:async()=>{const ok=await runReport('backup');if(ok&&canManage()){try{await S.db.doc('settings/company').update({lastBackup:todayISO().slice(0,7)})}catch(e){}}}
 });
 
-function custForm(ck,stay){const c=ck?S.cust[ck]:{n:'',t:'Hospital',ph:'',ad:''};
+function custForm(ck,stay){
+  if(ck?!can('editCust'):!can('newCust')){toast(LANG==='ta'?'இதற்கு அனுமதி இல்லை. Owner-இடம் கேட்கவும்.':'Not allowed. Ask the owner.');return}const c=ck?S.cust[ck]:{n:'',t:'Hospital',ph:'',ad:''};
   formDrawer(ck?'Edit customer':'Add customer',`<div class="field"><label for="cu-n">Name</label><input class="inp" id="cu-n" required value="${esc(c.n)}"></div>
     <div class="row"><div class="field"><label for="cu-t">Type</label><select class="inp" id="cu-t">${['Hospital','Engineering','Industry','Granite / Metal','Scrap','Home','Other'].map(t=>`<option ${c.t===t?'selected':''}>${t}</option>`).join('')}</select></div><div class="field"><label for="cu-ph">Phone</label><input class="inp" id="cu-ph" value="${esc(c.ph||'')}" inputmode="tel"></div></div>
     <div class="row"><div class="field"><label for="cu-br">Branch</label><select class="inp" id="cu-br"><option value="">${ck&&!c.br&&custBr(ck).br?'Auto: '+(custBr(ck).br==='BOTH'?'Both':brName(custBr(ck).br)):'Auto (from their cylinders)'}</option>${(S.company.branches||[]).map(b=>`<option value="${esc(b)}" ${c.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}<option value="BOTH" ${c.br==='BOTH'?'selected':''}>Both</option></select></div><div class="field"><label for="cu-town">Town / area</label><input class="inp" id="cu-town" value="${esc(c.town||'')}" placeholder="eg. Pennagaram"></div></div>
