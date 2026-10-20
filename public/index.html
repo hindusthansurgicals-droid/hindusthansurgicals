@@ -238,6 +238,15 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.today-tools{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:2;background:var(--surface);padding:4px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.today-tools .rel svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.today-tools .rel input{padding-left:34px;width:100%}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tchips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 10px;font:600 12px var(--f-body);color:var(--ink);cursor:pointer}
+.tchips button .n{color:var(--muted);font-weight:500;margin-left:2px}
+.tchips button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tchips button[aria-pressed=true] .n{color:inherit;opacity:.8}
+.tchips .clr{border-color:var(--crit);color:var(--crit)}
 .ownbox{border:1px dashed var(--line);border-radius:10px;padding:8px 12px}
 .ownbox .row{margin-top:8px}
 body.no-editcust .dd .ed{display:none}
@@ -394,9 +403,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.9.1';
+const APP_VERSION=window.CD_VERSION||'3.9.2';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.9.2','2026-10-20',['Today’s entries: search box (customer, DC no., cylinder no.), quick filters (DC, MT, To check, OK, Mine, Edited) and one-tap Clear','Entries: when matches are outside the dates, a “Show all dates” button appears','Registers: clearer message when a branch has no numbers, with a jump to the other branch']],
  ['3.9.1','2026-10-20',['Today’s entries (right side) also shows older entries that were changed today']],
  ['3.9.0','2026-10-20',['New entry: “Customer’s own cylinders” — save a DC / MT with just the count (and their numbers as a note), so the DC number is not missing','Shown on entry cards, registers, DC PDF, WhatsApp and Excel exports; not counted in our cylinder tracking','Past gaps: Registers → Missing → “Enter 1002” opens New entry with that number']],
  ['3.8.0','2026-10-20',['Owner sets permissions per person (Settings → People → Permissions): pages, new entries, edit own / anyone’s entries, other branches, new customers, edit customers, save place, see money, downloads','Staff defaults tightened: own branch only, no new customers, no customer edits, no money, no downloads','Staff “edit own entries” now means entries made today (any DC date)','Firestore rules enforce the same limits on the server','Install as an app from Chrome (Install app button / Add to Home screen)']],
@@ -1178,7 +1188,10 @@ VIEWS.entry={
         <div class="row" style="align-items:center"><button type="submit" class="btn primary" id="f-save">${ic('check')}<span>${f.edit?'Save changes':'Save entry'}</span></button><span class="muted small" id="f-sum"></span></div>
         <div id="f-saved"></div>
       </form>
-      <div class="panel"><div class="panel-head"><h3>Today's entries</h3><span class="muted" id="f-today-n"></span></div><div id="f-today"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Today's entries</h3><span class="muted" id="f-today-n"></span></div>
+        <div class="today-tools"><div class="rel">${ic('search')}<input class="inp" id="t-q" type="search" autocomplete="off" placeholder="${LANG==='ta'?'தேடு: customer, DC எண், சிலிண்டர் எண்':'Search: customer, DC no., cylinder no.'}" value="${esc(S.ui.tq||'')}"></div>
+          <div class="tchips" id="t-f"></div></div>
+        <div id="f-today"></div></div>
     </div>`;
   },
   after(){
@@ -1210,6 +1223,8 @@ VIEWS.entry={
       $('#f-own-n').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const b=$('#f-save');if(b&&!b.disabled)b.focus()}});
       $('#f-own-g').addEventListener('change',e=>{f.ownG=e.target.value});
       $('#f-own-nos').addEventListener('input',e=>{f.ownNos=e.target.value})}
+    {const tq=$('#t-q');if(tq){tq.addEventListener('input',()=>{S.ui.tq=tq.value;VIEWS.entry.update()});tq.addEventListener('keydown',e=>{if(e.key==='Escape'){tq.value='';S.ui.tq='';VIEWS.entry.update()}})}
+      const tw=tq&&tq.closest('.panel');if(tw)tw.addEventListener('click',e=>{const b=e.target.closest('[data-tf]');if(!b)return;const v=b.dataset.tf;if(v==='clear'){S.ui.tf='all';S.ui.tq='';tq.value=''}else S.ui.tf=v;VIEWS.entry.update()})}
     $('#f-br').addEventListener('change',e=>{f.br=e.target.value;if(isCust(f.t)&&!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}});
     $('#f-dc').addEventListener('input',e=>{f.dc=e.target.value.trim();f.dcAuto=false;VIEWS.entry.updateNo()});
     const moreSum=()=>{const x=$('#f-more-sum');if(x)x.textContent=[f.vh,f.dr,f.rm].filter(Boolean).join(' · ')};
@@ -1356,7 +1371,15 @@ VIEWS.entry={
       const el=$('#f-mine');if(el)el.innerHTML=my.length?`<b>${ta?'இன்று நீங்கள்':'You today'}:</b> <span class="t-dc">${n('DC').length} DC</span> · ${c(n('DC'))} ${ta?'சிலிண்டர்':'cyl'} · <span class="t-mt">${n('MT').length} MT</span> · ${c(n('MT'))} ${ta?'சிலிண்டர்':'cyl'}`:''}
     $('#f-today-n').textContent=mine.length?`${mine.reduce((a,r)=>a+r.cy.length+ownN(r),0)} cylinders in ${mine.length} entries`:'';
     const why=r=>r.cy.map(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf?{c,f:ev.flag}:null}).filter(Boolean);
-    const bad=mine.filter(r=>why(r).length),good=mine.filter(r=>!why(r).length);
+    /* search + quick filters */
+    const tf=S.ui.tf||'all',tq=(S.ui.tq||'').trim().toLowerCase();const ta=LANG==='ta';
+    const FL=[['all',ta?'எல்லாம்':'All'],['DC','DC'],['MT','MT'],['bad',ta?'சரிபார்க்க':'To check'],['ok',ta?'சரியானவை':'OK'],['me',ta?'என்னுடையவை':'Mine'],['ed',ta?'திருத்தியவை':'Edited']];
+    const passF=r=>tf==='all'||(tf==='DC'||tf==='MT'?r.t===tf:tf==='bad'?why(r).length>0:tf==='ok'?!why(r).length:tf==='me'?r.by===S.uid:tf==='ed'?!!r.ed:true);
+    const passQ=r=>!tq||[recTitle(r),r.dc,r.cy.join(' '),r.own&&r.own.nos,personName(r.by),r.vh,r.dr,fmtD(r.d)].filter(Boolean).join(' ').toLowerCase().includes(tq);
+    const all=mine;const shown=mine.filter(r=>passF(r)&&passQ(r));
+    {const tfEl=$('#t-f');if(tfEl)tfEl.innerHTML=FL.map(([k,l])=>{const n=all.filter(r=>k==='all'||((k==='DC'||k==='MT')?r.t===k:k==='bad'?why(r).length>0:k==='ok'?!why(r).length:k==='me'?r.by===S.uid:!!r.ed)).length;return `<button type="button" data-tf="${k}" aria-pressed="${tf===k}">${esc(l)} <span class="n">${n}</span></button>`}).join('')+((tf!=='all'||tq)?`<button type="button" data-tf="clear" class="clr">✕ ${ta?'அழி':'Clear'}</button>`:'')}
+    const bad=shown.filter(r=>why(r).length),good=shown.filter(r=>!why(r).length);
+    if(mine.length&&!shown.length){$('#f-today').innerHTML=`<div class="empty"><b>${ta?'பொருந்தும் பதிவு இல்லை':'No matching entry'}</b><button class="btn sm" type="button" data-tf="clear">✕ ${ta?'தேடல் / filter அழி':'Clear search & filter'}</button></div>`;return}
     $('#f-today').innerHTML=mine.length?
       (bad.length?`<div class="today-sec bad"><div class="today-h">${ic('warn')}<b>${LANG==='ta'?'சரிபார்க்க':'To check'} · ${bad.length}</b><a href="#" data-act="nav" data-v="mism">All mismatches</a></div>${bad.map(r=>entryCard(r)+`<ul class="why">${why(r).map(x=>`<li><span class="mono">${esc(x.c)}</span> ${esc(x.f)}</li>`).join('')}</ul>`).join('')}</div>`:'')+
       (good.length?`<div class="today-sec"><div class="today-h">${ic('check')}<b>${LANG==='ta'?'சரியானவை':'OK'} · ${good.length}</b></div>${good.map(r=>entryCard(r)).join('')}</div>`:'')
@@ -1432,9 +1455,12 @@ VIEWS.entries={
   after(){const u=S.ui;const bind=(id,k,ev='change')=>$(id).addEventListener(ev,e=>{u[k]=e.target.value;this.update()});
     bind('#e-from','entFrom');bind('#e-to','entTo');bind('#e-br','entBr');bind('#e-type','entType');bind('#e-q','entQ','input');this.update()},
   update(){const u=S.ui;const q=u.entQ.trim().toLowerCase();const qc=normCyl(u.entQ);
-    const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&(u.entBr==='all'||r.br===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||String(r.dc).toLowerCase()===q||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q)));
-    if(!rs.length){$('#e-list').innerHTML=`<div class="empty"><b>No entries in this range</b>${S.D.recs.length?'Change the dates or search.':'New DC and MT entries will be listed here once staff start saving them.'}</div>`;return}
-    let html='',day='';const live=rs.filter(r=>!r.del);
+    const other=r=>(u.entBr==='all'||r.br===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||String(r.dc).toLowerCase()===q||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
+    const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&other(r));
+    const outside=S.D.recs.filter(r=>!r.del&&other(r)&&((u.entFrom&&r.d<u.entFrom)||(u.entTo&&r.d>u.entTo))).length;
+    const ta=LANG==='ta';const allBtn=outside?`<div class="notice info" style="margin-bottom:10px">${ic('info')}<div style="flex:1">${ta?`இந்தத் தேதிகளுக்கு வெளியே <b>${outside}</b> பதிவுகள் பொருந்துகின்றன.`:`<b>${outside}</b> more matching entries on other dates.`} <button class="btn sm" type="button" data-act="entall">${ta?'எல்லா தேதிகளையும் காட்டு':'Show all dates'}</button></div></div>`:'';
+    if(!rs.length){$('#e-list').innerHTML=allBtn+`<div class="empty"><b>No entries in this range</b>${S.D.recs.length?'Change the dates or search.':'New DC and MT entries will be listed here once staff start saving them.'}</div>`;return}
+    let html=allBtn,day='';const live=rs.filter(r=>!r.del);
     html+=`<div class="panel-head"><h3>${live.length} entries</h3><span class="muted">${live.filter(r=>r.t==='DC').reduce((a,r)=>a+r.cy.length,0)} out · ${live.filter(r=>r.t==='MT').reduce((a,r)=>a+r.cy.length,0)} in</span></div>`;
     rs.slice(0,400).forEach(r=>{if(r.d!==day){day=r.d;html+=`<div class="list-day">${fmtD(day)}</div>`}html+=entryCard(r)});
     if(rs.length>400)html+=`<div class="muted small" style="padding-top:10px">Showing the latest 400. Narrow the dates to see more.</div>`;
@@ -1542,7 +1568,8 @@ VIEWS.reg={
     const rs=seriesRecs(t,br).sort((a,b)=>(+b.dc)-(+a.dc));const other=S.D.recs.filter(r=>!r.del&&r.t===t&&r.br===br&&!isNum(r.dc));
     const miss=gaps(t,br);const q=(u.regQ||'').trim().toLowerCase();const vd=S.voids||{};
     let html=`<div class="panel-head"><h3>${t} ${esc(brName(br))}</h3><span class="muted">${rs.length} numbers${rs.length?` · ${rs[rs.length-1].dc} to ${rs[0].dc}`:''}${miss.length?` · <b style="color:var(--crit)">${miss.length} missing</b>`:''}</span></div>`;
-    if(!rs.length){$('#g-list').innerHTML=html+`<div class="empty"><b>No ${t} numbers yet</b>Numbers appear here as entries are saved with a ${t} no.</div>`;return}
+    if(!rs.length){const ta=LANG==='ta';const others=S.company.branches.filter(b=>b!==br).map(b=>[b,seriesRecs(t,b).length]).filter(x=>x[1]);
+      $('#g-list').innerHTML=html+`<div class="empty"><b>${ta?`${brName(br)} கிளையில் இன்னும் ${t} எண் இல்லை`:`No ${t} numbers for ${brName(br)} yet`}</b>${ta?`App-இல் இந்தக் கிளைக்குப் போட்ட ${t} பதிவுகள் மட்டும் இங்கே வரும். பழைய Excel history-இல் DC எண் இல்லை.`:`Only ${t} entries saved in the app for this branch show here. Old Excel history has no DC numbers.`}${others.length?`<div style="margin-top:8px">${others.map(([b,n])=>`<button class="btn sm" type="button" data-act="regbr" data-v="${esc(b)}">${esc(brName(b))} · ${n}</button>`).join(' ')}</div>`:''}</div>`;return}
     if(miss.length)html+=`<div class="notice crit" style="margin-bottom:12px">${ic('warn')}<div><b>Missing ${t} numbers:</b> <span class="mono">${esc(rangesTxt(miss))}</span><div class="small" style="margin-top:4px">Enter them with their real date, or cancel a number that was never used (torn, spoiled).</div></div></div>`;
     html+=`<div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Date</th><th>${t==='DC'?'Customer':'From customer'}</th><th class="r">Cyl.</th><th>Cylinders</th><th>Entered</th><th></th></tr></thead><tbody>`;
     let prev=null;const rows=[];
@@ -2128,6 +2155,8 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
+  regbr:el=>{S.ui.regBr=el.dataset.v;const g=$('#g-br');if(g)g.value=el.dataset.v;VIEWS.reg.update()},
+  entall:()=>{S.ui.entFrom='';S.ui.entTo='';const f=$('#e-from'),t=$('#e-to');if(f)f.value='';if(t)t.value='';VIEWS.entries.update()},
   mergeinto:el=>mergeIntoPanel(el.dataset.v),
   install:async()=>{if(!INSTALL){toast(LANG==='ta'?'Chrome மெனு (⋮) → “Add to Home screen / Install app”':'Chrome menu (⋮) → “Install app”');return}INSTALL.prompt();try{await INSTALL.userChoice}catch(e){}INSTALL=null;paintShell()},
   saveloc:el=>saveLoc(el.dataset.v),
