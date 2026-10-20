@@ -412,9 +412,11 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.9.6';
+const APP_VERSION=window.CD_VERSION||'3.9.8';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.9.8','2026-10-20',['Picking a customer switches the entry branch to the customer’s branch (Krishnagiri customer → Krishnagiri) and its DC / MT number','Customer branch guess is again worked out from their cylinders (Krishnagiri*)']],
+ ['3.9.7','2026-10-20',['New entry: “Customer’s own cylinders” option removed (entries already saved that way still show it)']],
  ['3.9.6','2026-10-20',['DC and MT numbers are automatic (the app’s own running number, taken at the moment of saving); ✎ beside the box to change one by hand']],
  ['3.9.5','2026-10-20',['New entry: vehicle / driver / remarks section removed (old values on saved entries are kept)']],
  ['3.9.4','2026-10-20',['Colours: DC blue, MT red (crimson) everywhere — entry cards, New entry buttons, counts, charts, phone bar']],
@@ -750,7 +752,7 @@ function mergeIntoPanel(from){
 function brPanel(){
   const ta=LANG==='ta';let q='',only=true;
   openDrawer({k:'form',render:()=>[`<h3>${ta?'Customer கிளைகள்':'Customer branches'}</h3>`,
-    `<p class="muted" style="margin-top:0">${ta?'ஒவ்வொரு customer-க்கும் கிளையைத் தொடவும் — உடனே சேமிக்கப்படும். “?” = app பதிவுகளின் கிளையிலிருந்து கணித்தது.':'Tap the branch for each customer — it saves at once. “?” = guessed from the branch on their app entries.'}</p>
+    `<p class="muted" style="margin-top:0">${ta?'ஒவ்வொரு customer-க்கும் கிளையைத் தொடவும் — உடனே சேமிக்கப்படும். “*” = சிலிண்டர்களிலிருந்து கணித்தது.':'Tap the branch for each customer — it saves at once. “*” = worked out from their cylinders.'}</p>
      <div class="row"><input class="inp" id="bp-q" placeholder="${ta?'பெயர் தேடு':'Search name'}" style="flex:1"><label class="check"><input type="checkbox" id="bp-only" checked> ${ta?'கிளை இல்லாதவை மட்டும்':'Only not set'}</label></div>
      <div id="bp-list" style="margin-top:10px"></div>`],
     after(){const draw=()=>{const rows=Object.entries(S.cust).filter(([k,c])=>(!only||!c.br)&&(!q||c.n.toLowerCase().includes(q))).sort((a,b)=>(S.D.holding[b[0]]||[]).length-(S.D.holding[a[0]]||[]).length||a[1].n.localeCompare(b[1].n)).slice(0,150);
@@ -1115,15 +1117,15 @@ async function waDC(docId,rid){
 function custBr(ck){
   const c=S.cust[ck]||{};if(c.br)return {br:c.br,set:true};
   if(!S.D)return {br:''};const memo=S.D._cbr||(S.D._cbr={});if(memo[ck])return memo[ck];
-  /* guess only from the branch chosen on this customer's app entries (a cylinder's home branch says nothing about where the customer is) */
-  const n={};for(const r of S.D.recs)if(!r.del&&r.ck===ck&&r.br)n[r.br]=(n[r.br]||0)+1;
+  const n={};const ids=new Set((S.D.custMoves[ck]||[]).map(m=>m.id));
+  for(const id of ids){const b=(S.cyl[id]||{}).b;if(b)n[b]=(n[b]||0)+1}
   const tot=Object.values(n).reduce((a,x)=>a+x,0);const top=Object.entries(n).sort((a,b)=>b[1]-a[1])[0];
   return memo[ck]=!top?{br:''}:top[1]/tot>=0.8?{br:top[0]}:{br:'BOTH'};
 }
 const custTown=c=>c.town||(c.ad?String(c.ad).split(/[,\n]/).map(x=>x.trim()).filter(Boolean).pop()||'':'');
 function brTag(ck){const {br,set}=custBr(ck);if(!br)return '';
   const name=br==='BOTH'?(LANG==='ta'?'இரண்டும்':'Both'):brName(br);
-  return `<span class="brtag ${br==='KGIRI'?'k':br==='BOTH'?'b':'d'}" title="${set?'':(LANG==='ta'?'App பதிவுகளின் கிளையிலிருந்து கணித்தது — Customers → Customer கிளைகள்-இல் உறுதிசெய்யவும்':'Guessed from the branch on their app entries — set it in Customers → Customer branches')}">${esc(name)}${set?'':'?'}</span>`}
+  return `<span class="brtag ${br==='KGIRI'?'k':br==='BOTH'?'b':'d'}" title="${set?'':(LANG==='ta'?'அவர்கள் சிலிண்டர்களிலிருந்து கணித்தது — Customers → Customer கிளைகள்-இல் உறுதிசெய்யலாம்':'Worked out from their cylinders — confirm in Customers → Customer branches')}">${esc(name)}${set?'':'*'}</span>`}
 /* Typed dates: 24-9-26 · 24/09/2026 · 24.9.26 · 240926 · 24092026 · 24-9 (this year) → ISO, or null */
 function parseTypedDate(v,defYear){
   let s=String(v||'').trim();if(!s)return null;let d,m,y;
@@ -1198,7 +1200,7 @@ VIEWS.entry={
         </div>
         <div id="f-expect"></div>
         <label class="check fullret" id="f-full-wrap" ${f.t==='MT'?'':'hidden'}><input type="checkbox" id="f-full" tabindex="-1" ${f.full?'checked':''}> <span><b>${LANG==='ta'?'நிரம்பியபடியே திரும்பி வந்தது (பயன்படுத்தவில்லை)':'Came back FULL (not used)'}</b> <span class="muted small">${LANG==='ta'?'— குடோனில் “நிரம்பியது” என்று சேரும்':'— goes to the godown as full'}</span></span></label>
-        <div class="ownbox" id="f-own-wrap" ${isCust(f.t)?'':'hidden'}>
+        <div class="ownbox" id="f-own-wrap" hidden style="display:none">
           <label class="check"><input type="checkbox" id="f-own" tabindex="-1" ${f.own?'checked':''}> <span><b>${LANG==='ta'?'Customer சொந்த சிலிண்டர்':'Customer’s own cylinders'}</b> <span class="muted small">${LANG==='ta'?'— நாம் track செய்வதில்லை; DC எண் மட்டும் பதிவாகும்':'— not tracked; the DC number is recorded'}</span></span></label>
           <div class="row" id="f-own-box" ${f.own?'':'hidden'}>
             <div class="field" style="flex:0 1 110px"><label for="f-own-n">${LANG==='ta'?'எத்தனை':'How many'}</label><input class="inp num" id="f-own-n" type="number" min="1" inputmode="numeric" value="${esc(f.ownN||'')}"></div>
@@ -1279,7 +1281,11 @@ VIEWS.entry={
       if(q&&!exact&&can('newCust'))html+=`<button type="button" data-new="1" aria-selected="${items.length===sel}">${ic('plus','style="width:15px;height:15px"')}<span>Add “${esc(ci.value.trim())}” as a new customer</span></button>`;
       dd.innerHTML=html;dd.hidden=!html;ci.setAttribute('aria-expanded',String(!!html));
     };
-    const pick=ck=>{f.ck=ck;f.cq='';ci.value=custName(ck);dd.hidden=true;ci.setAttribute('aria-expanded','false');this.update();$('#f-cyl').focus()};
+    const pick=ck=>{
+      {const b=custBr(ck).br;if(!f.edit&&b&&b!=='BOTH'&&b!==f.br&&S.company.branches.includes(b)){
+        if(can('otherBr')){f.br=b;const sel=$('#f-br');if(sel)sel.value=b;if(isCust(f.t)&&f.dcAuto){f.dc=nextNo(f.t,f.br);const d=$('#f-dc');if(d)d.value=f.dc}toast((LANG==='ta'?'கிளை தானாக மாறியது: ':'Branch changed to ')+brName(b))}
+        else toast((LANG==='ta'?'இந்த customer ':'This customer is ')+brName(b)+(LANG==='ta'?' கிளை — உங்கள் கிளையில் பதிவாகிறது':' — saving under your branch'))}}
+      f.ck=ck;f.cq='';ci.value=custName(ck);dd.hidden=true;ci.setAttribute('aria-expanded','false');this.update();$('#f-cyl').focus()};
     ci.addEventListener('input',()=>{f.ck='';f.cq=ci.value;sel=-1;showDD();this.update()});
     ci.addEventListener('focus',()=>{if(!f.ck){sel=-1;showDD()}});
     ci.addEventListener('blur',()=>setTimeout(()=>{dd.hidden=true},180));
@@ -1418,7 +1424,7 @@ VIEWS.entry={
   },
   updateSave(){const f=S.form;const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
     const who=isCust(f.t)?!!f.ck:!!f.pl.trim();
-    const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const fOwn=f.own&&+f.ownN>0;{const w=$('#f-own-wrap');if(w)w.hidden=!isCust(f.t)}
+    const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const fOwn=f.own&&+f.ownN>0;{const w=$('#f-own-wrap');if(w)w.hidden=!(isCust(f.t)&&f.own)}
     const ok=who&&(f.cy.length||(fOwn&&isCust(f.t)))&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup;
     const b=$('#f-save');if(b)b.disabled=!ok;
     const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length&&!(fOwn&&isCust(f.t))?(f.own?(LANG==='ta'?'எத்தனை சிலிண்டர் என்று போடவும்':'Type how many'):'Add at least one cylinder'):hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
@@ -1488,7 +1494,7 @@ VIEWS.entries={
     bind('#e-from','entFrom');bind('#e-to','entTo');bind('#e-br','entBr');bind('#e-type','entType');bind('#e-q','entQ','input');this.update()},
   update(){const u=S.ui;const q=u.entQ.trim().toLowerCase();const qc=normCyl(u.entQ);
     /* branch = the customer's branch when it is set, otherwise the branch chosen on the entry */
-    const brOf=r=>{const cb=isCust(r.t)&&S.cust[r.ck]&&S.cust[r.ck].br;return cb&&cb!=='BOTH'?cb:r.br};
+    const brOf=r=>{const cb=isCust(r.t)&&r.ck&&custBr(r.ck).br;return cb&&cb!=='BOTH'?cb:r.br};
     const other=r=>(u.entBr==='all'||brOf(r)===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||String(r.dc).toLowerCase()===q||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
     const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&other(r));
     const outside=S.D.recs.filter(r=>!r.del&&other(r)&&((u.entFrom&&r.d<u.entFrom)||(u.entTo&&r.d>u.entTo))).length;
