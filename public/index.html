@@ -238,6 +238,7 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.bprow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .today-tools{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:2;background:var(--surface);padding:4px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
 .today-tools .rel svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
 .today-tools .rel input{padding-left:34px;width:100%}
@@ -304,6 +305,8 @@ body.no-money .money{display:none}
 .today-h a{margin-left:auto;font-size:12px}
 .today-sec.bad .today-h{background:var(--warn-bg);color:var(--warn)}
 .today-sec.bad .entry-card{border-left:3px solid var(--warn);padding-left:8px}
+.tbad .entry-card{border-left:3px solid var(--warn);padding-left:8px}
+.today-h.warnline{background:var(--warn-bg);color:var(--warn);gap:10px}
 ul.why{margin:-4px 0 8px 0;padding:6px 10px 6px 28px;background:var(--warn-bg);border-radius:8px;font-size:12.5px;color:var(--ink)}
 ul.why li{margin:2px 0}
 .date-head{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:17px}
@@ -403,10 +406,11 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.9.2';
+const APP_VERSION=window.CD_VERSION||'3.9.3';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
- ['3.9.2','2026-10-20',['Today’s entries: search box (customer, DC no., cylinder no.), quick filters (DC, MT, To check, OK, Mine, Edited) and one-tap Clear','Entries: when matches are outside the dates, a “Show all dates” button appears','Registers: clearer message when a branch has no numbers, with a jump to the other branch']],
+ ['3.9.3','2026-10-20',['Today’s entries: one list, newest on top; to-check entries marked in place','Customer branch beside the name on entry cards and registers; Registers filter by customer branch','Branch guess from the branch on their app entries (not cylinders); Customers → Customer branches to set each with a tap','Entries: Branch filter uses the customer’s branch once it is set']],
+ ['3.9.2','2026-10-20',['Today’s entries: search box (customer, DC no., cylinder no.), quick filters (DC, MT, To check, OK, Mine, Edited) and one-tap Clear','Entries: when matches are outside the dates, a “Show all dates” button appears','Registers: clearer message when a branch has no numbers, with a jump to the other branch','Today’s entries is one list, newest on top (entries to check are marked in place)','Customer’s branch shown beside the name on entry cards and registers; Registers can filter by customer branch','Customer branch guess now comes from the branch on their app entries (not the cylinders’ home branch); Customers → “Customer branches” sets each one with a tap']],
  ['3.9.1','2026-10-20',['Today’s entries (right side) also shows older entries that were changed today']],
  ['3.9.0','2026-10-20',['New entry: “Customer’s own cylinders” — save a DC / MT with just the count (and their numbers as a note), so the DC number is not missing','Shown on entry cards, registers, DC PDF, WhatsApp and Excel exports; not counted in our cylinder tracking','Past gaps: Registers → Missing → “Enter 1002” opens New entry with that number']],
  ['3.8.0','2026-10-20',['Owner sets permissions per person (Settings → People → Permissions): pages, new entries, edit own / anyone’s entries, other branches, new customers, edit customers, save place, see money, downloads','Staff defaults tightened: own branch only, no new customers, no customer edits, no money, no downloads','Staff “edit own entries” now means entries made today (any DC date)','Firestore rules enforce the same limits on the server','Install as an app from Chrome (Install app button / Add to Home screen)']],
@@ -732,6 +736,21 @@ function mergeIntoPanel(from){
       $('#mi-list').addEventListener('click',async e=>{const b=e.target.closest('[data-to]');if(!b)return;const T=S.cust[b.dataset.to];
         if(!confirm(ta?`“${F.n}” → “${T.n}”\n${(S.D.custMoves[from]||[]).length} பதிவுகள் மாறும். “${F.n}” நீக்கப்படும். தொடரவா?`:`“${F.n}” → “${T.n}”\n${(S.D.custMoves[from]||[]).length} moves will move. “${F.n}” will be removed. Continue?`))return;
         try{await mergeCustomers(from,b.dataset.to);closeDrawer();setTimeout(()=>openDrawer({k:'cust',v:b.dataset.to}),400)}catch(err){toast(dbErr(err))}})}});
+}
+/* Owner: set each customer's branch with one tap. */
+function brPanel(){
+  const ta=LANG==='ta';let q='',only=true;
+  openDrawer({k:'form',render:()=>[`<h3>${ta?'Customer கிளைகள்':'Customer branches'}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?'ஒவ்வொரு customer-க்கும் கிளையைத் தொடவும் — உடனே சேமிக்கப்படும். “?” = app பதிவுகளின் கிளையிலிருந்து கணித்தது.':'Tap the branch for each customer — it saves at once. “?” = guessed from the branch on their app entries.'}</p>
+     <div class="row"><input class="inp" id="bp-q" placeholder="${ta?'பெயர் தேடு':'Search name'}" style="flex:1"><label class="check"><input type="checkbox" id="bp-only" checked> ${ta?'கிளை இல்லாதவை மட்டும்':'Only not set'}</label></div>
+     <div id="bp-list" style="margin-top:10px"></div>`],
+    after(){const draw=()=>{const rows=Object.entries(S.cust).filter(([k,c])=>(!only||!c.br)&&(!q||c.n.toLowerCase().includes(q))).sort((a,b)=>(S.D.holding[b[0]]||[]).length-(S.D.holding[a[0]]||[]).length||a[1].n.localeCompare(b[1].n)).slice(0,150);
+        $('#bp-list').innerHTML=rows.length?rows.map(([k,c])=>{const g=custBr(k);return `<div class="bprow"><div style="flex:1;min-width:0"><b>${esc(c.n)}</b> <span class="small muted">${(S.D.holding[k]||[]).length} holding${custTown(c)?' · '+esc(custTown(c)):''}${!c.br&&g.br?` · ${ta?'கணிப்பு':'guess'}: ${esc(g.br==='BOTH'?'Both':brName(g.br))}?`:''}</span></div>
+          <div class="seg">${S.company.branches.concat(['BOTH']).map(b=>`<button type="button" data-bk="${esc(k)}" data-bv="${b}" aria-pressed="${c.br===b}">${esc(b==='BOTH'?(ta?'இரண்டும்':'Both'):brName(b))}</button>`).join('')}</div></div>`}).join(''):`<div class="empty"><b>${ta?'எல்லோருக்கும் கிளை உள்ளது':'All set'}</b></div>`};
+      $('#bp-q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();draw()});$('#bp-only').addEventListener('change',e=>{only=e.target.checked;draw()});
+      $('#bp-list').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;const k=b.dataset.bk,v=b.dataset.bv;
+        try{await S.db.doc('cust/all').update({list:{[k]:{br:v}}});S.cust[k]=Object.assign({},S.cust[k],{br:v});if(S.D)delete S.D._cbr;toast(`${S.cust[k].n} → ${v==='BOTH'?'Both':brName(v)}`);const row=b.closest('.bprow');if(only&&row)row.remove();else draw()}catch(err){toast(dbErr(err))}});
+      draw();$('#bp-q').focus()}});
 }
 /* Owner: switch each permission on/off for one person. */
 function permPanel(id){
@@ -1087,15 +1106,15 @@ async function waDC(docId,rid){
 function custBr(ck){
   const c=S.cust[ck]||{};if(c.br)return {br:c.br,set:true};
   if(!S.D)return {br:''};const memo=S.D._cbr||(S.D._cbr={});if(memo[ck])return memo[ck];
-  const n={};const ids=new Set((S.D.custMoves[ck]||[]).map(m=>m.id));
-  for(const id of ids){const b=(S.cyl[id]||{}).b;if(b)n[b]=(n[b]||0)+1}
+  /* guess only from the branch chosen on this customer's app entries (a cylinder's home branch says nothing about where the customer is) */
+  const n={};for(const r of S.D.recs)if(!r.del&&r.ck===ck&&r.br)n[r.br]=(n[r.br]||0)+1;
   const tot=Object.values(n).reduce((a,x)=>a+x,0);const top=Object.entries(n).sort((a,b)=>b[1]-a[1])[0];
   return memo[ck]=!top?{br:''}:top[1]/tot>=0.8?{br:top[0]}:{br:'BOTH'};
 }
 const custTown=c=>c.town||(c.ad?String(c.ad).split(/[,\n]/).map(x=>x.trim()).filter(Boolean).pop()||'':'');
 function brTag(ck){const {br,set}=custBr(ck);if(!br)return '';
   const name=br==='BOTH'?(LANG==='ta'?'இரண்டும்':'Both'):brName(br);
-  return `<span class="brtag ${br==='KGIRI'?'k':br==='BOTH'?'b':'d'}" title="${set?'':(LANG==='ta'?'சிலிண்டர்களிலிருந்து கணித்தது':'Worked out from their cylinders')}">${esc(name)}${set?'':'*'}</span>`}
+  return `<span class="brtag ${br==='KGIRI'?'k':br==='BOTH'?'b':'d'}" title="${set?'':(LANG==='ta'?'App பதிவுகளின் கிளையிலிருந்து கணித்தது — Customers → Customer கிளைகள்-இல் உறுதிசெய்யவும்':'Guessed from the branch on their app entries — set it in Customers → Customer branches')}">${esc(name)}${set?'':'?'}</span>`}
 /* Typed dates: 24-9-26 · 24/09/2026 · 24.9.26 · 240926 · 24092026 · 24-9 (this year) → ISO, or null */
 function parseTypedDate(v,defYear){
   let s=String(v||'').trim();if(!s)return null;let d,m,y;
@@ -1224,7 +1243,7 @@ VIEWS.entry={
       $('#f-own-g').addEventListener('change',e=>{f.ownG=e.target.value});
       $('#f-own-nos').addEventListener('input',e=>{f.ownNos=e.target.value})}
     {const tq=$('#t-q');if(tq){tq.addEventListener('input',()=>{S.ui.tq=tq.value;VIEWS.entry.update()});tq.addEventListener('keydown',e=>{if(e.key==='Escape'){tq.value='';S.ui.tq='';VIEWS.entry.update()}})}
-      const tw=tq&&tq.closest('.panel');if(tw)tw.addEventListener('click',e=>{const b=e.target.closest('[data-tf]');if(!b)return;const v=b.dataset.tf;if(v==='clear'){S.ui.tf='all';S.ui.tq='';tq.value=''}else S.ui.tf=v;VIEWS.entry.update()})}
+      const tw=tq&&tq.closest('.panel');if(tw)tw.addEventListener('click',e=>{const b=e.target.closest('[data-tf]');if(!b)return;e.preventDefault();const v=b.dataset.tf;if(v==='clear'){S.ui.tf='all';S.ui.tq='';tq.value=''}else S.ui.tf=v;VIEWS.entry.update()})}
     $('#f-br').addEventListener('change',e=>{f.br=e.target.value;if(isCust(f.t)&&!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}});
     $('#f-dc').addEventListener('input',e=>{f.dc=e.target.value.trim();f.dcAuto=false;VIEWS.entry.updateNo()});
     const moreSum=()=>{const x=$('#f-more-sum');if(x)x.textContent=[f.vh,f.dr,f.rm].filter(Boolean).join(' · ')};
@@ -1380,9 +1399,10 @@ VIEWS.entry={
     {const tfEl=$('#t-f');if(tfEl)tfEl.innerHTML=FL.map(([k,l])=>{const n=all.filter(r=>k==='all'||((k==='DC'||k==='MT')?r.t===k:k==='bad'?why(r).length>0:k==='ok'?!why(r).length:k==='me'?r.by===S.uid:!!r.ed)).length;return `<button type="button" data-tf="${k}" aria-pressed="${tf===k}">${esc(l)} <span class="n">${n}</span></button>`}).join('')+((tf!=='all'||tq)?`<button type="button" data-tf="clear" class="clr">✕ ${ta?'அழி':'Clear'}</button>`:'')}
     const bad=shown.filter(r=>why(r).length),good=shown.filter(r=>!why(r).length);
     if(mine.length&&!shown.length){$('#f-today').innerHTML=`<div class="empty"><b>${ta?'பொருந்தும் பதிவு இல்லை':'No matching entry'}</b><button class="btn sm" type="button" data-tf="clear">✕ ${ta?'தேடல் / filter அழி':'Clear search & filter'}</button></div>`;return}
+    /* newest first, one list; entries to check are marked where they are */
     $('#f-today').innerHTML=mine.length?
-      (bad.length?`<div class="today-sec bad"><div class="today-h">${ic('warn')}<b>${LANG==='ta'?'சரிபார்க்க':'To check'} · ${bad.length}</b><a href="#" data-act="nav" data-v="mism">All mismatches</a></div>${bad.map(r=>entryCard(r)+`<ul class="why">${why(r).map(x=>`<li><span class="mono">${esc(x.c)}</span> ${esc(x.f)}</li>`).join('')}</ul>`).join('')}</div>`:'')+
-      (good.length?`<div class="today-sec"><div class="today-h">${ic('check')}<b>${LANG==='ta'?'சரியானவை':'OK'} · ${good.length}</b></div>${good.map(r=>entryCard(r)).join('')}</div>`:'')
+      `<div class="today-sec">`+(bad.length?`<div class="today-h warnline">${ic('warn')}<b>${ta?'சரிபார்க்க':'To check'} · ${bad.length}</b>${tf!=='bad'?`<a href="#" data-tf="bad">${ta?'இவற்றை மட்டும் காட்டு':'Show only these'}</a>`:''}<a href="#" data-act="nav" data-v="mism">All mismatches</a></div>`:'')+
+      shown.map(r=>{const w=why(r);return w.length?`<div class="tbad">${entryCard(r)}<ul class="why">${w.map(x=>`<li><span class="mono">${esc(x.c)}</span> ${esc(x.f)}</li>`).join('')}</ul></div>`:entryCard(r)}).join('')+`</div>`
       :`<div class="empty"><b>Nothing yet today</b>Every entry made today, by anyone, appears here.</div>`;
   },
   updateSave(){const f=S.form;const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
@@ -1432,7 +1452,7 @@ function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readO
 function entryCard(r){
   const flags=r.cy.filter(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf});
   return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
-  <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div><b>${esc(recTitle(r))}</b> ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}</div>
+  <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div><b>${esc(recTitle(r))}</b> ${isCust(r.t)&&r.ck?brTag(r.ck):''} ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}</div>
   <div class="chips">${ownN(r)?`<span class="pill info">${esc(ownTxt(r))}</span>`:''}${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
   <div class="meta"><span>${fmtD(r.d)} · ${esc(brName(r.br))}</span><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span><span>${fmtDT(r.at)}</span>${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.sig?`<span class="pill ok">✍ ${LANG==='ta'?'கையெழுத்து உள்ளது':'signed'}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
   <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'&&canEditRec(r)&&!r.sig?`<button class="btn sm ghost" data-act="sign" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="${LANG==='ta'?'கையெழுத்து':'Signature'}">✍</button>`:''}${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
@@ -1455,7 +1475,9 @@ VIEWS.entries={
   after(){const u=S.ui;const bind=(id,k,ev='change')=>$(id).addEventListener(ev,e=>{u[k]=e.target.value;this.update()});
     bind('#e-from','entFrom');bind('#e-to','entTo');bind('#e-br','entBr');bind('#e-type','entType');bind('#e-q','entQ','input');this.update()},
   update(){const u=S.ui;const q=u.entQ.trim().toLowerCase();const qc=normCyl(u.entQ);
-    const other=r=>(u.entBr==='all'||r.br===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||String(r.dc).toLowerCase()===q||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
+    /* branch = the customer's branch when it is set, otherwise the branch chosen on the entry */
+    const brOf=r=>{const cb=isCust(r.t)&&S.cust[r.ck]&&S.cust[r.ck].br;return cb&&cb!=='BOTH'?cb:r.br};
+    const other=r=>(u.entBr==='all'||brOf(r)===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||String(r.dc).toLowerCase()===q||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
     const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&other(r));
     const outside=S.D.recs.filter(r=>!r.del&&other(r)&&((u.entFrom&&r.d<u.entFrom)||(u.entTo&&r.d>u.entTo))).length;
     const ta=LANG==='ta';const allBtn=outside?`<div class="notice info" style="margin-bottom:10px">${ic('info')}<div style="flex:1">${ta?`இந்தத் தேதிகளுக்கு வெளியே <b>${outside}</b> பதிவுகள் பொருந்துகின்றன.`:`<b>${outside}</b> more matching entries on other dates.`} <button class="btn sm" type="button" data-act="entall">${ta?'எல்லா தேதிகளையும் காட்டு':'Show all dates'}</button></div></div>`:'';
@@ -1498,7 +1520,7 @@ VIEWS.cyl={
 
 /* Customers */
 VIEWS.cust={
-  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return n?`<button class="btn" data-act="mergeopen">${ic('warn')}${LANG==='ta'?'ஒத்த பெயர்கள்':'Look-alike names'} · ${n}</button>`:''})():''}${can('newCust')?`<button class="btn" data-act="newcust">${ic('plus')}Add customer</button>`:''}</div>`:''}</div>
+  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return n?`<button class="btn" data-act="mergeopen">${ic('warn')}${LANG==='ta'?'ஒத்த பெயர்கள்':'Look-alike names'} · ${n}</button>`:''})():''}${S.isOwner?(()=>{const n=Object.keys(S.cust).filter(k=>!custBr(k).set).length;return `<button class="btn" data-act="brfix">${LANG==='ta'?'Customer கிளைகள்':'Customer branches'}${n?` · ${n}`:''}</button>`})():''}${can('newCust')?`<button class="btn" data-act="newcust">${ic('plus')}Add customer</button>`:''}</div>`:''}</div>
     <div class="panel"><div class="row"><div class="field search"><label for="k-q">Customer</label><div class="rel">${ic('search')}<input class="inp" id="k-q" value="${esc(u.custQ)}" placeholder="Search by name"></div></div>
     <div class="field" style="flex:0 1 auto"><label>Sort</label><div class="seg" id="k-sort"></div></div></div></div><div class="panel" id="k-list"></div>`},
   after(){$('#k-q').addEventListener('input',e=>{S.ui.custQ=e.target.value;this.update()});this.update()},
@@ -1561,8 +1583,9 @@ VIEWS.reg={
     return `<div class="page-head"><div><h2>DC & MT registers</h2><p>Every DC and MT number in order. Missing numbers show in red. A number entered late is placed in its correct position automatically.</p></div></div>
     <div class="panel"><div class="row"><div class="field" style="flex:0 1 auto"><label>Register</label><div class="seg" id="g-t"></div></div>
     <div class="field" style="flex:0 1 160px"><label for="g-br">Branch</label><select class="inp" id="g-br">${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.regBr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
+    <div class="field" style="flex:0 1 170px"><label for="g-cbr">${LANG==='ta'?'Customer கிளை':'Customer branch'}</label><select class="inp" id="g-cbr"><option value="all">${LANG==='ta'?'எல்லாம்':'All'}</option>${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.regCbr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
     <div class="field search"><label for="g-q">Number or customer</label><div class="rel">${ic('search')}<input class="inp mono" id="g-q" value="${esc(u.regQ||'')}" placeholder="eg. 513"></div></div></div></div><div class="panel" id="g-list"></div>`},
-  after(){$('#g-br').addEventListener('change',e=>{S.ui.regBr=e.target.value;this.update()});$('#g-q').addEventListener('input',e=>{S.ui.regQ=e.target.value;this.update()});this.update()},
+  after(){$('#g-br').addEventListener('change',e=>{S.ui.regBr=e.target.value;this.update()});$('#g-cbr').addEventListener('change',e=>{S.ui.regCbr=e.target.value;this.update()});$('#g-q').addEventListener('input',e=>{S.ui.regQ=e.target.value;this.update()});this.update()},
   update(){const u=S.ui;const t=u.regT||'DC',br=u.regBr||myBranch();
     $('#g-t').innerHTML=[['DC','DC register'],['MT','MT register']].map(([k,l])=>`<button data-act="regt" data-v="${k}" aria-pressed="${t===k}">${l}</button>`).join('');
     const rs=seriesRecs(t,br).sort((a,b)=>(+b.dc)-(+a.dc));const other=S.D.recs.filter(r=>!r.del&&r.t===t&&r.br===br&&!isNum(r.dc));
@@ -1574,12 +1597,15 @@ VIEWS.reg={
     html+=`<div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Date</th><th>${t==='DC'?'Customer':'From customer'}</th><th class="r">Cyl.</th><th>Cylinders</th><th>Entered</th><th></th></tr></thead><tbody>`;
     let prev=null;const rows=[];
     for(const r of rs){
-      if(prev&&+prev.dc-(+r.dc)>1){const nums=[];for(let n=+prev.dc-1;n>+r.dc;n--)nums.push(n);const open=nums.filter(n=>!vd[br+'_'+t+'_'+n]);const vds=nums.filter(n=>vd[br+'_'+t+'_'+n]);
+      const cbr=u.regCbr&&u.regCbr!=='all'?u.regCbr:null;
+      if(cbr){const b=custBr(r.ck).br;if(b!==cbr&&b!=='BOTH'){prev=r;continue}}
+      if(!cbr&&prev&&+prev.dc-(+r.dc)>1){const nums=[];for(let n=+prev.dc-1;n>+r.dc;n--)nums.push(n);const open=nums.filter(n=>!vd[br+'_'+t+'_'+n]);const vds=nums.filter(n=>vd[br+'_'+t+'_'+n]);
         if(!q||nums.some(n=>String(n).includes(q)))rows.push(`<tr style="background:${open.length?'var(--crit-bg)':'var(--surface-2)'}"><td class="mono" colspan="5">${open.length?`<b style="color:var(--crit)">Missing ${esc(rangesTxt(open.slice().reverse()))}</b>`:''}${vds.length?` <span class="muted small">Cancelled ${esc(rangesTxt(vds.slice().reverse()))}</span>`:''}</td><td></td><td style="white-space:nowrap">${open.length&&canEnter()?`<button class="btn sm" data-act="newno" data-t="${t}" data-n="${open[open.length-1]}">${ic('plus')}Enter ${open[open.length-1]}</button> ${canManage()?`<button class="btn sm ghost" data-act="voidno" data-t="${t}" data-br="${esc(br)}" data-n="${esc(open.join(','))}">Cancel</button>`:''}`:''}</td></tr>`)}
       const late=prev&&prev.d<r.d;
-      if(!q||String(r.dc).includes(q)||recTitle(r).toLowerCase().includes(q))rows.push(`<tr><td class="mono"><b>${esc(r.dc)}</b></td><td class="num">${fmtD(r.d)}${late?` <span class="pill warn">after ${esc(prev.dc)}</span>`:''}</td><td>${esc(recTitle(r))}</td><td class="r num">${r.cy.length}${ownN(r)?` <span class="muted small">+${ownN(r)}</span>`:''}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc([r.cy.join(', '),ownTxt(r)].filter(Boolean).join(' · '))}</td><td class="small muted"><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span> · ${fmtDT(r.at)}</td><td style="white-space:nowrap">${r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`);
+      if(!q||String(r.dc).includes(q)||recTitle(r).toLowerCase().includes(q))rows.push(`<tr><td class="mono"><b>${esc(r.dc)}</b></td><td class="num">${fmtD(r.d)}${late?` <span class="pill warn">after ${esc(prev.dc)}</span>`:''}</td><td>${esc(recTitle(r))} ${r.ck?brTag(r.ck):''}</td><td class="r num">${r.cy.length}${ownN(r)?` <span class="muted small">+${ownN(r)}</span>`:''}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc([r.cy.join(', '),ownTxt(r)].filter(Boolean).join(' · '))}</td><td class="small muted"><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span> · ${fmtDT(r.at)}</td><td style="white-space:nowrap">${r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`);
       prev=r}
     html+=rows.join('')+`</tbody></table></div>`;
+    if(u.regCbr&&u.regCbr!=='all')html+=`<div class="small muted" style="margin-top:10px">${LANG==='ta'?`${brName(u.regCbr)} customer-களின் ${t} மட்டும் · missing எண்கள் மறைக்கப்பட்டன`:`Only ${brName(u.regCbr)} customers · missing numbers hidden`}</div>`;
     if(other.length)html+=`<div class="small muted" style="margin-top:12px">${other.length} ${t} entries have no number or a non-numeric number and are not in the register.</div>`;
     $('#g-list').innerHTML=html},
   names(){$$('#g-list [data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
@@ -2155,6 +2181,7 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
+  brfix:()=>brPanel(),
   regbr:el=>{S.ui.regBr=el.dataset.v;const g=$('#g-br');if(g)g.value=el.dataset.v;VIEWS.reg.update()},
   entall:()=>{S.ui.entFrom='';S.ui.entTo='';const f=$('#e-from'),t=$('#e-to');if(f)f.value='';if(t)t.value='';VIEWS.entries.update()},
   mergeinto:el=>mergeIntoPanel(el.dataset.v),
