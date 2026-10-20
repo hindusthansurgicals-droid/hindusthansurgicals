@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='3.4.0';window.CD_BUILD='2026-10-20';
+window.CD_VERSION='3.5.0';window.CD_BUILD='2026-10-20';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -47,6 +47,22 @@ function mapErr(e){
 }
 const wrapP=p=>p.catch(e=>{throw mapErr(e)});
 
+/* ---------- cloud sync status ----------
+   Every write is counted until Firebase's server confirms it. Offline, the write is kept on this
+   device (and uploaded when the connection returns), so the app does not wait more than 1.5 s. */
+const sync={pending:0,lastOk:null,err:null,errAt:null,online:navigator.onLine};
+const emit=()=>window.dispatchEvent(new CustomEvent('cd-sync',{detail:Object.assign({},sync)}));
+function track(p){
+  sync.pending++;emit();
+  const done=p.then(r=>{sync.pending--;sync.lastOk=Date.now();if(!sync.pending)sync.err=null;emit();return r},
+    e=>{sync.pending--;const x=mapErr(e);sync.err=x.code;sync.errAt=Date.now();emit();window.dispatchEvent(new CustomEvent('cd-sync-error',{detail:x}));throw x});
+  done.catch(()=>{});
+  return Promise.race([done,new Promise(r=>setTimeout(()=>r('queued'),1500))]);
+}
+window.addEventListener('online',()=>{sync.online=true;emit()});
+window.addEventListener('offline',()=>{sync.online=false;emit()});
+window.addEventListener('beforeunload',e=>{if(sync.pending>0){e.preventDefault();e.returnValue='Some entries are still being saved to the cloud.';return e.returnValue}});
+
 /* ---------- snapshot / ref wrappers ---------- */
 function docSnap(s){
   return {id:s.id,exists:s.exists,data:()=>{const d=s.data();return d===undefined?undefined:dec(d)}};
@@ -59,11 +75,11 @@ function docRef(r){
   return {
     id:r.id,
     get:()=>wrapP(r.get()).then(docSnap),
-    set:(data,opts)=>wrapP(r.set(enc(data),opts||{})),
+    set:(data,opts)=>track(r.set(enc(data),opts||{})),
     /* The app's update merges nested fields (deep merge) and creates the
        document if needed; Firestore set+merge does exactly that. */
-    update:data=>wrapP(r.set(enc(data),{merge:true})),
-    delete:()=>wrapP(r.delete()),
+    update:data=>track(r.set(enc(data),{merge:true})),
+    delete:()=>track(r.delete()),
     onSnapshot:(next,err)=>r.onSnapshot(s=>next(docSnap(s)),e=>err&&err(mapErr(e)))
   };
 }
@@ -161,6 +177,15 @@ const dl={save:async({filename,data})=>{
   setTimeout(()=>URL.revokeObjectURL(url),60000);
 }};
 
+/* ---------- full backup (same format import.html restores) ---------- */
+const BACKUP_COLS=['settings','cust','cyl','hist','log','bill','trade','reg','members','profiles'];
+async function backupAll(source){
+  const out={};
+  for(const c of BACKUP_COLS){const q=await fs.collection(c).get(source?{source}:undefined);if(!q.docs.length)continue;out[c]={};q.docs.forEach(d=>{out[c][d.id]=dec(d.data())})}
+  out._backup={app:'Cylinder Desk',version:window.CD_VERSION||'',at:new Date().toISOString(),project:firebaseConfig.projectId};
+  return out;
+}
+
 window.FBC={
   use:async name=>{
     if(name==='user'){await userReady;return user}
@@ -169,6 +194,11 @@ window.FBC={
     return null;
   },
   signOut:()=>auth.signOut(),
+  sync:()=>Object.assign({},sync),
+  backupAll,
+  /* what the Firebase server itself holds (not this device's copy) */
+  serverData:()=>backupAll('server'),
+  waitForSync:()=>fs.waitForPendingWrites(),
   /* used by the one-time import page */
   _raw:{fs,auth,enc,dec,userReady,OWNER_EMAILS}
 };

@@ -58,8 +58,9 @@ $('#file').onchange=async e=>{
     /* Entries made in the old app carry the old account id; give them to this owner account. */
     const text=(await f.text()).split(OLD_OWNER_ID).join(me.id);
     bundle=JSON.parse(text);
-    const n=Object.values(bundle).reduce((a,c)=>a+Object.keys(c).length,0);
-    log('File OK: '+n+' records in '+Object.keys(bundle).join(', '));
+    const n=Object.entries(bundle).filter(([k])=>!k.startsWith('_')).reduce((a,[,c])=>a+Object.keys(c).length,0);
+    if(bundle._backup)log('Backup made '+new Date(bundle._backup.at).toLocaleString()+' (version '+(bundle._backup.version||'?')+')');
+    log('File OK: '+n+' records in '+Object.keys(bundle).filter(k=>!k.startsWith('_')).join(', '));
     $('#go').disabled=false;
   }catch(err){bundle=null;$('#go').disabled=true;log('This is not the right file ('+err.message+').','err')}
 };
@@ -73,6 +74,7 @@ $('#go').onclick=async()=>{
   for(const col of ['hist','cyl','reg']){if(!bundle[col])continue;
     try{const q=await fs.collection(col).get();for(const d of q.docs){if(!(d.id in bundle[col])&&(col!=='reg'||d.id.startsWith('imp_'))){await fs.doc(col+'/'+d.id).delete();log('– '+col+'/'+d.id)}}}catch(err){log('✗ '+col+' — '+(err.code||err.message),'err')}}
   for(const [col,docs] of Object.entries(bundle)){
+    if(col.startsWith('_')||col==='members'||col==='profiles')continue; // each person keeps their own
     for(const [id,data] of Object.entries(docs)){
       try{await fs.doc(col+'/'+id).set(enc(data));done++;log('✓ '+col+'/'+id)}
       catch(err){fail++;log('✗ '+col+'/'+id+' — '+(err.code||err.message),'err')}
