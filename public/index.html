@@ -237,6 +237,15 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.k{background:color-mix(in srgb,#8A4FB3 14%,var(--surface));color:#8A4FB3}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
+.mtlist{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface)}
+.mt-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.mt-h .sp{flex:1}
+.mt-rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;max-height:320px;overflow-y:auto}
+.mt-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.mt-row:hover{border-color:var(--muted)}
+.mt-row.on{border-color:var(--ok);background:var(--ok-bg)}
+.mt-row input{width:16px;height:16px;accent-color:var(--ok)}
+.mt-row>*{white-space:nowrap}.mt-row .pill,.mt-row .num:last-child{margin-left:auto}
 .sync-slot{display:flex;gap:6px;align-items:center}
 .sync-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 10px;font:600 12px var(--f-body);white-space:nowrap;cursor:pointer}
 .sync-chip i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
@@ -351,9 +360,11 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.5.2';
+const APP_VERSION=window.CD_VERSION||'3.5.4';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.5.4','2026-10-20',['MT: after choosing the customer, their cylinders are listed — tick the ones that came back (or “All came back”); typed numbers tick too, and numbers not in the list can still be typed']],
+ ['3.5.3','2026-10-20',['New entry: when “Check before saving” shows, Space ticks “Save anyway” and moves to Save','After saving, the cursor goes to the date and the last date stays (Tab keeps it and goes to the customer)']],
  ['3.5.2','2026-10-20',['Fix: backup and “Check data on the server” failed because the security rules do not allow reading the whole settings folder; settings are now read one by one']],
  ['3.5.1','2026-10-20',['Customer list shows the branch (Dharmapuri / Krishnagiri — set by you, or worked out from their cylinders) and town; your branch first; ✎ edits a customer right from the list','Customer details: Branch and Town / area fields']],
  ['3.5.0','2026-10-20',['Header: cloud status (saved / saving / offline with waiting entries) and a warning before closing while entries are still uploading','Cloud & backup panel: check that every cylinder, customer and entry is on the Firebase server','Automatic JSON backup every 30 minutes to a folder you choose (or a reminder), restore with import.html','Customer page: outstanding cylinders and full DC/MT history with filters (DC, MT, still with them, dates, cylinder); each DC shows when it came back','New entry: date starts at today after each save; the Saved box is gone; entries to check are listed separately with the reason']],
@@ -944,7 +955,7 @@ VIEWS.entry={
       setDate(r,old>60?(ta()?`${old} நாட்களுக்கு முந்தைய தேதி — சரியா?`:`${old} days ago — is that right?`):'',old>60?'warn':'');return true};
     dIn.addEventListener('blur',readDate);
     let dJust=false;dIn.addEventListener('focus',()=>{dJust=true;dIn.select()});dIn.addEventListener('mouseup',e=>{if(dJust){e.preventDefault();dJust=false}});dIn.addEventListener('keydown',()=>{dJust=false},true);
-    dIn.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(readDate())$('#f-cust')&&!f.ck?$('#f-cust').focus():cyIn.focus()}});
+    dIn.addEventListener('keydown',e=>{if(e.key==='Enter'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();if(readDate()){const n=isCust(f.t)?$('#f-cust'):$('#f-pl');(n&&!(isCust(f.t)&&f.ck)?n:cyIn).focus()}}});
     dIn.addEventListener('input',()=>{dIn.classList.remove('bad');dMsg.textContent=''});
     $('#f-date-cal').addEventListener('click',()=>{try{dPick.showPicker()}catch(e){dPick.focus();dPick.click()}});
     dPick.addEventListener('change',()=>{if(dPick.value){dIn.value=fmtD(dPick.value);readDate()}});
@@ -996,8 +1007,11 @@ VIEWS.entry={
       if(st.st==='sold'||st.st==='missing')s-=5;return s};
     const pend=[];let psel=0;const pdd=$('#f-cyl-dd');
     /* Tab from the cylinder box jumps to Save entry (Enter there saves). If something is missing, the reason is shown. */
+    const onlyNeedsTick=()=>{const cb=$('#f-confirm');if(!cb||f.confirm)return false;f.confirm=true;VIEWS.entry.updateSave();const ok=!$('#f-save').disabled;f.confirm=false;VIEWS.entry.updateSave();return ok};
+    const tickAndSave=()=>{const cb=$('#f-confirm');cb.checked=true;f.confirm=true;VIEWS.entry.updateSave();$('#f-save').focus()};
     const toSave=()=>{if(!dIn.value.trim()||!f.d){if(!readDate()){dIn.focus();return}}VIEWS.entry.updateSave();const b=$('#f-save');
       if(b&&!b.disabled){b.focus();return}
+      if(onlyNeedsTick()){$('#f-confirm').focus();return}
       const sum=$('#f-sum');if(sum){sum.classList.remove('flash');void sum.offsetWidth;sum.classList.add('flash')}
       if(isCust(f.t)&&!f.ck)$('#f-cust').focus();else if(!isCust(f.t)&&!f.pl.trim())$('#f-pl').focus();else cyIn.focus()};
     const showPick=()=>{
@@ -1012,7 +1026,9 @@ VIEWS.entry={
     const choose=id=>{pend.shift();psel=0;if(id&&!f.cy.includes(id))f.cy.push(id);f.confirm=false;this.update();showPick();cyIn.focus()};
     pdd.addEventListener('mousedown',e=>{const b=e.target.closest('[data-pick]');if(!b)return;e.preventDefault();choose(b.dataset.pick)});
     const addFrom=txt=>{txt.split(/[\s,;]+/).map(normCyl).filter(Boolean).forEach(id=>{
-        const tw=twins(id);
+        let tw=twins(id);
+        // MT: if exactly one of them is with this customer, that is the one — no question
+        if(tw&&f.t==='MT'&&f.ck){const mine=tw.filter(x=>{const st=S.D.state[x];return st&&st.st==='out'&&st.ck===f.ck});if(mine.length===1){if(!f.cy.includes(mine[0]))f.cy.push(mine[0]);return}}
         if(tw){pend.push({tok:id,list:tw.sort((a,b)=>pickScore(b)-pickScore(a)||a.localeCompare(b))});return}
         if(!f.cy.includes(id))f.cy.push(id)});
       f.confirm=false;this.update();psel=0;showPick()};
@@ -1024,6 +1040,7 @@ VIEWS.entry={
         if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();choose(pend[0].list[psel]);if(!pend.length)toSave();return}
         if(e.key==='Escape'){e.preventDefault();e.stopPropagation();choose(null);return}}
       if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}if(!pend.length)toSave();return}
+      if(e.key===' '&&!cyIn.value.trim()&&!pend.length&&onlyNeedsTick()){e.preventDefault();tickAndSave();return}
       if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}}
       else if(e.key==='Backspace'&&!cyIn.value&&f.cy.length){f.cy.pop();this.update()}
     });
@@ -1048,12 +1065,24 @@ VIEWS.entry={
       if(!list.length){ex.innerHTML=`<div class="notice info">${ic('info')}<div>Our records show no cylinders with this customer. If they returned one, it will be flagged for checking.</div></div>`;list=null}}
     else if(f.t==='FS'){list=Object.values(S.D.state).filter(s=>s.known&&s.st==='empty'&&(!s.b||s.b===f.br)).sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));label='Empty in godown ('+brName(f.br)+')'}
     else if(f.t==='FR'){list=Object.values(S.D.state).filter(s=>s.known&&s.st==='filling'&&(!f.pl||!s.pl||s.pl.toLowerCase()===f.pl.trim().toLowerCase())).sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));label='At filling'+(f.pl?' · '+f.pl:'')}
-    if(list){const left=list.filter(s=>!f.cy.includes(s.id));
+    if(list&&f.t==='MT'){
+      /* MT: tick the cylinders that came back. Numbers typed in the box above tick here too; numbers not in this list can still be typed. */
+      const ta=LANG==='ta';const sel=list.filter(s=>f.cy.includes(s.id)).length;const extra=f.cy.filter(id=>!list.some(s=>s.id===id));
+      const dp=d=>d==null?'':d>90?`<span class="pill crit num">${d}d</span>`:d>30?`<span class="pill warn num">${d}d</span>`:`<span class="num muted">${d}d</span>`;
+      ex.innerHTML=`<div class="mtlist"><div class="mt-h"><b>${ta?`${esc(custName(f.ck))}-இடம் உள்ளவை`:`With ${esc(custName(f.ck))} now`} · ${list.length}</b><span class="muted small">${ta?`${sel} தேர்வு`:`${sel} ticked`}</span>
+        <span class="sp"></span>${sel<list.length?`<button type="button" class="btn sm" data-act="addall" tabindex="-1">${ta?'அனைத்தும் திரும்பின':'All came back'}</button>`:''}${sel?`<button type="button" class="btn sm ghost" data-act="mtnone" tabindex="-1">${ta?'நீக்கு':'Clear'}</button>`:''}</div>
+        <div class="mt-rows">${list.map(s=>{const on=f.cy.includes(s.id);return `<label class="mt-row ${on?'on':''}"><input type="checkbox" tabindex="-1" data-mt="${esc(s.id)}" ${on?'checked':''}><span class="cyl">${esc(s.id)}</span><span class="small muted">${esc(s.g||'')}</span><span class="small muted">DC ${fmtD(s.d)}</span>${dp(s.days)}</label>`}).join('')}</div>
+        ${extra.length?`<div class="small" style="margin-top:6px;color:var(--warn)">${ta?'பட்டியலில் இல்லாதவை (சரிபார்க்கப்படும்): ':'Not in this list (will be checked): '}<span class="mono">${esc(extra.join(', '))}</span></div>`:''}
+        <div class="small muted" style="margin-top:6px">${ta?'பட்டியலில் இல்லாத எண்ணையும் மேலே type செய்யலாம்.':'A number that is not in this list can still be typed in the box above.'}</div></div>`;
+      $$('#f-expect [data-mt]').forEach(c=>c.addEventListener('change',()=>{const id=c.dataset.mt;const i=f.cy.indexOf(id);if(c.checked&&i<0)f.cy.push(id);if(!c.checked&&i>=0)f.cy.splice(i,1);f.confirm=false;VIEWS.entry.update()}));
+    }
+    else if(list){const left=list.filter(s=>!f.cy.includes(s.id));
       ex.innerHTML=list.length?`<div class="field"><label>${esc(label)} · tap to add${left.length>1?` · <a href="#" data-act="addall">add all ${left.length}</a>`:''}</label><div class="expect">${list.slice(0,120).map(s=>`<button type="button" data-act="addexp" data-v="${esc(s.id)}" ${f.cy.includes(s.id)?'disabled':''} title="Since ${fmtD(s.d)}">${esc(s.id)} <span class="muted" style="font-family:var(--f-body);font-weight:500">${s.days!=null?s.days+'d':''}</span></button>`).join('')}${list.length>120?`<span class="small muted">+${list.length-120} more</span>`:''}</div></div>`:`<div class="small muted">${esc(label)}: none.</div>`}
     else if(!(f.t==='MT'&&f.ck))ex.innerHTML='';
     $('#f-warn').innerHTML=probs.length?`<div class="notice warn">${ic('warn')}<div style="display:flex;flex-direction:column;gap:6px"><b>Check before saving</b>${probs.slice(0,30).map(p=>`<div><span class="cyl">${esc(p[0])}</span> ${esc(p[2])}</div>`).join('')}${probs.length>30?`<div class="small muted">+${probs.length-30} more</div>`:''}
-      <label class="check"><input type="checkbox" id="f-confirm" ${f.confirm?'checked':''}> Save anyway. These go to Mismatches for the office to check.</label></div></div>`:'';
-    const cb=$('#f-confirm');if(cb)cb.addEventListener('change',e=>{f.confirm=e.target.checked;VIEWS.entry.updateSave()});
+      <label class="check"><input type="checkbox" id="f-confirm" ${f.confirm?'checked':''}> Save anyway. These go to Mismatches for the office to check. <span class="muted small">(Space)</span></label></div></div>`:'';
+    const cb=$('#f-confirm');if(cb){cb.addEventListener('change',e=>{f.confirm=e.target.checked;VIEWS.entry.updateSave();if(f.confirm){const b=$('#f-save');if(b&&!b.disabled)b.focus()}});
+      cb.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();cb.checked=true;f.confirm=true;VIEWS.entry.updateSave();const b=$('#f-save');if(b&&!b.disabled)b.focus()}})}
     this.updateNo();
     const sv=null;
     $('#f-saved').innerHTML=sv?`<div class="notice info">${ic('check')}<div style="flex:1"><b>Saved.</b> ${esc(TLABEL[sv.t])} ${esc(sv.dc?'#'+sv.dc:'')} · ${esc(sv.title)} · ${sv.cy.length} cylinder${sv.cy.length===1?'':'s'}
@@ -1072,7 +1101,7 @@ VIEWS.entry={
     const who=isCust(f.t)?!!f.ck:!!f.pl.trim();
     const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const ok=who&&f.cy.length&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup;
     const b=$('#f-save');if(b)b.disabled=!ok;
-    const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length?'Add at least one cylinder':hard?'Remove numbers that are not in the list':probs&&!f.confirm?'Tick “Save anyway” to continue':''}
+    const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length?'Add at least one cylinder':hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
 };
 async function addCustomer(name){
   name=name.replace(/\s+/g,' ').trim();if(!name)return null;
@@ -1100,11 +1129,11 @@ async function saveEntry(){
     }
     const rid=uidGen();
     await writeRec({rid,body},f.d,f.br);
-    const keep={t:f.t,d:todayISO(),br:f.br,vh:f.vh,dr:f.dr,pl:cust?'':f.pl};
+    const keep={t:f.t,d:f.d,br:f.br,vh:f.vh,dr:f.dr,pl:cust?'':f.pl};
     S.form=Object.assign(newForm(),keep,{saved:{t:body.t,dc:body.dc,title:recTitle(body),cy:body.cy,rid,docId:f.d+'_'+f.br+'_'+S.uid}});
     if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?String(nn):'';S.form.dcAuto=!!nn}
     toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')));
-    mounted=null;refresh();setTimeout(()=>{const c=$(cust?'#f-cust':'#f-cyl');c&&c.focus()},50);
+    mounted=null;refresh();setTimeout(()=>{const c=$('#f-date');c&&c.focus()},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
 function canEditRec(r){if(!canEnter())return false;if(canManage())return true;return r.by===S.uid&&r.d===S.D.today}
@@ -1837,7 +1866,8 @@ const A={
   rmchip:el=>{S.form.cy.splice(+el.dataset.i,1);VIEWS.entry.update();$('#f-cyl').focus()},
   clearchips:()=>{S.form.cy=[];S.form.confirm=false;VIEWS.entry.update()},
   addexp:el=>{const f=S.form;if(!f.cy.includes(el.dataset.v))f.cy.push(el.dataset.v);VIEWS.entry.update()},
-  addall:()=>{const f=S.form;$$('#f-expect [data-act="addexp"]').forEach(b=>{if(!f.cy.includes(b.dataset.v))f.cy.push(b.dataset.v)});
+  mtnone:()=>{const f=S.form;const hold=new Set((S.D.holding[f.ck]||[]).map(s=>s.id));f.cy=f.cy.filter(id=>!hold.has(id));VIEWS.entry.update()},
+  addall:()=>{const f=S.form;if(f.t==='MT'&&f.ck)(S.D.holding[f.ck]||[]).forEach(x=>{if(!f.cy.includes(x.id))f.cy.push(x.id)});$$('#f-expect [data-act="addexp"]').forEach(b=>{if(!f.cy.includes(b.dataset.v))f.cy.push(b.dataset.v)});
     if(f.t!=='MT'){const all=Object.values(S.D.state).filter(s=>s.known&&(f.t==='FS'?s.st==='empty'&&(!s.b||s.b===f.br):s.st==='filling'&&(!f.pl||!s.pl||s.pl.toLowerCase()===f.pl.trim().toLowerCase())));all.forEach(s=>{if(!f.cy.includes(s.id))f.cy.push(s.id)})}
     VIEWS.entry.update()},
   cancelEdit:()=>{S.form=newForm();mounted=null;refresh()},
