@@ -129,7 +129,7 @@ const slug=n=>String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().repl
 const normCyl=s=>String(s||'').trim().toUpperCase().replace(/\s+/g,'');
 const dayNum=(y,m,d)=>Date.UTC(y,m-1,d)/864e5;
 const isoFromDay=n=>{const d=new Date(n*864e5);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())};
-const fmtDay=n=>{if(n==null||n<0)return '—';const s=isoFromDay(n);return s.slice(8,10)+'-'+s.slice(5,7)+'-'+s.slice(0,4)};
+const fmtDay=n=>{if(n==null||!isFinite(n))return '—';const s=isoFromDay(n);return s.slice(8,10)+'-'+s.slice(5,7)+'-'+s.slice(0,4)};
 const dayFromIso=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');return m?dayNum(+m[1],+m[2],+m[3]):null};
 const now=new Date();const TODAY=dayNum(now.getFullYear(),now.getMonth()+1,now.getDate());
 const blank=v=>v==null||String(v).trim()==='';
@@ -163,7 +163,7 @@ const TA={
  'Nothing to import.':'இறக்குமதி செய்ய எதுவும் இல்லை.',
  'Imported':'இறக்குமதி ஆனது','Open app':'App-ஐத் திற','Import another file':'இன்னொரு file',
  'Will be skipped':'தவிர்க்கப்படும்','Will be imported':'இறக்குமதி ஆகும்','Accepted':'ஏற்கப்பட்டது','Your correction':'உங்கள் திருத்தம்','Kept as is':'அப்படியே',
- 'Gas':'வாயு','Branch':'கிளை','Changed automatically (only spacing / capital letters / dash):':'தானாக மாற்றியவை (இடைவெளி / பெரிய எழுத்து / கோடு மட்டும்):',
+ 'Gas':'வாயு','Branch':'கிளை','Taken as already in the app (corrected when the history was first loaded), or only spacing / capital letters / dash changed:':'App-இல் ஏற்கெனவே உள்ளபடி எடுக்கப்பட்டவை (history முதலில் ஏற்றப்பட்டபோது திருத்தப்பட்டவை), அல்லது இடைவெளி / பெரிய எழுத்து / கோடு மட்டும் மாறியவை:','no date (as in the app)':'தேதி இல்லை (app-இல் உள்ளபடி)','as already in the app':'app-இல் ஏற்கெனவே உள்ளபடி','Changed automatically (only spacing / capital letters / dash):':'தானாக மாற்றியவை (இடைவெளி / பெரிய எழுத்து / கோடு மட்டும்):',
  'This undoes the import: its movements are removed from the old history. Customers and cylinders it added stay. Continue?':'இந்த இறக்குமதி திரும்பப் பெறப்படும்: அதன் நகர்வுகள் பழைய history-யிலிருந்து நீக்கப்படும். சேர்த்த வாடிக்கையாளர்களும் சிலிண்டர்களும் அப்படியே இருக்கும். தொடரவா?',
  'Undone.':'திரும்பப் பெறப்பட்டது.','Could not save. Check your connection and try again.':'சேமிக்க முடியவில்லை. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
  'This file has no rows.':'இந்த file-இல் வரிகள் இல்லை.','Could not read this file.':'இந்த file-ஐப் படிக்க முடியவில்லை.',
@@ -172,7 +172,12 @@ const TA={
  'Reload the app on other phones to see the imported history.':'இறக்குமதி ஆன history-யைப் பார்க்க மற்ற போன்களில் app-ஐ refresh செய்யவும்.',
  'items':'உருப்படிகள்','Ready movements':'தயாரான நகர்வுகள்','Already in app':'ஏற்கெனவே app-இல்','Cylinders':'சிலிண்டர்கள்','New entries in file':'File-இல் புதியவை',
  'Cylinder register (one row per cylinder)':'சிலிண்டர் பதிவேடு (ஒரு சிலிண்டருக்கு ஒரு வரி)','Cylinder number column':'சிலிண்டர் எண் column','Branch / gas column':'கிளை / வாயு column','First “DC Date” column':'முதல் “DC Date” column',
- 'Reading':'படிக்கிறது',
+ 'Reading':'படிக்கிறது','Add only new entries':'புதிய பதிவுகளை மட்டும் சேர்','Keeps everything in the app. Entries already in the app are skipped.':'App-இல் உள்ள எல்லாம் அப்படியே இருக்கும். ஏற்கெனவே உள்ளவை தவிர்க்கப்படும்.',
+ 'Replace: delete old data, load from this file':'மாற்று: பழைய தரவை நீக்கி, இந்த file-இலிருந்து ஏற்று',
+ 'Deletes the cylinder list and old history in the app and loads them again from this file. Entries made in the app (New entry), customers, billing and purchases stay. A backup file downloads first.':'App-இல் உள்ள சிலிண்டர் பட்டியலையும் பழைய history-யையும் நீக்கி, இந்த file-இலிருந்து மீண்டும் ஏற்றும். App-இல் போட்ட பதிவுகள் (புதிய பதிவு), வாடிக்கையாளர்கள், பில், வாங்கல்கள் அப்படியே இருக்கும். முதலில் backup file download ஆகும்.',
+ 'Removed from cylinder list':'பட்டியலிலிருந்து நீக்கப்படுபவை','In the app but not in this file':'App-இல் உள்ளது, file-இல் இல்லை','Keep all':'அனைத்தையும் வை','Remove all':'அனைத்தையும் நீக்கு','Keep':'வை','Remove':'நீக்கு',
+ 'Will be kept':'வைக்கப்படும்','Will be removed':'நீக்கப்படும்','Has entries made in the app — kept unless you remove it.':'App-இல் போட்ட பதிவுகள் உள்ளன — நீங்கள் நீக்கச் சொன்னால் மட்டுமே நீக்கப்படும்.',
+ 'Entries in file':'File-இல் உள்ள பதிவுகள்','Replace now':'இப்போது மாற்று','Replaced the app data. To undo, load the backup file in import.html.':'App தரவு மாற்றப்பட்டது. திரும்பப் பெற, backup file-ஐ import.html-இல் ஏற்றவும்.',
  'Read this sheet as a cylinder register':'இந்த sheet-ஐ சிலிண்டர் பதிவேடாகப் படி'
 };
 const MSG={ /* messages with placeholders: [en, ta] */
@@ -222,6 +227,10 @@ const MSG={ /* messages with placeholders: [en, ta] */
  needN:['{n} items need your decision.','{n} உருப்படிகளுக்கு உங்கள் முடிவு தேவை.'],
  readyN:['{n} movements will be imported.','{n} நகர்வுகள் இறக்குமதி ஆகும்.'],
  tooMany:['This file has {n} movements. Import at most 20,000 at a time — split the file.','இந்த file-இல் {n} நகர்வுகள் உள்ளன. ஒரே முறையில் 20,000 வரை மட்டும் — file-ஐப் பிரிக்கவும்.'],
+ repNote:['Replace: the app’s cylinder list and old history will be deleted and loaded again from this file ({c} cylinders). {r} cylinders in the app are not in this file and will be removed. Entries made in the app, customers, billing and purchases stay.','மாற்றம்: app-இல் உள்ள சிலிண்டர் பட்டியலும் பழைய history-யும் நீக்கப்பட்டு இந்த file-இலிருந்து ({c} சிலிண்டர்கள்) மீண்டும் ஏற்றப்படும். File-இல் இல்லாத {r} சிலிண்டர்கள் நீக்கப்படும். App-இல் போட்ட பதிவுகள், வாடிக்கையாளர்கள், பில், வாங்கல்கள் அப்படியே இருக்கும்.'],
+ repReady:['{n} entries will be loaded from the file (replace).','File-இலிருந்து {n} பதிவுகள் ஏற்றப்படும் (மாற்றம்).'],
+ repConfirm:['Replace the app data with this file?\n\n• Delete: cylinder list ({oc}) and old history ({oh} entries)\n• Load: {nc} cylinders and {nh} entries from {f}\n• Keep: entries made in the app, customers, billing, purchases\n\nA backup file downloads first. Keep it safe — it is the only way to undo.','App தரவை இந்த file-ஆல் மாற்றவா?\n\n• நீக்கப்படுவது: சிலிண்டர் பட்டியல் ({oc}), பழைய history ({oh} பதிவுகள்)\n• ஏற்றப்படுவது: {f}-இலிருந்து {nc} சிலிண்டர்கள், {nh} பதிவுகள்\n• அப்படியே இருப்பது: app-இல் போட்ட பதிவுகள், வாடிக்கையாளர்கள், பில், வாங்கல்கள்\n\nமுதலில் ஒரு backup file download ஆகும். அதைப் பத்திரமாக வையுங்கள் — திரும்பப் பெற அது ஒன்றே வழி.'],
+ repDone:['Replaced: {nc} cylinders and {nh} entries loaded from {f}. Backup saved as {b}.','மாற்றப்பட்டது: {f}-இலிருந்து {nc} சிலிண்டர்கள், {nh} பதிவுகள் ஏற்றப்பட்டன. Backup: {b}.'],
  pastLine:['{f} · {n} movements · {d}','{f} · {n} நகர்வுகள் · {d}'],
 };
 const t=s=>LANG==='ta'&&TA[s]?TA[s]:s;
@@ -458,12 +467,14 @@ function regItems(){
     let p=0;
     while(p<x.evs.length&&p<H.length){const e=x.evs[p],h=H[p];const d=parseDate(e.date);
       if(e.t===h.t&&(!d||!okDay(d.day)||h.day<0||d.day===h.day))p++;else break}
-    inApp+=p;if(p<H.length&&p<x.evs.length)differs.push(x.r);
+    const rep=S.regMode==='replace';const known=p;
+    if(rep)p=0;else{inApp+=p;if(p<H.length&&p<x.evs.length)differs.push(x.r)}
     const days=x.evs.map(e=>{const d=parseDate(e.date);return d&&okDay(d.day)?d.day:null});
     for(let i=p;i<x.evs.length;i++){const e=x.evs[i];let prev=null,next=null;
       for(let j=i-1;j>=0;j--)if(days[j]!=null){prev=days[j];break}
       for(let j=i+1;j<days.length;j++)if(days[j]!=null){next=days[j];break}
-      items.push({r:x.r+':'+colName(e.col),label:t('Row')+' '+x.r+' · '+colName(e.col),date:e.date,type:e.t,cust:e.name,ids:[id],prev,next,
+      const was=i<known?H[i]:null;
+      items.push({r:x.r+':'+colName(e.col),label:t('Row')+' '+x.r+' · '+colName(e.col),date:e.date,type:e.t,cust:e.name,ids:[id],prev,next,appDay:was&&was.day>=0?was.day:null,appCn:was?was.cn:null,appNoDate:!!(was&&was.day<0),
         line:[x.raw+(x.label?' ('+x.label+')':''),e.t,cellTxt(e.date),e.name]})}
   }
   return {items,inApp,differs};
@@ -486,6 +497,8 @@ function analyze(){
     {const k=R.r+'|date',d=D[k];const p=parseDate(R.date);let iss=null,val=null;
       const nb=carry?{prev:prev.day,next:null}:{prev:R.prev,next:R.next};
       if(p&&okDay(p.day))val=p.day;
+      else if(R.appDay!=null&&!d){val=R.appDay;cleaned.push({r:R.r,from:cellTxt(R.date),to:fmtDay(R.appDay),app:1})}
+      else if(R.appNoDate&&!d){val=-1;cleaned.push({r:R.r,from:cellTxt(R.date)||'—',to:t('no date (as in the app)'),app:1})}
       else if(!p&&blank(R.date)){
         if(carry&&prev.day!=null)iss=addIss(k,{kind:'date',msg:m('dateAbove'),sugg:m('dateAboveS',{v:fmtDay(prev.day)}),sv:prev.day,block:true,edit:'date'},R.r);
         else iss=addIss(k,{kind:'date',msg:carry?m('dateEmpty'):m('dateEmptyR'),block:true,edit:'date'},R.r);
@@ -516,7 +529,9 @@ function analyze(){
         else{iss=addIss(rk,{kind:'cust',msg:m('custEmpty'),block:true,edit:'cust'},R.r);iss.dec=rd;openIf(iss,null)}
       }else{
         const exact=S.custBySlug.get(slug(raw));
+        const appC=R.appCn&&S.custBySlug.get(slug(R.appCn));
         if(exact)val=exact;
+        else if(appC&&!D['cust|'+slug(raw)]){val=appC;cleaned.push({r:R.r,from:raw,to:appC,app:1})}
         else{const gk='cust|'+slug(raw),d=D[gk];const b=bestCust(raw);
           if(b){iss=addIss(gk,{kind:'custm',msg:m('custMatch',{raw}),sugg:m('custMatchS',{v:b}),sv:b,no:'new',block:true,edit:'cust',raw},R.r)}
           else iss=addIss(gk,{kind:'custn',msg:m('custNew',{raw}),sugg:m('custNewS',{raw}),sv:'new',block:true,edit:'cust',raw},R.r);
@@ -576,11 +591,11 @@ function analyze(){
     for(const id of row.ids){
       const e={r:row.r,id,day:row.day,t:row.t,cn:row.cust||'',w:[],key:'w|'+row.r+'|'+id};
       const fk=id+'|'+e.t+'|'+e.day;
-      const ex=S.exKeys.get(fk);
+      let ex=S.exKeys.get(fk);if(ex==='old'&&S.mode==='reg'&&S.regMode==='replace')ex=null;
       if(ex)e.w.push({kind:'inapp',msg:m('dupApp',{t:e.t,d:fmtDay(e.day)}),def:'skip'});
-      else if(seen.has(fk))e.w.push({kind:'dup',msg:m('dupFile',{r:String(seen.get(fk)).replace(':',' · ')}),def:'skip'});
+      else if(S.mode!=='reg'&&seen.has(fk))e.w.push({kind:'dup',msg:m('dupFile',{r:String(seen.get(fk)).replace(':',' · ')}),def:'skip'});
       else seen.set(fk,row.r);
-      const lf=S.logFirst.get(id);if(lf!=null&&e.day>lf&&!ex)e.w.push({kind:'after',msg:m('afterApp',{d:fmtDay(lf)}),def:'import'});
+      const lf=S.logFirst.get(id);if(lf!=null&&e.day>=0&&e.day>lf&&!ex)e.w.push({kind:'after',msg:m('afterApp',{d:fmtDay(lf)}),def:'import'});
       evs.push(e);
     }
   }
@@ -588,7 +603,7 @@ function analyze(){
   // DC/MT order check on what will actually be imported, together with the history already in the app
   const byCyl=new Map();
   evs.forEach((e,i)=>{e.i=i;if(decideE(e)==='import'){if(!byCyl.has(e.id))byCyl.set(e.id,[]);byCyl.get(e.id).push(e)}});
-  for(const [id,list] of byCyl){
+  if(!(S.mode==='reg'&&S.regMode==='replace'))for(const [id,list] of byCyl){
     list.sort((a,b)=>a.day-b.day||a.i-b.i);
     const ex=S.exSeq.get(id)||{hist:[],log:[]};
     const seq=[];let j=0;
@@ -608,7 +623,14 @@ function analyze(){
   const need=all.filter(i=>i.open);
   const ready=evs.filter(e=>decideE(e)==='import');
   const usedCust=new Set(ready.map(e=>slug(e.cn)));const usedCyl=new Set(ready.map(e=>e.id));
-  S.A={issues:all,need,rows:rowsOut,evs,ready,decideE,cleaned,inApp,differs,items:items.length,
+  let removed=[];
+  if(S.mode==='reg'&&S.regMode==='replace'){
+    const inFile=new Set();for(const x of S.REG){const id=x.id||x.newId;const d=S.D['new|'+id];if(x.id||!(d&&d.a==='skip'))inFile.add(id)}
+    removed=[...S.cylMaster.keys()].filter(id=>!inFile.has(id)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).map(id=>{
+      const hasApp=!!((S.exSeq.get(id)||{}).log||[]).length;const d=S.D['rm|'+id];
+      return {id,hasApp,g:(S.cylMaster.get(id)||{}).g||'',b:(S.cylMaster.get(id)||{}).b||'',keep:d?d.a==='keep':hasApp}});
+  }
+  S.A={issues:all,need,rows:rowsOut,evs,ready,decideE,cleaned,inApp,differs,items:items.length,removed,
     newCust:[...newCust.entries()].filter(([k])=>usedCust.has(k)).map(([,v])=>v),
     newCyl:[...newCyl.entries()].filter(([k])=>usedCyl.has(k)),
     warnEvs:evs.filter(e=>e.w.some(w=>w.kind!=='inapp')),
@@ -640,7 +662,7 @@ function fileView(){
   ${pastView()}`;
 }
 function pastView(){
-  return `<div class="panel"><h3>${esc(t('Past imports'))}</h3>${S.past.length?`<div class="list">${S.past.map(p=>`<div class="past"><div class="sp"><b>${esc(p.file||'—')}</b><div class="muted small">${esc(m('pastLine',{f:'',n:p.n,d:new Date(p.at).toLocaleString()}).replace(/^ · /,''))}</div></div><button class="btn sm danger" data-undo="${esc(p.id)}">${esc(t('Undo'))}</button></div>`).join('')}</div>`:`<p class="muted" style="margin:0">${esc(t('No imports yet.'))}</p>`}</div>`;
+  return `<div class="panel"><h3>${esc(t('Past imports'))}</h3>${S.past.length?`<div class="list">${S.past.map(p=>`<div class="past"><div class="sp"><b>${esc(p.file||'—')}</b><div class="muted small">${esc(m('pastLine',{f:'',n:p.n,d:new Date(p.at).toLocaleString()}).replace(/^ · /,''))}</div></div>${p.kind==='replace'?`<span class="muted small">${esc(t('Replaced the app data. To undo, load the backup file in import.html.'))}</span>`:`<button class="btn sm danger" data-undo="${esc(p.id)}">${esc(t('Undo'))}</button>`}</div>`).join('')}</div>`:`<p class="muted" style="margin:0">${esc(t('No imports yet.'))}</p>`}</div>`;
 }
 function mapView(){
   const g=S.grid,h=S.hdr;const reg=S.mode==='reg';
@@ -650,6 +672,9 @@ function mapView(){
   const opts=(k,extra='')=>`<option value="">${esc(t('— not in file —'))}</option>${extra}`+colOpts(S.map[k],false);
   const typeExtra=`<option value="=DC" ${S.map.type==='=DC'?'selected':''}>${esc(t('Whole sheet is DC (full out)'))}</option><option value="=MT" ${S.map.type==='=MT'?'selected':''}>${esc(t('Whole sheet is MT (empty in)'))}</option>`;
   const canReg=!!findRegister(g);
+  const modeSel=reg?`<div class="list" style="margin-top:12px">
+      <label class="past" style="cursor:pointer"><input type="radio" name="m-mode" value="add" ${S.regMode!=='replace'?'checked':''}><div class="sp"><b>${esc(t('Add only new entries'))}</b><div class="muted small">${esc(t('Keeps everything in the app. Entries already in the app are skipped.'))}</div></div></label>
+      <label class="past" style="cursor:pointer"><input type="radio" name="m-mode" value="replace" ${S.regMode==='replace'?'checked':''}><div class="sp"><b>${esc(t('Replace: delete old data, load from this file'))}</b><div class="muted small">${esc(t('Deletes the cylinder list and old history in the app and loads them again from this file. Entries made in the app (New entry), customers, billing and purchases stay. A backup file downloads first.'))}</div></div></label></div>`:'';
   const toggle=canReg?`<label class="small" style="display:flex;gap:6px;align-items:center;margin-top:12px"><input type="checkbox" id="m-asreg" ${reg?'checked':''}> ${esc(t('Read this sheet as a cylinder register'))}</label>`:'';
   let fields;
   if(reg){buildReg();const ne=S.REG.reduce((a,x)=>a+x.evs.length,0);
@@ -668,7 +693,7 @@ function mapView(){
   const prev=g.slice(Math.max(0,h-2),h+9);const start=Math.max(0,h-2);
   return `<div class="panel"><div class="row" style="margin-bottom:12px"><div class="field"><label>${esc(t('Sheet'))}</label><select class="inp" id="m-sheet">${S.wb.SheetNames.map(n=>`<option ${n===S.sheet?'selected':''}>${esc(n)}</option>`).join('')}</select></div>
     <div class="field" style="flex:0 1 120px"><label>${esc(t('Header row'))}</label><input class="inp" type="number" min="1" id="m-hdr" value="${h+1}"></div></div>
-    ${fields}${toggle}
+    ${fields}${modeSel}${toggle}
     <div class="row" style="margin-top:14px"><button class="btn primary" id="m-go">${esc(t('Check file'))}</button><button class="btn" id="m-back">${esc(t('Choose another file'))}</button><span class="muted small mono">${esc(S.file)}</span></div></div>
   <div class="panel"><h3>${esc(t('First rows of the sheet'))}</h3><p class="muted small" style="margin:-4px 0 8px">${esc(t('Blue row = header row.'))}</p><div class="tbl-wrap"><table><thead><tr><th>#</th>${Array.from({length:width},(_,i)=>`<th>${colName(i)}</th>`).join('')}</tr></thead><tbody>
   ${prev.map((r,ri)=>`<tr class="${start+ri===h?'hdr':''}"><td class="muted">${start+ri+1}</td>${Array.from({length:width},(_,i)=>`<td title="${esc(cellTxt((r||[])[i]))}">${esc(cellTxt((r||[])[i]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
@@ -710,10 +735,11 @@ const KIND_TITLE={date:['Date problems','தேதி பிரச்சின�
   dup:['Repeated in the file','file-இல் மீண்டும் வருகிறது'],inapp:['Already in the app','ஏற்கெனவே app-இல் உள்ளவை'],seq:['Order does not match (DC/MT)','DC/MT வரிசை பொருந்தவில்லை'],after:['After app entries','App பதிவுகளுக்குப் பின்'],old:['Very old dates','மிகப் பழைய தேதிகள்']};
 const kt=k=>(KIND_TITLE[k]||[k,k])[LANG==='ta'?1:0];
 function reviewView(){
-  const A=S.A;const tabs=[['need','Need decision',A.need.length],['warn','Warnings',A.warnEvs.length],['inapp','Already in app',A.inApp+A.dupEvs.length],['done','Decided',A.issues.filter(i=>i.dec).length],['skip','Skipped',A.skippedRows.length],['ready','Ready',A.ready.length],['clean','Cleaned',A.cleaned.length]];
-  const notes=(A.inApp+A.dupEvs.length?`<div class="note info">${esc(m('inAppN',{n:(A.inApp+A.dupEvs.length).toLocaleString('en-IN')}))}</div>`:'')+
+  const A=S.A;const isRep=S.mode==='reg'&&S.regMode==='replace';
+  const tabs=[['need','Need decision',A.need.length],['warn','Warnings',A.warnEvs.length],...(isRep?[['removed','Removed from cylinder list',A.removed.filter(x=>!x.keep).length]]:[]),['inapp','Already in app',A.inApp+A.dupEvs.length],['done','Decided',A.issues.filter(i=>i.dec).length],['skip','Skipped',A.skippedRows.length],['ready','Ready',A.ready.length],['clean','Cleaned',A.cleaned.length]];
+  const notes=(isRep?`<div class="note crit">${esc(m('repNote',{c:S.REG.length.toLocaleString('en-IN'),r:A.removed.filter(x=>!x.keep).length}))}</div>`:'')+(A.inApp+A.dupEvs.length?`<div class="note info">${esc(m('inAppN',{n:(A.inApp+A.dupEvs.length).toLocaleString('en-IN')}))}</div>`:'')+
     (A.differs.length?`<div class="note">${esc(m('differsN',{n:A.differs.length,list:A.differs.slice(0,12).join(', ')+(A.differs.length>12?' …':'')}))}</div>`:'');
-  const stats=notes+`<div class="stats"><div class="stat"><b>${S.mode==='reg'?S.REG.length:S.RAW.length}</b><span>${esc(t(S.mode==='reg'?'Cylinders':'Rows'))}</span></div><div class="stat"><b>${A.items}</b><span>${esc(t('New entries in file'))}</span></div>
+  const stats=notes+`<div class="stats"><div class="stat"><b>${S.mode==='reg'?S.REG.length:S.RAW.length}</b><span>${esc(t(S.mode==='reg'?'Cylinders':'Rows'))}</span></div><div class="stat"><b>${A.items}</b><span>${esc(t(isRep?'Entries in file':'New entries in file'))}</span></div>
     <div class="stat need"><b>${A.need.length}</b><span>${esc(t('Need your decision'))}</span></div><div class="stat warn"><b>${A.warnEvs.length}</b><span>${esc(t('Warnings'))}</span></div><div class="stat ready"><b>${A.ready.length}</b><span>${esc(t('Ready to import'))}</span></div></div>`;
   const tabH=`<div class="tabs">${tabs.map(([k,l,n])=>`<button class="btn sm ${S.tab===k?'on':''}" data-tab="${k}">${esc(t(l))} · ${n}</button>`).join('')}</div>`;
   let body='';
@@ -724,6 +750,9 @@ function reviewView(){
       body=[...groups].map(([kind,items])=>{const pg=pageOf(items,'g'+kind);
         const bulk=S.tab==='need'?(items.some(i=>i.sugg)?`<button class="btn sm ok" data-bulk="yes" data-kind="${kind}">${esc(t(kind==='custn'?'Add as new customer':'Accept all'))} (${items.filter(i=>i.sugg).length})</button>`:'')+(kind==='cyln'?`<button class="btn sm ok" data-bulk="new" data-kind="${kind}">${esc(t('Add all as new'))} (${items.length})</button>`:'')+`<button class="btn sm danger" data-bulk="skip" data-kind="${kind}">${esc(t('Skip all'))} (${items.length})</button>`:'';
         return `<div class="group"><div class="group-h"><b>${esc(kt(kind))}</b><span class="pill">${items.length}</span><span class="sp"></span>${bulk}</div>${pg.items.map(issueCard).join('')}${pg.nav}</div>`}).join('');}
+  }else if(S.tab==='removed'){
+    const pg=pageOf(A.removed,'removed');
+    body=A.removed.length?`<div class="group"><div class="group-h"><b>${esc(t('In the app but not in this file'))}</b><span class="pill">${A.removed.length}</span><span class="sp"></span><button class="btn sm" data-rmall="keep">${esc(t('Keep all'))}</button><button class="btn sm danger" data-rmall="remove">${esc(t('Remove all'))}</button></div>${pg.items.map(x=>`<div class="iss ${x.keep?'done':''}"><div class="where"><span class="mono">${esc(x.id)}</span> · ${esc(x.g)}${x.b?' · '+esc(brLabel(x.b)):''}</div>${x.hasApp?`<div class="msg warn">${esc(t('Has entries made in the app — kept unless you remove it.'))}</div>`:''}<div class="acts"><span class="state ${x.keep?'':'skip'}">${esc(t(x.keep?'Will be kept':'Will be removed'))}</span>${x.keep?`<button class="btn sm danger" data-rm="remove" data-id="${esc(x.id)}">${esc(t('Remove'))}</button>`:`<button class="btn sm" data-rm="keep" data-id="${esc(x.id)}">${esc(t('Keep'))}</button>`}</div></div>`).join('')}${pg.nav}</div>`:`<div class="panel muted">${esc(t('Nothing here.'))}</div>`;
   }else if(S.tab==='inapp'){
     const pg=pageOf(A.dupEvs,'inapp');
     body=`<div class="panel muted small">${esc(m('inAppN',{n:(A.inApp+A.dupEvs.length).toLocaleString('en-IN')}))}</div>`+(A.dupEvs.length?`<div class="group">${pg.items.map(warnCard).join('')}${pg.nav}</div>`:'');
@@ -739,7 +768,7 @@ function reviewView(){
     body=A.ready.length?`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${esc(t('Row'))}</th><th>${esc(t('Date'))}</th><th>DC/MT</th><th>${esc(t('Cylinder number(s)'))}</th><th>${esc(t('Customer'))}</th></tr></thead><tbody>${pg.items.map(e=>`<tr><td>${e.r}</td><td>${fmtDay(e.day)}</td><td><span class="pill ${e.t==='DC'?'dc':'mt'}">${e.t}</span></td><td class="mono">${esc(e.id)}</td><td>${esc(e.cn)}</td></tr>`).join('')}</tbody></table></div>${pg.nav}</div>`:`<div class="panel muted">${esc(t('Nothing here.'))}</div>`;
   }else{
     const pg=pageOf(A.cleaned,'clean',100);
-    body=A.cleaned.length?`<div class="panel"><p class="muted small" style="margin-top:0">${esc(t('Changed automatically (only spacing / capital letters / dash):'))}</p><div class="tbl-wrap"><table><tbody>${pg.items.map(c=>`<tr><td>${esc(t('Row'))} ${c.r}</td><td class="mono">${esc(c.from)}</td><td>→</td><td class="mono">${esc(c.to)}</td></tr>`).join('')}</tbody></table></div>${pg.nav}</div>`:`<div class="panel muted">${esc(t('Nothing here.'))}</div>`;
+    body=A.cleaned.length?`<div class="panel"><p class="muted small" style="margin-top:0">${esc(t(S.regMode==='replace'&&S.mode==='reg'?'Taken as already in the app (corrected when the history was first loaded), or only spacing / capital letters / dash changed:':'Changed automatically (only spacing / capital letters / dash):'))}</p><div class="tbl-wrap"><table><tbody>${pg.items.map(c=>`<tr><td>${esc((S.itemByR.get(c.r)||{}).label||(t('Row')+' '+c.r))}</td><td class="mono">${esc(c.from)}</td><td>→</td><td class="mono">${esc(c.to)}</td><td class="muted small">${c.app?esc(t('as already in the app')):''}</td></tr>`).join('')}</tbody></table></div>${pg.nav}</div>`:`<div class="panel muted">${esc(t('Nothing here.'))}</div>`;
   }
   return stats+tabH+body;
 }
@@ -757,12 +786,13 @@ function pageOf(items,id,per=PER){
 }
 function bottomBar(){
   const A=S.A;const n=A.need.length,r=A.ready.length;
-  const msg=n?m('needN',{n}):r?m('readyN',{n:r}):t('Nothing to import.');
-  return `<div class="bar-bottom"><div class="msg" style="color:${n?'var(--crit)':'var(--ok)'}">${esc(msg)}</div><button class="btn" id="r-back">${esc(t('Match columns'))}</button><button class="btn primary" id="r-imp" ${n||!r||S.busy?'disabled':''}>${S.busy?`<span class="spin"></span> ${esc(t('Importing…'))}`:esc(t('Import now'))}</button></div>`;
+  const isRep=S.mode==='reg'&&S.regMode==='replace';
+  const msg=n?m('needN',{n}):r?m(isRep?'repReady':'readyN',{n:r.toLocaleString('en-IN')}):t('Nothing to import.');
+  return `<div class="bar-bottom"><div class="msg" style="color:${n?'var(--crit)':'var(--ok)'}">${esc(msg)}</div><button class="btn" id="r-back">${esc(t('Match columns'))}</button><button class="btn primary" id="r-imp" ${n||!r||S.busy?'disabled':''}>${S.busy?`<span class="spin"></span> ${esc(t('Importing…'))}`:esc(t(isRep?'Replace now':'Import now'))}</button></div>`;
 }
 function doneView(){
   const R=S.result;
-  return `<div class="panel note ok" style="font-size:15px">✓ ${esc(m('done',{n:R.n,f:R.file}))}</div>
+  return `<div class="panel note ok" style="font-size:15px">✓ ${esc(R.replace?m('repDone',{nc:R.nc.toLocaleString('en-IN'),nh:R.n.toLocaleString('en-IN'),f:R.file,b:R.backup}):m('done',{n:R.n,f:R.file}))}</div>
   <div class="panel"><p style="margin-top:0">${esc(t('Reload the app on other phones to see the imported history.'))}</p><div class="row"><a class="btn primary" href="./">${esc(t('Open app'))}</a><button class="btn" id="d-again">${esc(t('Import another file'))}</button></div></div>${pastView()}`;
 }
 
@@ -776,6 +806,7 @@ function bind(){
   document.querySelectorAll('[data-map]').forEach(s=>s.onchange=()=>{S.map[s.dataset.map]=s.value});
   document.querySelectorAll('[data-reg]').forEach(s=>s.onchange=()=>{S.reg[s.dataset.reg]=s.value===''?'':+s.value;render()});
   const rl=$('#m-asreg');if(rl)rl.onchange=()=>{S.mode=rl.checked?'reg':'list';if(S.mode==='list'){S.hdr=guessHeader(S.grid);S.map=guessMap(S.grid[S.hdr],S.sheet)}else{const f=findRegister(S.grid);if(f){S.hdr=f.hdr;S.reg=f}}render()};
+  document.querySelectorAll('[name=m-mode]').forEach(r=>r.onchange=()=>{S.regMode=r.value});
   const go=$('#m-go');if(go)go.onclick=()=>{
     if(S.mode==='reg'){buildReg();resolveReg();S.D={};S.pages={};matchCache.clear();S.tab='need';analyze();if(!S.A.need.length)S.tab=S.A.warnEvs.length?'warn':'ready';S.step='review';render();window.scrollTo(0,0);return}
     if(S.map.date===''||S.map.date==null)return toast(t('Choose the date column.'));
@@ -792,6 +823,8 @@ function bind(){
   document.querySelectorAll('[data-bulk]').forEach(b=>b.onclick=()=>bulk(b.dataset.bulk,b.dataset.kind));
   document.querySelectorAll('[data-wbulk]').forEach(b=>b.onclick=()=>{S.A.warnEvs.filter(e=>e.w[0].kind===b.dataset.kind).forEach(e=>S.D[e.key]={a:b.dataset.wbulk});rerun()});
   document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{S.D[b.dataset.k]={a:b.dataset.w};rerun()});
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{S.D['rm|'+b.dataset.id]={a:b.dataset.rm};rerun()});
+  document.querySelectorAll('[data-rmall]').forEach(b=>b.onclick=()=>{S.A.removed.forEach(x=>S.D['rm|'+x.id]={a:b.dataset.rmall});rerun()});
   document.querySelectorAll('[data-unskip]').forEach(b=>b.onclick=()=>{delete S.D[b.dataset.unskip+'|row'];rerun()});
 }
 function rerun(){const y=window.scrollY;analyze();render();window.scrollTo(0,y)}
@@ -878,6 +911,7 @@ function writeHist(b,H,all){
   return n;
 }
 async function doImport(){
+  if(S.mode==='reg'&&S.regMode==='replace')return doReplace();
   const A=S.A;if(A.need.length||!A.ready.length||S.busy)return;
   if(A.ready.length>20000)return toast(m('tooMany',{n:A.ready.length}));
   const lines=[m('sumImp',{n:A.ready.length})];if(A.newCust.length)lines.push(m('sumCust',{n:A.newCust.length})+' '+A.newCust.slice(0,6).join(', ')+(A.newCust.length>6?' …':''));
@@ -908,6 +942,58 @@ async function doImport(){
     b.set(fs.doc('reg/'+id),{file:S.file,sheet:S.sheet,at,by:S.me.id,n:news.length,rows:JSON.stringify(news.map(e=>[e.id,e.t,e.day,e.cn,e.r])),newCust:A.newCust,newCyl:A.newCyl.map(x=>x[0])});
     await b.commit();
     S.result={n:news.length,file:S.file};S.step='done';await loadAll();await loadPast();
+  }catch(e){console.error(e);toast(t('Could not save. Check your connection and try again.'))}
+  S.busy=false;render();window.scrollTo(0,0);
+}
+/* Full copy of the app data as a .json file — the same format import.html loads, so it can restore it. */
+async function backupJson(tag){
+  const cols=['settings','cust','cyl','hist','log','bill','trade','reg'];const out={};
+  for(const c of cols){const q=await fs.collection(c).get();if(!q.docs.length)continue;out[c]={};q.docs.forEach(d=>{out[c][d.id]=FB.dec(d.data())})}
+  const name=`Cylinder desk backup ${tag} ${new Date().toISOString().slice(0,16).replace('T',' ').replace(':','-')}.json`;
+  const blob=new Blob([JSON.stringify(out)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  return name;
+}
+async function doReplace(){
+  const A=S.A;if(A.need.length||S.busy)return;
+  const keepIds=new Set(A.removed.filter(x=>x.keep).map(x=>x.id));
+  // cylinder list from the file
+  const list={};const at=new Date().toISOString();
+  for(const x of S.REG){const id=x.id||x.newId;
+    if(!x.id){const d=S.D['new|'+id];if(d&&d.a==='skip')continue}
+    const old=S.cylMaster.get(id)||{};const e=Object.assign({},old);
+    e.g=old.g&&fam(old.g)===fam(x.g)&&!/\d/.test(x.g)?old.g:x.g;
+    e.b=x.b||old.b||'';
+    if(/^MISSING/.test(x.sec)){if(old.r!=='SOLD')e.r='MISSING'}else if(old.r==='MISSING')e.r='';
+    if(e.r==null)e.r='';if(!x.id&&!old.add)e.add={by:S.me.id,at,imp:true};
+    list[id]=e}
+  for(const id of keepIds)list[id]=S.cylMaster.get(id);
+  const oc=S.cylMaster.size,oh=[...S.exSeq.values()].reduce((a,v)=>a+v.hist.length,0);
+  if(!confirm(m('repConfirm',{oc:oc.toLocaleString('en-IN'),oh:oh.toLocaleString('en-IN'),nc:Object.keys(list).length.toLocaleString('en-IN'),nh:A.ready.length.toLocaleString('en-IN'),f:S.file})))return;
+  S.busy=true;render();
+  try{
+    const bname=await backupJson('before replace');
+    // old history rebuilt from the file, row by row in column order (as the sheet reads)
+    const meta={cyl:[],cust:[]};const ci=new Map(),ui=new Map();
+    const cIdx=id=>{if(!ci.has(id)){ci.set(id,meta.cyl.length);meta.cyl.push(id)}return ci.get(id)};
+    const uIdx=n=>{if(!n)return -1;if(!ui.has(n)){ui.set(n,meta.cust.length);meta.cust.push(n)}return ui.get(n)};
+    const all=A.ready.map(e=>[cIdx(e.id),e.t==='MT'?1:0,e.day,uIdx(e.cn)]);
+    // entries the app had kept without a valid date for cylinders that are not in the file stay out; nothing else to carry
+    const H=await readHist();
+    const b=fs.batch();
+    const n=writeHist(b,H,all);
+    const maxDay=all.reduce((a,e)=>Math.max(a,e[2]),0);
+    b.set(fs.doc('hist/meta'),FB.enc({cyl:meta.cyl,cust:meta.cust,count:all.length,chunks:n,asOf:maxDay?isoFromDay(maxDay):''}));
+    // cylinder list: split into documents of up to 700 cylinders
+    const ids=Object.keys(list).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));const per=700;const nd=Math.max(1,Math.ceil(ids.length/per));
+    for(let i=0;i<nd;i++){const part={};ids.slice(i*per,(i+1)*per).forEach(id=>part[id]=list[id]);b.set(fs.doc('cyl/m'+i),{list:part})}
+    const cq=await fs.collection('cyl').get();cq.docs.forEach(d=>{const k=/^m(\d+)$/.exec(d.id);if(!k||+k[1]>=nd)b.delete(fs.doc('cyl/'+d.id))});
+    if(A.newCust.length){const cl={};A.newCust.forEach(nm=>{cl[slug(nm)]={n:nm,t:'Other',ph:'',ad:'',by:S.me.id,at,imp:true}});b.set(fs.doc('cust/all'),{list:cl},{merge:true})}
+    // earlier "add" imports can no longer be undone after a replace
+    S.past.forEach(p=>b.delete(fs.doc('reg/'+p.id)));
+    b.set(fs.doc('reg/imp_'+Date.now().toString(36)),{kind:'replace',file:S.file,sheet:S.sheet,at,by:S.me.id,n:all.length,cyl:ids.length,backup:bname});
+    await b.commit();
+    S.result={n:all.length,file:S.file,replace:true,nc:ids.length,backup:bname};S.step='done';await loadAll();await loadPast();
   }catch(e){console.error(e);toast(t('Could not save. Check your connection and try again.'))}
   S.busy=false;render();window.scrollTo(0,0);
 }

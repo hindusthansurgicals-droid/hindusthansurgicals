@@ -23,8 +23,8 @@ input[type=file]{display:block;margin:10px 0 16px;max-width:100%}
 </head>
 <body>
 <div class="panel">
-  <h1>Import old data</h1>
-  <p class="muted">One time only. Copies cylinders, customers, old Excel history, purchases, sales and entries from the old Cylinder Desk into Firebase.<br>
+  <h1>Load or restore a backup</h1>
+  <p class="muted">Loads a Cylinder Desk backup (.json) — the first data export, or the backup file that downloads before a “Replace” import. The app’s data is set back to what is in the file.<br>
   ஒரே ஒருமுறை மட்டும். பழைய Cylinder Desk தரவை Firebase-க்கு மாற்றுகிறது.</p>
   <div id="who" class="muted">Signing in…</div>
   <div class="muted" style="font-size:12px" id="ver"></div>
@@ -66,9 +66,12 @@ $('#file').onchange=async e=>{
 $('#go').onclick=async()=>{
   if(!bundle)return;
   const meta=await fs.doc('hist/meta').get();
-  if(meta.exists&&!confirm('Data was already imported once. Import again and overwrite it with the file?'))return;
+  if(meta.exists&&!confirm('The app already has data. Set it back to what is in this file? (Entries made in the app after the backup are kept.)'))return;
   $('#go').disabled=true;$('#file').disabled=true;
   let done=0,fail=0;
+  // documents created after the backup (new history parts, cylinder lists, import records) are removed so the app matches the file
+  for(const col of ['hist','cyl','reg']){if(!bundle[col])continue;
+    try{const q=await fs.collection(col).get();for(const d of q.docs){if(!(d.id in bundle[col])&&(col!=='reg'||d.id.startsWith('imp_'))){await fs.doc(col+'/'+d.id).delete();log('– '+col+'/'+d.id)}}}catch(err){log('✗ '+col+' — '+(err.code||err.message),'err')}}
   for(const [col,docs] of Object.entries(bundle)){
     for(const [id,data] of Object.entries(docs)){
       try{await fs.doc(col+'/'+id).set(enc(data));done++;log('✓ '+col+'/'+id)}
