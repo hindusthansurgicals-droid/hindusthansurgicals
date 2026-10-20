@@ -238,6 +238,8 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.ownbox{border:1px dashed var(--line);border-radius:10px;padding:8px 12px}
+.ownbox .row{margin-top:8px}
 body.no-editcust .dd .ed{display:none}
 body.no-money .money{display:none}
 .permgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px 14px}
@@ -392,9 +394,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.8.0';
+const APP_VERSION=window.CD_VERSION||'3.9.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.9.0','2026-10-20',['New entry: “Customer’s own cylinders” — save a DC / MT with just the count (and their numbers as a note), so the DC number is not missing','Shown on entry cards, registers, DC PDF, WhatsApp and Excel exports; not counted in our cylinder tracking','Past gaps: Registers → Missing → “Enter 1002” opens New entry with that number']],
  ['3.8.0','2026-10-20',['Owner sets permissions per person (Settings → People → Permissions): pages, new entries, edit own / anyone’s entries, other branches, new customers, edit customers, save place, see money, downloads','Staff defaults tightened: own branch only, no new customers, no customer edits, no money, no downloads','Staff “edit own entries” now means entries made today (any DC date)','Firestore rules enforce the same limits on the server','Install as an app from Chrome (Install app button / Add to Home screen)']],
  ['3.7.0','2026-10-20',['Phone: number keypad for cylinder numbers with C N A D K buttons','Customer box shows your recent customers first','“You today” count of your DC / MT','Customer signs on the phone (✍ on a DC); printed on the DC PDF','Customer page: 📞 Call, 🧭 Directions, 📍 Save this place (GPS) — after a DC on a phone the app offers to save the place','Staff get Tamil by default']],
  ['3.6.1','2026-10-20',['Backup file names carry the date and time (eg. Cylinder desk backup 20-10-2026 15-55.json); automatic copies kept 2 days, one per day kept always']],
@@ -1057,7 +1060,10 @@ function daySummary(){
 /* WhatsApp: 10-digit Indian numbers get 91 in front. */
 const waPhone=p=>{const d=String(p||'').replace(/\D/g,'');if(d.length===10)return '91'+d;if(d.length===12&&d.startsWith('91'))return d;if(d.length===11&&d.startsWith('0'))return '91'+d.slice(1);return ''};
 function waOpen(phone,text){window.open('https://wa.me/'+(phone||'')+'?text='+encodeURIComponent(text),'_blank','noopener');if(!phone)toast(LANG==='ta'?'இந்த வாடிக்கையாளருக்கு phone எண் இல்லை — WhatsApp-இல் chat-ஐத் தேர்வு செய்யவும்.':'No phone number saved for this customer — pick the chat in WhatsApp.')}
-function dcText(r){const ta=LANG==='ta';return `${S.company.name||''}\n${r.t==='DC'?'DC':'MT'}${r.dc?' #'+r.dc:''} · ${fmtD(r.d)}\n${custName(r.ck)}\n${r.cy.length} ${ta?'சிலிண்டர்':'cylinder'+(r.cy.length===1?'':'s')}: ${r.cy.join(', ')}${r.vh?'\n'+(ta?'வாகனம் ':'Vehicle ')+r.vh:''}`}
+/* Customer's own cylinders: not tracked, only the count (and their numbers as a note) are kept with the DC / MT. */
+const ownN=r=>r&&r.own&&+r.own.n>0?+r.own.n:0;
+const ownTxt=(r,ta=LANG==='ta')=>ownN(r)?`${ta?'சொந்த சிலிண்டர்':'Own cyl'} × ${ownN(r)}${r.own.g&&r.own.g!=='O2'?' '+r.own.g:''}${r.own.nos?' ('+r.own.nos+')':''}`:'';
+function dcText(r){const ta=LANG==='ta';return `${S.company.name||''}\n${r.t==='DC'?'DC':'MT'}${r.dc?' #'+r.dc:''} · ${fmtD(r.d)}\n${custName(r.ck)}\n${r.cy.length?`${r.cy.length} ${ta?'சிலிண்டர்':'cylinder'+(r.cy.length===1?'':'s')}: ${r.cy.join(', ')}`:''}${ownN(r)?(r.cy.length?'\n':'')+ownTxt(r):''}${r.vh?'\n'+(ta?'வாகனம் ':'Vehicle ')+r.vh:''}`}
 /* DC to the customer's WhatsApp: on a phone the PDF itself is shared; otherwise the chat opens with the details (PDF downloads to attach). */
 async function waDC(docId,rid){
   const doc=S.logs[docId];const r=doc&&doc.recs&&doc.recs[rid];if(!r)return;const ph=waPhone((S.cust[r.ck]||{}).ph);const text=dcText(r);
@@ -1153,6 +1159,13 @@ VIEWS.entry={
         </div>
         <div id="f-expect"></div>
         <label class="check fullret" id="f-full-wrap" ${f.t==='MT'?'':'hidden'}><input type="checkbox" id="f-full" tabindex="-1" ${f.full?'checked':''}> <span><b>${LANG==='ta'?'நிரம்பியபடியே திரும்பி வந்தது (பயன்படுத்தவில்லை)':'Came back FULL (not used)'}</b> <span class="muted small">${LANG==='ta'?'— குடோனில் “நிரம்பியது” என்று சேரும்':'— goes to the godown as full'}</span></span></label>
+        <div class="ownbox" id="f-own-wrap" ${isCust(f.t)?'':'hidden'}>
+          <label class="check"><input type="checkbox" id="f-own" tabindex="-1" ${f.own?'checked':''}> <span><b>${LANG==='ta'?'Customer சொந்த சிலிண்டர்':'Customer’s own cylinders'}</b> <span class="muted small">${LANG==='ta'?'— நாம் track செய்வதில்லை; DC எண் மட்டும் பதிவாகும்':'— not tracked; the DC number is recorded'}</span></span></label>
+          <div class="row" id="f-own-box" ${f.own?'':'hidden'}>
+            <div class="field" style="flex:0 1 110px"><label for="f-own-n">${LANG==='ta'?'எத்தனை':'How many'}</label><input class="inp num" id="f-own-n" type="number" min="1" inputmode="numeric" value="${esc(f.ownN||'')}"></div>
+            <div class="field" style="flex:0 1 130px"><label for="f-own-g">Gas</label><select class="inp" id="f-own-g">${['O2','CO2','N2','Argon','DURO','Other'].map(g=>`<option ${f.ownG===g?'selected':''}>${g}</option>`).join('')}</select></div>
+            <div class="field" style="flex:1 1 180px"><label for="f-own-nos">${LANG==='ta'?'அவர்கள் சிலிண்டர் எண் (விருப்பம்)':'Their cylinder numbers (optional)'}</label><input class="inp mono" id="f-own-nos" value="${esc(f.ownNos||'')}" placeholder="eg. 77, 81"></div>
+          </div></div>
         <details class="more" id="f-more" ${f.rm||S.ui.moreOpen?'open':''}><summary><span>More details: vehicle, driver, remarks</span> <span class="muted small" id="f-more-sum">${esc([f.vh,f.dr,f.rm].filter(Boolean).join(' · '))}</span></summary><div class="more-body">
         <div class="row">
           <div class="field"><label for="f-vh">Vehicle no.</label><input class="inp mono" id="f-vh" list="dl-vh" value="${esc(f.vh)}" placeholder="TN 29 AB 1234"><datalist id="dl-vh">${datalistVals('vh').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
@@ -1190,6 +1203,12 @@ VIEWS.entry={
     dIn.addEventListener('input',()=>{dIn.classList.remove('bad');dMsg.textContent=''});
     $('#f-date-cal').addEventListener('click',()=>{try{dPick.showPicker()}catch(e){dPick.focus();dPick.click()}});
     dPick.addEventListener('change',()=>{if(dPick.value){dIn.value=fmtD(dPick.value);readDate()}});
+    {const ow=$('#f-own'),box=$('#f-own-box');
+      ow.addEventListener('change',()=>{f.own=ow.checked;box.hidden=!f.own;if(f.own&&!f.ownN){f.ownN='1'}$('#f-own-n').value=f.ownN||'';VIEWS.entry.updateSave();if(f.own){const n=$('#f-own-n');n.focus();n.select()}});
+      $('#f-own-n').addEventListener('input',e=>{f.ownN=e.target.value;VIEWS.entry.updateSave()});
+      $('#f-own-n').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const b=$('#f-save');if(b&&!b.disabled)b.focus()}});
+      $('#f-own-g').addEventListener('change',e=>{f.ownG=e.target.value});
+      $('#f-own-nos').addEventListener('input',e=>{f.ownNos=e.target.value})}
     $('#f-br').addEventListener('change',e=>{f.br=e.target.value;if(isCust(f.t)&&!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}});
     $('#f-dc').addEventListener('input',e=>{f.dc=e.target.value.trim();f.dcAuto=false;VIEWS.entry.updateNo()});
     const moreSum=()=>{const x=$('#f-more-sum');if(x)x.textContent=[f.vh,f.dr,f.rm].filter(Boolean).join(' · ')};
@@ -1330,9 +1349,9 @@ VIEWS.entry={
       ${sv.t==='DC'?`<div style="margin-top:8px"><button type="button" class="btn sm" data-act="dcpdf" data-doc="${esc(sv.docId)}" data-rid="${esc(sv.rid)}">${ic('dl')}Download DC (PDF)</button></div>`:''}</div></div>`:'';
     const madeToday=r=>r.at?todayISO.call(null)===(()=>{const d=new Date(r.at);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())})():r.d===S.D.today;
     const mine=S.D.recs.filter(r=>!r.del&&madeToday(r)).sort((a,b)=>(b.at||'').localeCompare(a.at||''));
-    {const my=S.D.recs.filter(r=>!r.del&&r.by===S.uid&&r.at&&new Date(r.at).toDateString()===new Date().toDateString());const n=t=>my.filter(r=>r.t===t);const c=a=>a.reduce((x,r)=>x+r.cy.length,0);const ta=LANG==='ta';
+    {const my=S.D.recs.filter(r=>!r.del&&r.by===S.uid&&r.at&&new Date(r.at).toDateString()===new Date().toDateString());const n=t=>my.filter(r=>r.t===t);const c=a=>a.reduce((x,r)=>x+r.cy.length+ownN(r),0);const ta=LANG==='ta';
       const el=$('#f-mine');if(el)el.innerHTML=my.length?`<b>${ta?'இன்று நீங்கள்':'You today'}:</b> <span class="t-dc">${n('DC').length} DC</span> · ${c(n('DC'))} ${ta?'சிலிண்டர்':'cyl'} · <span class="t-mt">${n('MT').length} MT</span> · ${c(n('MT'))} ${ta?'சிலிண்டர்':'cyl'}`:''}
-    $('#f-today-n').textContent=mine.length?`${mine.reduce((a,r)=>a+r.cy.length,0)} cylinders in ${mine.length} entries`:'';
+    $('#f-today-n').textContent=mine.length?`${mine.reduce((a,r)=>a+r.cy.length+ownN(r),0)} cylinders in ${mine.length} entries`:'';
     const why=r=>r.cy.map(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf?{c,f:ev.flag}:null}).filter(Boolean);
     const bad=mine.filter(r=>why(r).length),good=mine.filter(r=>!why(r).length);
     $('#f-today').innerHTML=mine.length?
@@ -1342,9 +1361,10 @@ VIEWS.entry={
   },
   updateSave(){const f=S.form;const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
     const who=isCust(f.t)?!!f.ck:!!f.pl.trim();
-    const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const ok=who&&f.cy.length&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup;
+    const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const fOwn=f.own&&+f.ownN>0;{const w=$('#f-own-wrap');if(w)w.hidden=!isCust(f.t)}
+    const ok=who&&(f.cy.length||(fOwn&&isCust(f.t)))&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup;
     const b=$('#f-save');if(b)b.disabled=!ok;
-    const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length?'Add at least one cylinder':hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
+    const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length&&!(fOwn&&isCust(f.t))?(f.own?(LANG==='ta'?'எத்தனை சிலிண்டர் என்று போடவும்':'Type how many'):'Add at least one cylinder'):hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
 };
 async function addCustomer(name){
   if(!can('newCust')){toast(LANG==='ta'?'புதிய வாடிக்கையாளர் சேர்க்க அனுமதி இல்லை. Owner-இடம் கேட்கவும்.':'You are not allowed to add customers. Ask the owner.');return null}
@@ -1359,10 +1379,11 @@ async function addCustomer(name){
 async function saveEntry(){
   const f=S.form;if(f.busy)return;
   const cust=isCust(f.t);
-  if((cust&&!f.ck)||(!cust&&!f.pl.trim())||!f.cy.length)return;
+  const own=cust&&f.own&&+f.ownN>0?{n:+f.ownN,g:f.ownG||'O2',nos:(f.ownNos||'').trim()}:null;
+  if((cust&&!f.ck)||(!cust&&!f.pl.trim())||(!f.cy.length&&!own))return;
   f.busy=true;VIEWS.entry.updateSave();
   const now=new Date().toISOString();
-  const body={full:f.t==='MT'&&f.full?true:false,t:f.t,d:f.d,ck:cust?f.ck:'',cn:cust?custName(f.ck):'',pl:cust?'':f.pl.trim(),dc:f.dc||'',cy:f.cy.slice(),rm:f.rm||'',vh:(f.vh||'').trim(),dr:(f.dr||'').trim(),br:f.br,by:S.uid,at:now};
+  const body={full:f.t==='MT'&&f.full?true:false,t:f.t,d:f.d,ck:cust?f.ck:'',cn:cust?custName(f.ck):'',pl:cust?'':f.pl.trim(),dc:f.dc||'',cy:f.cy.slice(),own,rm:f.rm||'',vh:(f.vh||'').trim(),dr:(f.dr||'').trim(),br:f.br,by:S.uid,at:now};
   try{
     if(f.edit){
       body.by=f.edit.by;body.at=f.edit.at;body.ed={by:S.uid,at:now};
@@ -1377,7 +1398,7 @@ async function saveEntry(){
     S.form=Object.assign(newForm(),keep,{saved:{t:body.t,dc:body.dc,title:recTitle(body),cy:body.cy,rid,docId:f.d+'_'+f.br+'_'+S.uid}});
     if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?String(nn):'';S.form.dcAuto=!!nn}
     if(cust&&isTouch()&&can('saveLoc')&&S.cust[body.ck]&&!S.cust[body.ck].loc)S.ui.askLoc=body.ck;
-    toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')));
+    toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+(body.cy.length?body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')):'')+(ownN(body)?(body.cy.length?' + ':'')+ownTxt(body):''));
     mounted=null;refresh();setTimeout(()=>{const c=$('#f-date');c&&c.focus()},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
@@ -1386,7 +1407,7 @@ function entryCard(r){
   const flags=r.cy.filter(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf});
   return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
   <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div><b>${esc(recTitle(r))}</b> ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}</div>
-  <div class="chips">${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
+  <div class="chips">${ownN(r)?`<span class="pill info">${esc(ownTxt(r))}</span>`:''}${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
   <div class="meta"><span>${fmtD(r.d)} · ${esc(brName(r.br))}</span><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span><span>${fmtDT(r.at)}</span>${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.sig?`<span class="pill ok">✍ ${LANG==='ta'?'கையெழுத்து உள்ளது':'signed'}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
   <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'&&canEditRec(r)&&!r.sig?`<button class="btn sm ghost" data-act="sign" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="${LANG==='ta'?'கையெழுத்து':'Signature'}">✍</button>`:''}${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
 }
@@ -1526,7 +1547,7 @@ VIEWS.reg={
       if(prev&&+prev.dc-(+r.dc)>1){const nums=[];for(let n=+prev.dc-1;n>+r.dc;n--)nums.push(n);const open=nums.filter(n=>!vd[br+'_'+t+'_'+n]);const vds=nums.filter(n=>vd[br+'_'+t+'_'+n]);
         if(!q||nums.some(n=>String(n).includes(q)))rows.push(`<tr style="background:${open.length?'var(--crit-bg)':'var(--surface-2)'}"><td class="mono" colspan="5">${open.length?`<b style="color:var(--crit)">Missing ${esc(rangesTxt(open.slice().reverse()))}</b>`:''}${vds.length?` <span class="muted small">Cancelled ${esc(rangesTxt(vds.slice().reverse()))}</span>`:''}</td><td></td><td style="white-space:nowrap">${open.length&&canEnter()?`<button class="btn sm" data-act="newno" data-t="${t}" data-n="${open[open.length-1]}">${ic('plus')}Enter ${open[open.length-1]}</button> ${canManage()?`<button class="btn sm ghost" data-act="voidno" data-t="${t}" data-br="${esc(br)}" data-n="${esc(open.join(','))}">Cancel</button>`:''}`:''}</td></tr>`)}
       const late=prev&&prev.d<r.d;
-      if(!q||String(r.dc).includes(q)||recTitle(r).toLowerCase().includes(q))rows.push(`<tr><td class="mono"><b>${esc(r.dc)}</b></td><td class="num">${fmtD(r.d)}${late?` <span class="pill warn">after ${esc(prev.dc)}</span>`:''}</td><td>${esc(recTitle(r))}</td><td class="r num">${r.cy.length}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc(r.cy.join(', '))}</td><td class="small muted"><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span> · ${fmtDT(r.at)}</td><td style="white-space:nowrap">${r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`);
+      if(!q||String(r.dc).includes(q)||recTitle(r).toLowerCase().includes(q))rows.push(`<tr><td class="mono"><b>${esc(r.dc)}</b></td><td class="num">${fmtD(r.d)}${late?` <span class="pill warn">after ${esc(prev.dc)}</span>`:''}</td><td>${esc(recTitle(r))}</td><td class="r num">${r.cy.length}${ownN(r)?` <span class="muted small">+${ownN(r)}</span>`:''}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc([r.cy.join(', '),ownTxt(r)].filter(Boolean).join(' · '))}</td><td class="small muted"><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span> · ${fmtDT(r.at)}</td><td style="white-space:nowrap">${r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`);
       prev=r}
     html+=rows.join('')+`</tbody></table></div>`;
     if(other.length)html+=`<div class="small muted" style="margin-top:12px">${other.length} ${t} entries have no number or a non-numeric number and are not in the register.</div>`;
@@ -2000,7 +2021,7 @@ function gasListSheet(name){
 }
 function entrySheet(name){
   const rows=[['Date','Type','No','Branch','Customer / plant','Cylinders','Count','Vehicle','Driver','Remarks','Entered by','Entered at','Edited']];
-  S.D.recs.filter(r=>!r.del).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0).forEach(r=>rows.push([xd(r.d),TLABEL[r.t]||r.t,r.dc||'',brName(r.br),isCust(r.t)?(r.cn||custName(r.ck)):(r.pl||''),r.cy.join(', '),r.cy.length,r.vh||'',r.dr||'',r.rm||'',personName(r.by),r.at?fmtDT(r.at):'',r.ed?'yes':'']));
+  S.D.recs.filter(r=>!r.del).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0).forEach(r=>rows.push([xd(r.d),TLABEL[r.t]||r.t,r.dc||'',brName(r.br),isCust(r.t)?(r.cn||custName(r.ck)):(r.pl||''),[r.cy.join(', '),ownTxt(r,false)].filter(Boolean).join(' · '),r.cy.length+ownN(r),r.vh||'',r.dr||'',r.rm||'',personName(r.by),r.at?fmtDT(r.at):'',r.ed?'yes':'']));
   return [name,rows,[11,12,8,12,24,40,7,12,12,20,16,12,7]];
 }
 function invoiceSheet(name){
@@ -2043,7 +2064,7 @@ function dayReport(day){
   sum.push([],['Staff','Entries','Cylinders']);const st={};rs.forEach(r=>{const s=st[r.by]=st[r.by]||[0,0];s[0]++;s[1]+=r.cy.length});Object.entries(st).forEach(([id,s])=>sum.push([personName(id),s[0],s[1]]));
   sum.push([],['Driver','Trips','Cylinders','Mismatches']);const dr={};rs.forEach(r=>{const k=r.dr||'(not entered)';const s=dr[k]=dr[k]||[0,0,0];s[0]++;s[1]+=r.cy.length});mm.forEach(m=>{const k=m.dr||'(not entered)';if(dr[k]&&!m.vf)dr[k][2]++});Object.entries(dr).forEach(([k,s])=>sum.push([k,...s]));
   const mv=[['Branch','Type','DC No','Customer / plant','Cylinders','Count','Vehicle','Driver','Entered by','Time','Remarks']];
-  rs.slice().reverse().forEach(r=>mv.push([brName(r.br),TLABEL[r.t],r.dc||'',recTitle(r),r.cy.join(', '),r.cy.length,r.vh||'',r.dr||'',personName(r.by),fmtDT(r.at),r.rm||'']));
+  rs.slice().reverse().forEach(r=>mv.push([brName(r.br),TLABEL[r.t],r.dc||'',recTitle(r),[r.cy.join(', '),ownTxt(r,false)].filter(Boolean).join(' · '),r.cy.length+ownN(r),r.vh||'',r.dr||'',personName(r.by),fmtDT(r.at),r.rm||'']));
   const mr=[['Cylinder','Type','Customer / plant','Problem','Driver','Status']];mm.forEach(m=>mr.push([m.id,TLABEL[m.t],m.ck?custName(m.ck):m.pl||'',m.flag,m.dr||'',m.vf?'Verified':'Open']));
   return xlsx(`Day report ${day}.xlsx`,[['Summary',sum,[24,10,10,10,10,9,11]],['Entries',mv,[12,14,8,26,40,7,14,14,16,12,20]],['Mismatches',mr,[12,14,26,40,14,10]]])}
 function rentReport(month){if(!month){toast('Pick a month');return}
@@ -2089,7 +2110,8 @@ async function dcPdf(docId,rid,ret){
   p.setFillColor(230,236,233);p.rect(10,y,W-20,7,'F');p.setFont('helvetica','bold');
   p.text('S.No',12,y+5);p.text('Cylinder No',26,y+5);p.text('Gas',76,y+5);y+=7;p.setFont('helvetica','normal');
   r.cy.forEach((id,i)=>{if(y>180){p.addPage();y=16}const st=S.cyl[id]||{};p.text(String(i+1),12,y+5);p.setFont('courier','bold');p.text(id,26,y+5);p.setFont('helvetica','normal');p.text(st.g||'',76,y+5);y+=6.5;p.setDrawColor(210);p.line(10,y,W-10,y)});
-  y+=6;p.setFont('helvetica','bold');p.text('Total full cylinders: '+r.cy.length,10,y);y+=8;
+  if(ownN(r)){if(y>180){p.addPage();y=16}p.text(String(r.cy.length+1),12,y+5);p.text("Customer's own cylinders x "+r.own.n+(r.own.g?' ('+r.own.g+')':'')+(r.own.nos?' - '+r.own.nos:''),26,y+5);y+=6.5;p.setDrawColor(210);p.line(10,y,W-10,y)}
+  y+=6;p.setFont('helvetica','bold');p.text('Total full cylinders: '+(r.cy.length+ownN(r))+(ownN(r)?'  (own '+ownN(r)+')':''),10,y);y+=8;
   p.setFont('helvetica','normal');p.text('Empty cylinders received: ________________________________',10,y);y+=7;
   if(r.rm){p.text('Remarks: '+r.rm,10,y);y+=7}
   y=Math.max(y+14,186);if(r.sig){try{p.addImage(r.sig,'PNG',10,y-15,44,16,undefined,'FAST')}catch(e){}}p.line(10,y,58,y);p.line(W-58,y,W-10,y);p.setFontSize(8.5);p.text("Receiver's signature",10,y+4);p.text('For '+(co.name||''),W-10,y+4,{align:'right'});
@@ -2158,7 +2180,7 @@ const A={
   logcall:el=>{const ck=el.dataset.v;formDrawer('Follow-up · '+custName(ck),`<div class="field"><label for="lc-note">What happened?</label><textarea class="inp" id="lc-note" required placeholder="eg. Called, will return 5 empties on Monday"></textarea></div>`,
     async()=>{const note=$('#lc-note').value.trim();if(!note){toast('Write a short note first');return}try{await S.db.doc('cust/all').update({list:{[ck]:{fu:{at:new Date().toISOString(),by:S.uid,note}}}});toast('Follow-up saved');closeDrawer()}catch(e){toast(dbErr(e))}},'Save follow-up')},
   editrec:el=>{const doc=S.logs[el.dataset.doc];const r=doc&&doc.recs[el.dataset.rid];if(!r)return;
-    S.form=Object.assign(newForm(),{t:r.t,d:r.d,br:r.br,dc:r.dc||'',ck:r.ck||'',pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',cy:r.cy.slice(),rm:r.rm||'',full:!!r.full,edit:{docId:el.dataset.doc,rid:el.dataset.rid,by:r.by,at:r.at}});closeDrawer();go('entry')},
+    S.form=Object.assign(newForm(),{t:r.t,d:r.d,br:r.br,dc:r.dc||'',ck:r.ck||'',pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',cy:r.cy.slice(),own:ownN(r)>0,ownN:ownN(r)?String(r.own.n):'',ownG:(r.own&&r.own.g)||'O2',ownNos:(r.own&&r.own.nos)||'',rm:r.rm||'',full:!!r.full,edit:{docId:el.dataset.doc,rid:el.dataset.rid,by:r.by,at:r.at}});closeDrawer();go('entry')},
   delrec:el=>{const doc=S.logs[el.dataset.doc];const r=doc&&doc.recs[el.dataset.rid];if(!r)return;
     formDrawer('Delete this entry?',`<p>${esc(TLABEL[r.t])} · ${esc(recTitle(r))} · ${fmtD(r.d)} · ${r.cy.length} cylinder${r.cy.length===1?'':'s'}: <span class="mono">${esc(r.cy.join(', '))}</span></p><p class="muted">The entry is removed from stock and history. It stays in the audit trail as deleted.</p>`,
       async()=>{try{await patchRec(el.dataset.doc,el.dataset.rid,{del:{by:S.uid,at:new Date().toISOString()}});toast('Entry deleted');closeDrawer()}catch(e){toast(dbErr(e))}},'Delete entry')},
