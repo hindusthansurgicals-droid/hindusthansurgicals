@@ -947,8 +947,7 @@ async function doImport(){
 }
 /* Full copy of the app data as a .json file — the same format import.html loads, so it can restore it. */
 async function backupJson(tag){
-  const cols=['settings','cust','cyl','hist','log','bill','trade','reg'];const out={};
-  for(const c of cols){const q=await fs.collection(c).get();if(!q.docs.length)continue;out[c]={};q.docs.forEach(d=>{out[c][d.id]=FB.dec(d.data())})}
+  const out=await window.FBC.backupAll();
   const name=`Cylinder desk backup ${tag} ${new Date().toISOString().slice(0,16).replace('T',' ').replace(':','-')}.json`;
   const blob=new Blob([JSON.stringify(out)],{type:'application/json'});
   const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);

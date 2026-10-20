@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='3.5.1';window.CD_BUILD='2026-10-20';
+window.CD_VERSION='3.5.2';window.CD_BUILD='2026-10-20';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -178,11 +178,22 @@ const dl={save:async({filename,data})=>{
 }};
 
 /* ---------- full backup (same format import.html restores) ---------- */
+/* The security rules allow the two settings documents to be read one by one, not the whole folder,
+   so settings are read by name; every other folder is read whole. members/profiles are optional. */
 const BACKUP_COLS=['settings','cust','cyl','hist','log','bill','trade','reg','members','profiles'];
-async function backupAll(source){
-  const out={};
-  for(const c of BACKUP_COLS){const q=await fs.collection(c).get(source?{source}:undefined);if(!q.docs.length)continue;out[c]={};q.docs.forEach(d=>{out[c][d.id]=dec(d.data())})}
-  out._backup={app:'Cylinder Desk',version:window.CD_VERSION||'',at:new Date().toISOString(),project:firebaseConfig.projectId};
+const SETTINGS_DOCS=['company','roles'];
+async function backupAll(source,opts){
+  const o=source?{source}:undefined;const out={};const missing=[];
+  for(const c of BACKUP_COLS){
+    if(opts&&opts.skip&&opts.skip.includes(c))continue;
+    try{
+      if(c==='settings'){for(const id of SETTINGS_DOCS){const d=await fs.doc('settings/'+id).get(o);if(d.exists){(out.settings=out.settings||{})[id]=dec(d.data())}}}
+      else{const q=await fs.collection(c).get(o);if(!q.docs.length)continue;out[c]={};q.docs.forEach(d=>{out[c][d.id]=dec(d.data())})}
+    }catch(e){console.warn('backup',c,e);missing.push(c);if(e&&e.code==='unavailable'&&source==='server')throw mapErr(e)}
+  }
+  const must=['cust','cyl','hist','log'];
+  if(missing.some(c=>must.includes(c))){const x=new Error('Could not read: '+missing.join(', '));x.code='incomplete';x.missing=missing;throw x}
+  out._backup={app:'Cylinder Desk',version:window.CD_VERSION||'',at:new Date().toISOString(),project:firebaseConfig.projectId,missing};
   return out;
 }
 
@@ -197,7 +208,7 @@ window.FBC={
   sync:()=>Object.assign({},sync),
   backupAll,
   /* what the Firebase server itself holds (not this device's copy) */
-  serverData:()=>backupAll('server'),
+  serverData:()=>backupAll('server',{skip:['members','profiles']}),
   waitForSync:()=>fs.waitForPendingWrites(),
   /* used by the one-time import page */
   _raw:{fs,auth,enc,dec,userReady,OWNER_EMAILS}

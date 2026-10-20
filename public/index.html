@@ -351,9 +351,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.5.1';
+const APP_VERSION=window.CD_VERSION||'3.5.2';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.5.2','2026-10-20',['Fix: backup and “Check data on the server” failed because the security rules do not allow reading the whole settings folder; settings are now read one by one']],
  ['3.5.1','2026-10-20',['Customer list shows the branch (Dharmapuri / Krishnagiri — set by you, or worked out from their cylinders) and town; your branch first; ✎ edits a customer right from the list','Customer details: Branch and Town / area fields']],
  ['3.5.0','2026-10-20',['Header: cloud status (saved / saving / offline with waiting entries) and a warning before closing while entries are still uploading','Cloud & backup panel: check that every cylinder, customer and entry is on the Firebase server','Automatic JSON backup every 30 minutes to a folder you choose (or a reminder), restore with import.html','Customer page: outstanding cylinders and full DC/MT history with filters (DC, MT, still with them, dates, cylinder); each DC shows when it came back','New entry: date starts at today after each save; the Saved box is gone; entries to check are listed separately with the reason']],
  ['3.4.1','2026-10-20',['New entry keyboard: customer ↓ then Tab moves to cylinders; Enter after each cylinder; Tab goes to Save entry and Enter saves','Vehicle, driver and remarks folded under “More details”','Date: type only day-month (24-9); the year comes from the Year box beside it (change it when needed)']],
@@ -669,7 +670,7 @@ async function bkRun(why){
     BK.last=now.toISOString();BK.due=false;try{localStorage.setItem('cd-bk-last',BK.last)}catch(e){}
     if(why!=='auto')toast(T2('Backup saved','Backup சேமிக்கப்பட்டது')+' · '+where);
     return true;
-  }catch(e){console.warn(e);toast(T2('Backup failed — check the connection.','Backup தோல்வி — இணையத்தைச் சரிபார்க்கவும்.'));return false}
+  }catch(e){console.warn(e);toast(T2('Backup failed: ','Backup தோல்வி: ')+((e&&(e.code==='incomplete'?e.message:e.code||e.message))||'error'));return false}
   finally{BK.busy=false;paintSync();if(S.drawer&&S.drawer.sync)paintDrawer()}
 }
 function bkTick(){
@@ -709,7 +710,7 @@ async function dataCheck(){
     const invN=Object.values(sv.bill||{}).reduce((a,d)=>a+Object.keys(d.inv||{}).length,0);
     const local={cyl:Object.keys(S.cyl).length,cust:Object.keys(S.cust).length,hist:S.hist?S.hist.chunks.reduce((a,c)=>a+c.length,0):0,log:S.D.recs.filter(r=>!r.del).length,inv:Object.values(S.bill||{}).reduce((a,d)=>a+Object.keys(d.inv||{}).length,0)};
     BK.check={at:Date.now(),rows:[[T2('Cylinders','சிலிண்டர்கள்'),cylN,local.cyl],[T2('Customers','வாடிக்கையாளர்கள்'),custN,local.cust],[T2('Old Excel history','பழைய Excel history'),histN,local.hist,hm.count],[T2('Entries made in the app','App-இல் போட்ட பதிவுகள்'),logN,local.log],[T2('Invoices','இன்வாய்ஸ்கள்'),invN,local.inv]],pending:FBC.sync().pending};
-  }catch(e){console.warn(e);BK.check={err:T2('Could not reach the server. Check the internet and try again.','Server-ஐ அணுக முடியவில்லை. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.')}}
+  }catch(e){console.warn(e);BK.check={err:e&&e.code==='incomplete'?T2('The server did not allow reading: ','Server படிக்க அனுமதிக்கவில்லை: ')+(e.missing||[]).join(', '):e&&(e.code==='unavailable'||!navigator.onLine)?T2('Could not reach the server. Check the internet and try again.','Server-ஐ அணுக முடியவில்லை. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.'):T2('Check failed: ','சரிபார்ப்பு தோல்வி: ')+((e&&(e.code||e.message))||'error')}}
   BK.checking=false;paintDrawer();
 }
 function syncPanel(){
