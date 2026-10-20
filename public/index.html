@@ -304,9 +304,12 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION='3.0.0';
-const APP_BUILD='2026-10-18';
+const APP_VERSION=window.CD_VERSION||'3.3.0';
+const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.3.0','2026-10-20',['Import your Excel cylinder register as it is (one row per cylinder, DC/MT pairs); only new entries are added','Date mistakes get a suggested fix (06-626 → 06-06-2026) that you approve','Reports: cylinder register in the old Excel layout, also inside Full backup','New entry: typing a number shared by two cylinders (1014 / K1014) asks which one']],
+ ['3.2.0','2026-10-20',['Import old files page: checks dates, DC/MT, customers and cylinder numbers, asks before any correction, Undo']],
+ ['3.1.0','2026-10-19',['Moved to Firebase: own database, Google sign-in, roles checked by Firebase rules, works offline for short breaks']],
  ['3.0.0','2026-10-18',['DC and MT number registers: missing numbers, late entries slot into the right order','Refill billing with GST invoices, payments and outstanding','Purchases and sales, loaded from the old Excel','Customer analysis: usage, average days, extra cylinders held','Tamil / English switch and a Tamil help page','Monthly backup reminder and app version']],
  ['2.0.0','2026-10-18',['Filling stages, barcode labels, follow-up list, hydro-test dates, rent, day-end report, vehicle and driver']],
  ['1.0.0','2026-10-18',['First version: DC/MT entry, stock, cylinder and customer history, mismatches, DC PDF, Excel reports, roles']]

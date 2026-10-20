@@ -105,6 +105,7 @@ tr.hdr td{background:var(--info-bg);font-weight:600}
 <header class="top">
   <a class="btn sm" href="./" id="back">← <span data-t>Back to app</span></a>
   <h1><span data-t>Import old files</span><small id="who"></small></h1>
+  <span class="muted small mono" id="ver"></span>
   <button class="btn sm" id="lang"></button>
 </header>
 <main id="main"><div class="panel muted"><span class="spin"></span> <span data-t>Loading…</span></div></main>
@@ -928,6 +929,7 @@ async function undoImport(id){
 
 /* ================= start ================= */
 (async()=>{
+  $('#ver').textContent='v'+(window.CD_VERSION||'');
   S.me=await FB.userReady;$('#who').textContent=S.me.email||'';
   if(S.me.isOwner){try{await loadAll();await loadPast()}catch(e){console.error(e)}}
   render();

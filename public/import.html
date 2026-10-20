@@ -27,6 +27,7 @@ input[type=file]{display:block;margin:10px 0 16px;max-width:100%}
   <p class="muted">One time only. Copies cylinders, customers, old Excel history, purchases, sales and entries from the old Cylinder Desk into Firebase.<br>
   ஒரே ஒருமுறை மட்டும். பழைய Cylinder Desk தரவை Firebase-க்கு மாற்றுகிறது.</p>
   <div id="who" class="muted">Signing in…</div>
+  <div class="muted" style="font-size:12px" id="ver"></div>
   <div id="step" hidden>
     <label for="file"><b>Choose <code>data-export.json</code></b></label>
     <input type="file" id="file" accept=".json,application/json">
@@ -45,6 +46,7 @@ const $=s=>document.querySelector(s);
 const log=(t,c)=>{const d=document.createElement('div');if(c)d.className=c;d.textContent=t;$('#log').appendChild(d);$('#log').scrollTop=1e9};
 const OLD_OWNER_ID='u_JbbgoIyBniYFYF4vkHsLmg';
 const {fs,enc,userReady}=FBC._raw;
+document.getElementById('ver').textContent='Version '+(window.CD_VERSION||'');
 const me=await userReady;
 $('#who').innerHTML='Signed in as <b></b>';$('#who b').textContent=me.email;
 if(!me.isOwner){log('Only the owner account can import data.','err');return}

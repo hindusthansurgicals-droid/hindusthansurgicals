@@ -3,6 +3,8 @@
    backed by Firebase Authentication (Google sign-in) and Cloud Firestore. */
 (function(){
 'use strict';
+/* App version — change this on every update (all files show it). */
+window.CD_VERSION='3.3.0';window.CD_BUILD='2026-10-20';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
