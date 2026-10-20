@@ -9,7 +9,7 @@
 :root{
   --bg:#F2F5F3; --surface:#FFFFFF; --surface-2:#E8EEEB; --line:#D3DCD8;
   --ink:#13201C; --muted:#5A6A65; --accent:#0E6B5A; --accent-2:#0A5143; --on-accent:#FFFFFF;
-  --ok:#2C7A3A; --ok-bg:#E3F1E5; --warn:#A8670B; --warn-bg:#FBEFD9; --crit:#B3261E; --crit-bg:#FBE4E1; --info:#1F5B8E; --info-bg:#E2ECF6;
+  --ok:#2C7A3A; --ok-bg:#E3F1E5; --warn:#A8670B; --warn-bg:#FBEFD9; --crit:#B3261E; --crit-bg:#FBE4E1; --info:#1F5B8E; --info-bg:#E2ECF6; --mt:#C2185B; --mt-bg:#FBE3EC;
   --gas-o2:#2F6FB0; --gas-co2:#6B7280; --gas-n2:#3C3F46; --gas-ar:#0E8A8A; --gas-duro:#8A5A18;
   --shadow:0 1px 2px rgba(19,32,28,.06),0 8px 24px rgba(19,32,28,.08);
   --f-display:"Archivo","Arial Narrow",Arial,sans-serif; --f-body:"IBM Plex Sans","Segoe UI",Roboto,Arial,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
@@ -18,13 +18,13 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E1412; --surface:#151D1A; --surface-2:#1C2622; --line:#2A3631;
   --ink:#E3EBE7; --muted:#93A39D; --accent:#4CB89D; --accent-2:#6FCDB5; --on-accent:#08201A;
-  --ok:#6CC27A; --ok-bg:#16301C; --warn:#E3AA4F; --warn-bg:#33270F; --crit:#F2766B; --crit-bg:#3A1714; --info:#7FB2E0; --info-bg:#132637;
+  --ok:#6CC27A; --ok-bg:#16301C; --warn:#E3AA4F; --warn-bg:#33270F; --crit:#F2766B; --crit-bg:#3A1714; --info:#7FB2E0; --info-bg:#132637; --mt:#F06C9B; --mt-bg:#3A1426;
   --gas-o2:#6FA5DB; --gas-co2:#A3A9B3; --gas-n2:#C3C6CC; --gas-ar:#45C2C2; --gas-duro:#D09A52;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E1412; --surface:#151D1A; --surface-2:#1C2622; --line:#2A3631;
   --ink:#E3EBE7; --muted:#93A39D; --accent:#4CB89D; --accent-2:#6FCDB5; --on-accent:#08201A;
-  --ok:#6CC27A; --ok-bg:#16301C; --warn:#E3AA4F; --warn-bg:#33270F; --crit:#F2766B; --crit-bg:#3A1714; --info:#7FB2E0; --info-bg:#132637;
+  --ok:#6CC27A; --ok-bg:#16301C; --warn:#E3AA4F; --warn-bg:#33270F; --crit:#F2766B; --crit-bg:#3A1714; --info:#7FB2E0; --info-bg:#132637; --mt:#F06C9B; --mt-bg:#3A1426;
   --gas-o2:#6FA5DB; --gas-co2:#A3A9B3; --gas-n2:#C3C6CC; --gas-ar:#45C2C2; --gas-duro:#D09A52;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark}
 *{box-sizing:border-box}
@@ -135,8 +135,8 @@ textarea.inp{min-height:60px;resize:vertical}
 .typepick span{font-size:12.5px;color:var(--muted)}
 .typepick button[aria-pressed="true"].dc{border-color:var(--info);background:var(--info-bg)}
 .typepick button[aria-pressed="true"].dc b{color:var(--info)}
-.typepick button[aria-pressed="true"].mt{border-color:var(--ok);background:var(--ok-bg)}
-.typepick button[aria-pressed="true"].mt b{color:var(--ok)}
+.typepick button[aria-pressed="true"].mt{border-color:var(--mt);background:var(--mt-bg)}
+.typepick button[aria-pressed="true"].mt b{color:var(--mt)}
 .typepick button[aria-pressed="true"].fs{border-color:var(--warn);background:var(--warn-bg)}
 .typepick button[aria-pressed="true"].fs b{color:var(--warn)}
 .typepick button[aria-pressed="true"].fr{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
@@ -152,7 +152,7 @@ textarea.inp{min-height:60px;resize:vertical}
 .pill.warn{background:var(--warn-bg);color:var(--warn)}
 .pill.ok{background:var(--ok-bg);color:var(--ok)}
 .t-dc{color:var(--info);font-weight:700}
-.t-mt{color:var(--ok);font-weight:700}
+.t-mt{color:var(--mt);font-weight:700}
 .badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--crit);color:#fff;font:700 11px/20px var(--f-body);text-align:center}
 .gas{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .gas::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--gc,var(--muted))}
@@ -238,6 +238,10 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.autono{position:relative;display:flex;align-items:center;gap:4px}
+.autono input{flex:1;min-width:0}
+.autono input[readonly]{background:var(--surface-2);color:var(--muted)}
+.autotag{position:absolute;right:44px;font:600 10.5px var(--f-body);color:var(--ok);background:var(--ok-bg);padding:2px 6px;border-radius:999px;pointer-events:none}
 .bprow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .today-tools{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:2;background:var(--surface);padding:4px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
 .today-tools .rel svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
@@ -276,6 +280,8 @@ body.no-money .money{display:none}
   body.staff .tabbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
   body.staff .tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 4px;min-height:56px;color:var(--ink);font-weight:600;font-size:12px}
   body.staff .tabbar button b{font:800 18px/1 var(--f-display)}
+  body.staff .tabbar button[data-v=DC] b{color:var(--info)}
+  body.staff .tabbar button[data-v=MT] b{color:var(--mt)}
   body.staff .tabbar button span{font-size:11px;color:var(--muted)}
   body.staff .tabbar button svg{width:20px;height:20px}
   body.staff .tabbar button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent)}
@@ -349,7 +355,7 @@ details.more summary::-webkit-details-marker{display:none}
 .entry-card .meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
 .entry-card .tcol{width:38px;text-align:center;font:800 13px/1 var(--f-display);padding:6px 0;border-radius:6px}
 .entry-card .tcol.dc{background:var(--info-bg);color:var(--info)}
-.entry-card .tcol.mt{background:var(--ok-bg);color:var(--ok)}
+.entry-card .tcol.mt{background:var(--mt-bg);color:var(--mt)}
 .entry-card .tcol.fs{background:var(--warn-bg);color:var(--warn);font-size:11px}
 .entry-card .tcol.fr{background:color-mix(in srgb,var(--accent) 12%,var(--surface));color:var(--accent);font-size:11px}
 .entry-card .del{opacity:.5;text-decoration:line-through}
@@ -406,9 +412,12 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.9.3';
+const APP_VERSION=window.CD_VERSION||'3.9.6';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.9.6','2026-10-20',['DC and MT numbers are automatic (the app’s own running number, taken at the moment of saving); ✎ beside the box to change one by hand']],
+ ['3.9.5','2026-10-20',['New entry: vehicle / driver / remarks section removed (old values on saved entries are kept)']],
+ ['3.9.4','2026-10-20',['Colours: DC blue, MT red (crimson) everywhere — entry cards, New entry buttons, counts, charts, phone bar']],
  ['3.9.3','2026-10-20',['Today’s entries: one list, newest on top; to-check entries marked in place','Customer branch beside the name on entry cards and registers; Registers filter by customer branch','Branch guess from the branch on their app entries (not cylinders); Customers → Customer branches to set each with a tap','Entries: Branch filter uses the customer’s branch once it is set']],
  ['3.9.2','2026-10-20',['Today’s entries: search box (customer, DC no., cylinder no.), quick filters (DC, MT, To check, OK, Mine, Edited) and one-tap Clear','Entries: when matches are outside the dates, a “Show all dates” button appears','Registers: clearer message when a branch has no numbers, with a jump to the other branch','Today’s entries is one list, newest on top (entries to check are marked in place)','Customer’s branch shown beside the name on entry cards and registers; Registers can filter by customer branch','Customer branch guess now comes from the branch on their app entries (not the cylinders’ home branch); Customers → “Customer branches” sets each one with a tap']],
  ['3.9.1','2026-10-20',['Today’s entries (right side) also shows older entries that were changed today']],
@@ -434,7 +443,7 @@ const CHANGELOG=[
 /* ---------------- number series ---------------- */
 const isNum=v=>/^\d+$/.test(String(v||''));
 function seriesRecs(t,br){return S.D.recs.filter(r=>!r.del&&r.t===t&&r.br===br&&isNum(r.dc))}
-function nextNo(t,br){if(!isCust(t))return '';let mx=0;for(const r of seriesRecs(t,br)){const n=+r.dc;if(n>mx)mx=n}return mx?String(mx+1):''}
+function nextNo(t,br){if(!isCust(t))return '';let mx=0;for(const r of seriesRecs(t,br)){const n=+r.dc;if(n>mx)mx=n}return String(mx+1)}
 function noCheck(f){
   if(!isCust(f.t)||!isNum(f.dc))return null;
   const n=+f.dc;const rs=seriesRecs(f.t,f.br).filter(r=>!(f.edit&&r.rid===f.edit.rid));
@@ -1172,7 +1181,7 @@ VIEWS.entry={
         <div class="row">
           <div class="field"><div class="date-head"><label for="f-date">Date</label><label class="yr" title="Year used when you type only day and month">Year <input id="f-year" class="mono" inputmode="numeric" maxlength="4" tabindex="-1" value="${esc(String(f.edit&&f.d?f.d.slice(0,4):(S.ui.year||new Date().getFullYear())))}"></label></div><div class="datebox"><input class="inp mono" id="f-date" value="${esc(f.d?fmtD(f.d):'')}" placeholder="24-9" inputmode="numeric" autocomplete="off" aria-describedby="f-date-msg"><button type="button" class="btn ghost sm" id="f-date-cal" aria-label="Calendar" tabindex="-1">${ic('cal')}</button><input type="date" id="f-date-pick" value="${esc(f.d)}" max="${todayISO()}" tabindex="-1" aria-hidden="true"></div><div class="small" id="f-date-msg"></div></div>
           <div class="field"><label for="f-br">Branch</label><select class="inp" id="f-br" ${can('otherBr')?'':'disabled title="Only your branch"'}>${S.company.branches.map(b=>`<option value="${esc(b)}" ${f.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
-          <div class="field"><label for="f-dc" id="f-dc-l">DC / receipt no.</label><input class="inp mono" id="f-dc" value="${esc(f.dc)}" placeholder="eg. 245"></div>
+          <div class="field"><label for="f-dc" id="f-dc-l">DC / receipt no.</label><div class="autono"><input class="inp mono" id="f-dc" value="${esc(f.dc)}" placeholder="auto" readonly tabindex="-1"><span class="autotag" id="f-dc-auto">${LANG==='ta'?'தானாக':'auto'}</span><button type="button" class="btn sm ghost" id="f-dc-ed" tabindex="-1" title="${LANG==='ta'?'எண்ணை மாற்று':'Change number'}">${ic('edit')}</button></div></div>
         </div>
         <div id="f-no-info"></div>
         <div class="field rel" id="f-cust-wrap"><label for="f-cust">Customer</label>
@@ -1196,7 +1205,7 @@ VIEWS.entry={
             <div class="field" style="flex:0 1 130px"><label for="f-own-g">Gas</label><select class="inp" id="f-own-g">${['O2','CO2','N2','Argon','DURO','Other'].map(g=>`<option ${f.ownG===g?'selected':''}>${g}</option>`).join('')}</select></div>
             <div class="field" style="flex:1 1 180px"><label for="f-own-nos">${LANG==='ta'?'அவர்கள் சிலிண்டர் எண் (விருப்பம்)':'Their cylinder numbers (optional)'}</label><input class="inp mono" id="f-own-nos" value="${esc(f.ownNos||'')}" placeholder="eg. 77, 81"></div>
           </div></div>
-        <details class="more" id="f-more" ${f.rm||S.ui.moreOpen?'open':''}><summary><span>More details: vehicle, driver, remarks</span> <span class="muted small" id="f-more-sum">${esc([f.vh,f.dr,f.rm].filter(Boolean).join(' · '))}</span></summary><div class="more-body">
+        <details class="more" id="f-more" hidden style="display:none"><summary><span>More details: vehicle, driver, remarks</span> <span class="muted small" id="f-more-sum">${esc([f.vh,f.dr,f.rm].filter(Boolean).join(' · '))}</span></summary><div class="more-body">
         <div class="row">
           <div class="field"><label for="f-vh">Vehicle no.</label><input class="inp mono" id="f-vh" list="dl-vh" value="${esc(f.vh)}" placeholder="TN 29 AB 1234"><datalist id="dl-vh">${datalistVals('vh').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
           <div class="field"><label for="f-dr">Driver</label><input class="inp" id="f-dr" list="dl-dr" value="${esc(f.dr)}" placeholder="Name"><datalist id="dl-dr">${datalistVals('dr').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
@@ -1245,7 +1254,9 @@ VIEWS.entry={
     {const tq=$('#t-q');if(tq){tq.addEventListener('input',()=>{S.ui.tq=tq.value;VIEWS.entry.update()});tq.addEventListener('keydown',e=>{if(e.key==='Escape'){tq.value='';S.ui.tq='';VIEWS.entry.update()}})}
       const tw=tq&&tq.closest('.panel');if(tw)tw.addEventListener('click',e=>{const b=e.target.closest('[data-tf]');if(!b)return;e.preventDefault();const v=b.dataset.tf;if(v==='clear'){S.ui.tf='all';S.ui.tq='';tq.value=''}else S.ui.tf=v;VIEWS.entry.update()})}
     $('#f-br').addEventListener('change',e=>{f.br=e.target.value;if(isCust(f.t)&&!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}});
-    $('#f-dc').addEventListener('input',e=>{f.dc=e.target.value.trim();f.dcAuto=false;VIEWS.entry.updateNo()});
+    $('#f-dc').addEventListener('input',e=>{f.dc=e.target.value.trim();f.dcAuto=false;$('#f-dc-auto').hidden=true;VIEWS.entry.updateNo()});
+    $('#f-dc-ed').addEventListener('click',()=>{const d=$('#f-dc');d.readOnly=false;d.tabIndex=0;d.focus();d.select()});
+    $('#f-dc-auto').hidden=!f.dcAuto;
     const moreSum=()=>{const x=$('#f-more-sum');if(x)x.textContent=[f.vh,f.dr,f.rm].filter(Boolean).join(' · ')};
     $('#f-more').addEventListener('toggle',e=>{S.ui.moreOpen=e.target.open});
     ['#f-rm','#f-vh','#f-dr'].forEach(id=>$(id).addEventListener('input',()=>setTimeout(moreSum)));
@@ -1427,6 +1438,7 @@ async function saveEntry(){
   const cust=isCust(f.t);
   const own=cust&&f.own&&+f.ownN>0?{n:+f.ownN,g:f.ownG||'O2',nos:(f.ownNos||'').trim()}:null;
   if((cust&&!f.ck)||(!cust&&!f.pl.trim())||(!f.cy.length&&!own))return;
+  if(cust&&!f.edit&&f.dcAuto){f.dc=nextNo(f.t,f.br)}
   f.busy=true;VIEWS.entry.updateSave();
   const now=new Date().toISOString();
   const body={full:f.t==='MT'&&f.full?true:false,t:f.t,d:f.d,ck:cust?f.ck:'',cn:cust?custName(f.ck):'',pl:cust?'':f.pl.trim(),dc:f.dc||'',cy:f.cy.slice(),own,rm:f.rm||'',vh:(f.vh||'').trim(),dr:(f.dr||'').trim(),br:f.br,by:S.uid,at:now};
@@ -1458,7 +1470,7 @@ function entryCard(r){
   <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'&&canEditRec(r)&&!r.sig?`<button class="btn sm ghost" data-act="sign" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="${LANG==='ta'?'கையெழுத்து':'Signature'}">✍</button>`:''}${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
 }
 
-VIEWS.entry.updateNo=function(){const f=S.form;const el=$('#f-no-info');if(!f||!el)return;const c=noCheck(f);
+VIEWS.entry.updateNo=function(){const f=S.form;if(f&&f.dcAuto&&!f.edit&&isCust(f.t)){const n=nextNo(f.t,f.br);const d=$('#f-dc');if(n!==f.dc){f.dc=n;if(d)d.value=n}}{const at=$('#f-dc-auto');if(at)at.hidden=!(f&&f.dcAuto)}const el=$('#f-no-info');if(!f||!el)return;const c=noCheck(f);
   el.innerHTML=c?`<div class="notice ${c.k==='crit'?'crit':c.k==='warn'?'warn':'info'}">${ic(c.k==='ok'?'info':'warn')}<div style="flex:1">${esc(c.msg)}${c.date&&c.date!==f.d?` <button type="button" class="btn sm" data-act="usedate" data-v="${c.date}" style="margin-left:6px">Use ${fmtD(c.date)}</button>`:''}</div></div>`:'';
   this.updateSave()};
 /* Entries list */
@@ -1737,7 +1749,7 @@ VIEWS.ana={
     const y=v=>H-pb-(v/mx)*(H-pb-14);const ticks=[0,Math.round(mx/2),mx];
     $('#an-chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:560px;max-width:100%" role="img" aria-label="Monthly DC and MT counts">
       ${ticks.map(v=>`<line x1="${pl}" x2="${W-10}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`).join('')}
-      ${months.map((m,i)=>{const x=pl+i*bw;const a=cnt[m].DC,b=cnt[m].MT;return `<rect x="${x+bw*0.14}" y="${y(a)}" width="${bw*0.34}" height="${H-pb-y(a)}" fill="var(--info)" rx="2"><title>${m} DC ${a}</title></rect><rect x="${x+bw*0.52}" y="${y(b)}" width="${bw*0.34}" height="${H-pb-y(b)}" fill="var(--ok)" rx="2"><title>${m} MT ${b}</title></rect><text x="${x+bw/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m.slice(5)-1]}</text>`}).join('')}</svg>`;
+      ${months.map((m,i)=>{const x=pl+i*bw;const a=cnt[m].DC,b=cnt[m].MT;return `<rect x="${x+bw*0.14}" y="${y(a)}" width="${bw*0.34}" height="${H-pb-y(a)}" fill="var(--info)" rx="2"><title>${m} DC ${a}</title></rect><rect x="${x+bw*0.52}" y="${y(b)}" width="${bw*0.34}" height="${H-pb-y(b)}" fill="var(--mt)" rx="2"><title>${m} MT ${b}</title></rect><text x="${x+bw/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m.slice(5)-1]}</text>`}).join('')}</svg>`;
     const rows=Object.keys(S.cust).map(ck=>{const h=(D.holding[ck]||[]).length;const u=use[ck]?use[ck].n:0;const hd=hold[ck]&&hold[ck].n?hold[ck].s/hold[ck].n:null;const need=hd!=null?Math.ceil(u/90*hd):null;return {ck,h,u,hd,need,extra:need!=null?h-need:null}}).filter(r=>r.h||r.u).sort((a,b)=>(b.extra??-1e9)-(a.extra??-1e9)||b.h-a.h);
     $('#an-tbl').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Customer</th><th class="r">Holding</th><th class="r">Used (90 d)</th><th class="r">Per month</th><th class="r">Avg days kept</th><th class="r">Needed</th><th class="r">Extra</th></tr></thead><tbody>${rows.slice(0,150).map(r=>`<tr class="click" data-act="opencust" data-v="${esc(r.ck)}"><td><b>${esc(custName(r.ck))}</b></td><td class="r num">${r.h}</td><td class="r num">${r.u}</td><td class="r num">${(r.u/3).toFixed(1)}</td><td class="r num">${r.hd!=null?Math.round(r.hd):'—'}</td><td class="r num">${r.need??'—'}</td><td class="r">${r.extra==null?'<span class="muted">—</span>':r.extra>=5?`<span class="pill crit num">+${r.extra}</span>`:r.extra>0?`<span class="pill warn num">+${r.extra}</span>`:`<span class="num muted">${r.extra}</span>`}</td></tr>`).join('')}</tbody></table></div>`}
 };
@@ -1898,7 +1910,7 @@ function cylDrawer(id){
   else{
     const list=evs.slice().reverse();
     const lbl={DC:'DC · sent to',MT:'MT · back from',FS:'Sent for filling',FR:'Received full'};
-    const col={DC:'var(--info)',MT:'var(--ok)',FS:'var(--warn)',FR:'var(--ok)'};
+    const col={DC:'var(--info)',MT:'var(--mt)',FS:'var(--warn)',FR:'var(--ok)'};
     body+=list.map((e,i)=>`<div class="trip"><div style="display:flex;flex-direction:column;align-items:center"><div class="dot" style="background:${e.flag&&!e.vf?'var(--crit)':col[e.t]}"></div>${i<list.length-1?'<div class="line" style="flex:1"></div>':''}</div>
       <div class="body"><div><span style="color:${col[e.t]};font-weight:700">${lbl[e.t]}</span> <b>${e.ck?`<a href="#" data-act="opencust" data-v="${esc(e.ck)}">${esc(custName(e.ck))}</a>`:esc(e.pl||'')}</b></div>
       <div class="small muted">${fmtD(e.d)}${e.src==='old'?' · old Excel':''}${e.dc?' · #'+esc(e.dc):''}${e.vh?' · '+esc(e.vh):''}${e.dr?' · '+esc(e.dr):''}${e.rm?' · '+esc(e.rm):''}</div>
@@ -2209,7 +2221,7 @@ const A={
   nav:el=>{if(el.dataset.v==='oldimp'){location.href='old-files.html';return}go(el.dataset.v)},
   dashbr:el=>{S.ui.dashBr=el.dataset.v;VIEWS.dash.update()},
   testfilter:()=>{S.ui.cylTest='over';S.ui.cylSt='all';go('cyl')},
-  ftype:el=>{const f=S.form;const was=f.t;f.t=el.dataset.v;f.confirm=false;f.full=false;{const w=$('#f-full-wrap'),c=$('#f-full');if(w){w.hidden=f.t!=='MT';w.classList.remove('on')}if(c)c.checked=false}if(!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}if(isCust(was)!==isCust(f.t))f.cy=[];VIEWS.entry.update()},
+  ftype:el=>{const f=S.form;const was=f.t;f.t=el.dataset.v;f.confirm=false;f.full=false;{const w=$('#f-full-wrap'),c=$('#f-full');if(w){w.hidden=f.t!=='MT';w.classList.remove('on')}if(c)c.checked=false}if(!f.edit&&isCust(f.t)){f.dc=nextNo(f.t,f.br);f.dcAuto=true;const d=$('#f-dc');d.value=f.dc;d.readOnly=true;d.tabIndex=-1;VIEWS.entry.updateNo()}if(isCust(was)!==isCust(f.t))f.cy=[];VIEWS.entry.update()},
   usedate:el=>{S.form.d=el.dataset.v;$('#f-date').value=fmtD(el.dataset.v);$('#f-date-pick').value=el.dataset.v;$('#f-date').classList.remove('bad');$('#f-date-msg').textContent='';VIEWS.entry.updateNo()},
   rmchip:el=>{S.form.cy.splice(+el.dataset.i,1);VIEWS.entry.update();$('#f-cyl').focus()},
   clearchips:()=>{S.form.cy=[];S.form.confirm=false;VIEWS.entry.update()},
