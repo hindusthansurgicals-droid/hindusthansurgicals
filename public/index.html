@@ -228,6 +228,14 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .dd button{display:flex;width:100%;border:0;background:none;padding:9px 12px;text-align:left;gap:8px;align-items:center}
 .dd button[aria-selected="true"],.dd button:hover{background:var(--surface-2)}
 .dd .sub{margin-left:auto;font-size:12px;color:var(--muted)}
+.dd .town{font-size:12px;color:var(--muted)}
+.dd .ed{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:6px;color:var(--muted);flex:none}
+.dd .ed:hover{background:var(--surface);color:var(--accent);box-shadow:inset 0 0 0 1px var(--line)}
+.dd .ed svg{width:14px;height:14px}
+.brtag{display:inline-block;font:600 10.5px/1 var(--f-body);padding:3px 6px;border-radius:999px;white-space:nowrap;vertical-align:1px}
+.brtag.d{background:var(--info-bg);color:var(--info)}
+.brtag.k{background:color-mix(in srgb,#8A4FB3 14%,var(--surface));color:#8A4FB3}
+.brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .sync-slot{display:flex;gap:6px;align-items:center}
 .sync-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 10px;font:600 12px var(--f-body);white-space:nowrap;cursor:pointer}
@@ -343,9 +351,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.5.0';
+const APP_VERSION=window.CD_VERSION||'3.5.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.5.1','2026-10-20',['Customer list shows the branch (Dharmapuri / Krishnagiri — set by you, or worked out from their cylinders) and town; your branch first; ✎ edits a customer right from the list','Customer details: Branch and Town / area fields']],
  ['3.5.0','2026-10-20',['Header: cloud status (saved / saving / offline with waiting entries) and a warning before closing while entries are still uploading','Cloud & backup panel: check that every cylinder, customer and entry is on the Firebase server','Automatic JSON backup every 30 minutes to a folder you choose (or a reminder), restore with import.html','Customer page: outstanding cylinders and full DC/MT history with filters (DC, MT, still with them, dates, cylinder); each DC shows when it came back','New entry: date starts at today after each save; the Saved box is gone; entries to check are listed separately with the reason']],
  ['3.4.1','2026-10-20',['New entry keyboard: customer ↓ then Tab moves to cylinders; Enter after each cylinder; Tab goes to Save entry and Enter saves','Vehicle, driver and remarks folded under “More details”','Date: type only day-month (24-9); the year comes from the Year box beside it (change it when needed)']],
  ['3.4.0','2026-10-20',['Import “Replace”: delete the cylinder list and old history and load them again from your Excel (backup file downloads first)','Full Excel (all details): your old sheets — O2 Cylinders, Cylinder - Formula, Cylinder Details, Sold Cylinders, ARG/CO2/N2 — plus customers, app entries, invoices','New entry: type the date like 24-9-26 and press Tab; wrong or future dates are shown','New entry: Enter in the cylinder box saves the entry; the right side shows every entry made today']],
@@ -817,6 +826,19 @@ VIEWS.dash={
   names(){$$('#dash-body [data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
 };
 
+/* Customer branch: set in the customer details, or worked out from which branch's cylinders they took. */
+function custBr(ck){
+  const c=S.cust[ck]||{};if(c.br)return {br:c.br,set:true};
+  if(!S.D)return {br:''};const memo=S.D._cbr||(S.D._cbr={});if(memo[ck])return memo[ck];
+  const n={};const ids=new Set((S.D.custMoves[ck]||[]).map(m=>m.id));
+  for(const id of ids){const b=(S.cyl[id]||{}).b;if(b)n[b]=(n[b]||0)+1}
+  const tot=Object.values(n).reduce((a,x)=>a+x,0);const top=Object.entries(n).sort((a,b)=>b[1]-a[1])[0];
+  return memo[ck]=!top?{br:''}:top[1]/tot>=0.8?{br:top[0]}:{br:'BOTH'};
+}
+const custTown=c=>c.town||(c.ad?String(c.ad).split(/[,\n]/).map(x=>x.trim()).filter(Boolean).pop()||'':'');
+function brTag(ck){const {br,set}=custBr(ck);if(!br)return '';
+  const name=br==='BOTH'?(LANG==='ta'?'இரண்டும்':'Both'):brName(br);
+  return `<span class="brtag ${br==='KGIRI'?'k':br==='BOTH'?'b':'d'}" title="${set?'':(LANG==='ta'?'சிலிண்டர்களிலிருந்து கணித்தது':'Worked out from their cylinders')}">${esc(name)}${set?'':'*'}</span>`}
 /* Typed dates: 24-9-26 · 24/09/2026 · 24.9.26 · 240926 · 24092026 · 24-9 (this year) → ISO, or null */
 function parseTypedDate(v,defYear){
   let s=String(v||'').trim();if(!s)return null;let d,m,y;
@@ -938,9 +960,10 @@ VIEWS.entry={
     const showDD=()=>{
       const q=ci.value.trim().toLowerCase();
       const all=Object.entries(S.cust).filter(([k,c])=>!c.off);
-      const items=(q?all.filter(([k,c])=>c.n.toLowerCase().includes(q)):all).sort((a,b)=>{const ai=a[1].n.toLowerCase().startsWith(q)?0:1,bi=b[1].n.toLowerCase().startsWith(q)?0:1;return ai-bi||a[1].n.localeCompare(b[1].n)}).slice(0,8);
+      const sameBr=k=>{const b=custBr(k).br;return b===f.br||b==='BOTH'?0:1};
+      const items=(q?all.filter(([k,c])=>c.n.toLowerCase().includes(q)||(custTown(c)||'').toLowerCase().includes(q)):all).sort((a,b)=>{const ai=a[1].n.toLowerCase().startsWith(q)?0:1,bi=b[1].n.toLowerCase().startsWith(q)?0:1;return ai-bi||sameBr(a[0])-sameBr(b[0])||a[1].n.localeCompare(b[1].n)}).slice(0,10);
       const exact=all.some(([k,c])=>c.n.toLowerCase()===q);
-      let html=items.map(([k,c],i)=>`<button type="button" role="option" data-ck="${esc(k)}" aria-selected="${i===sel}"><span>${esc(c.n)}</span><span class="sub num">${(S.D.holding[k]||[]).length} holding</span></button>`).join('');
+      let html=items.map(([k,c],i)=>`<button type="button" role="option" data-ck="${esc(k)}" aria-selected="${i===sel}"><span class="cn">${esc(c.n)}</span>${brTag(k)}${custTown(c)?`<span class="town">${esc(custTown(c))}</span>`:''}<span class="sub num">${(S.D.holding[k]||[]).length} holding</span><span class="ed" data-ed="${esc(k)}" title="${LANG==='ta'?'திருத்து':'Edit'}">${ic('edit')}</span></button>`).join('');
       if(q&&!exact)html+=`<button type="button" data-new="1" aria-selected="${items.length===sel}">${ic('plus','style="width:15px;height:15px"')}<span>Add “${esc(ci.value.trim())}” as a new customer</span></button>`;
       dd.innerHTML=html;dd.hidden=!html;ci.setAttribute('aria-expanded',String(!!html));
     };
@@ -954,7 +977,8 @@ VIEWS.entry={
       else if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(0,sel-1);showDD()}
       else if(e.key==='Enter'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();const b=dd.querySelectorAll('button')[Math.max(sel,0)];b&&b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true}))}
     });
-    dd.addEventListener('mousedown',async e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();
+    dd.addEventListener('mousedown',async e=>{const ed=e.target.closest('[data-ed]');if(ed){e.preventDefault();e.stopPropagation();dd.hidden=true;custForm(ed.dataset.ed,true);return}
+      const b=e.target.closest('button');if(!b)return;e.preventDefault();
       if(b.dataset.ck)pick(b.dataset.ck);
       else if(b.dataset.new){const ck=await addCustomer(ci.value.trim());if(ck)pick(ck)}});
     const cyIn=$('#f-cyl');
@@ -1159,7 +1183,7 @@ VIEWS.cust={
     rows.sort(u.custSort==='name'?(a,b)=>a.c.n.localeCompare(b.c.n):u.custSort==='old'?(a,b)=>b.o-a.o||b.h-a.h:(a,b)=>b.h-a.h||b.last.localeCompare(a.last));
     const anyRent=rows.some(r=>r.rent>0);
     $('#k-list').innerHTML=rows.length?`<div class="panel-head"><h3>${rows.length} customers</h3><span class="muted">${rows.reduce((a,r)=>a+r.h,0)} cylinders out</span></div><div class="tbl-wrap"><table><thead><tr><th>Customer</th><th>Type</th><th class="r">Holding</th><th class="r">Over 90 days</th>${anyRent?'<th class="r">Rent so far</th>':''}<th class="r">Last movement</th></tr></thead><tbody>
-      ${rows.slice(0,300).map(r=>`<tr class="click" data-act="opencust" data-v="${esc(r.k)}"><td><b>${esc(r.c.n)}</b>${r.c.ph?`<div class="small muted">${esc(r.c.ph)}</div>`:''}</td><td class="muted">${esc(r.c.t||'')}</td><td class="r num">${r.h||'<span class="muted">0</span>'}</td><td class="r">${r.o?`<span class="pill crit num">${r.o}</span>`:'<span class="muted">—</span>'}</td>${anyRent?`<td class="r num">${r.rent?rupee(r.rent):'<span class="muted">—</span>'}</td>`:''}<td class="r num muted">${fmtD(r.last)}</td></tr>`).join('')}</tbody></table></div>`
+      ${rows.slice(0,300).map(r=>`<tr class="click" data-act="opencust" data-v="${esc(r.k)}"><td><b>${esc(r.c.n)}</b> ${brTag(r.k)}${custTown(r.c)||r.c.ph?`<div class="small muted">${esc([custTown(r.c),r.c.ph].filter(Boolean).join(' · '))}</div>`:''}</td><td class="muted">${esc(r.c.t||'')}</td><td class="r num">${r.h||'<span class="muted">0</span>'}</td><td class="r">${r.o?`<span class="pill crit num">${r.o}</span>`:'<span class="muted">—</span>'}</td>${anyRent?`<td class="r num">${r.rent?rupee(r.rent):'<span class="muted">—</span>'}</td>`:''}<td class="r num muted">${fmtD(r.last)}</td></tr>`).join('')}</tbody></table></div>`
       :`<div class="empty"><b>No customer found</b>Check the spelling or add a new customer.</div>`}
 };
 
@@ -1890,16 +1914,17 @@ Object.assign(A,{
   backupnow:async()=>{const ok=await runReport('backup');if(ok&&canManage()){try{await S.db.doc('settings/company').update({lastBackup:todayISO().slice(0,7)})}catch(e){}}}
 });
 
-function custForm(ck){const c=ck?S.cust[ck]:{n:'',t:'Hospital',ph:'',ad:''};
+function custForm(ck,stay){const c=ck?S.cust[ck]:{n:'',t:'Hospital',ph:'',ad:''};
   formDrawer(ck?'Edit customer':'Add customer',`<div class="field"><label for="cu-n">Name</label><input class="inp" id="cu-n" required value="${esc(c.n)}"></div>
     <div class="row"><div class="field"><label for="cu-t">Type</label><select class="inp" id="cu-t">${['Hospital','Engineering','Industry','Granite / Metal','Scrap','Home','Other'].map(t=>`<option ${c.t===t?'selected':''}>${t}</option>`).join('')}</select></div><div class="field"><label for="cu-ph">Phone</label><input class="inp" id="cu-ph" value="${esc(c.ph||'')}" inputmode="tel"></div></div>
+    <div class="row"><div class="field"><label for="cu-br">Branch</label><select class="inp" id="cu-br"><option value="">${ck&&!c.br&&custBr(ck).br?'Auto: '+(custBr(ck).br==='BOTH'?'Both':brName(custBr(ck).br)):'Auto (from their cylinders)'}</option>${(S.company.branches||[]).map(b=>`<option value="${esc(b)}" ${c.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}<option value="BOTH" ${c.br==='BOTH'?'selected':''}>Both</option></select></div><div class="field"><label for="cu-town">Town / area</label><input class="inp" id="cu-town" value="${esc(c.town||'')}" placeholder="eg. Pennagaram"></div></div>
     <div class="field"><label for="cu-ad">Address (printed on DC)</label><textarea class="inp" id="cu-ad">${esc(c.ad||'')}</textarea></div>
     <div class="row"><div class="field"><label for="cu-dep">Deposit held (₹)</label><input class="inp num" type="number" min="0" id="cu-dep" value="${esc(c.dep??'')}"></div><div class="field"><label for="cu-rate">Own rent ₹/day</label><input class="inp num" type="number" min="0" step="0.5" id="cu-rate" value="${esc(c.rate??'')}" placeholder="default"></div><div class="field"><label for="cu-free">Own free days</label><input class="inp num" type="number" min="0" id="cu-free" value="${esc(c.free??'')}" placeholder="default"></div></div>
     <div class="field"><label for="cu-gst">Customer GSTIN</label><input class="inp mono" id="cu-gst" value="${esc(c.gst||'')}"></div>
     <div class="field"><label>Own refill price ₹ (blank = default)</label><div class="row">${RENT_GASES.map(g=>`<div class="field" style="flex:1 1 80px"><label for="cu-pr-${g}">${g}</label><input class="inp num" type="number" min="0" step="0.01" id="cu-pr-${g}" data-pr="${g}" value="${esc((c.pr||{})[g]??'')}"></div>`).join('')}</div></div>`,
     async()=>{const n=$('#cu-n').value.replace(/\s+/g,' ').trim();if(!n){toast('Type the name');return}
-      const body={n,t:$('#cu-t').value,ph:$('#cu-ph').value.trim(),ad:$('#cu-ad').value.trim(),dep:$('#cu-dep').value,rate:$('#cu-rate').value,free:$('#cu-free').value,gst:$('#cu-gst').value.trim(),pr:Object.fromEntries($$('[data-pr]').map(i=>[i.dataset.pr,i.value]))};
-      try{if(ck){await S.db.doc('cust/all').update({list:{[ck]:body}});toast('Saved');closeDrawer();openDrawer({k:'cust',v:ck})}
+      const body={n,t:$('#cu-t').value,br:$('#cu-br').value,town:$('#cu-town').value.replace(/\s+/g,' ').trim(),ph:$('#cu-ph').value.trim(),ad:$('#cu-ad').value.trim(),dep:$('#cu-dep').value,rate:$('#cu-rate').value,free:$('#cu-free').value,gst:$('#cu-gst').value.trim(),pr:Object.fromEntries($$('[data-pr]').map(i=>[i.dataset.pr,i.value]))};
+      try{if(ck){await S.db.doc('cust/all').update({list:{[ck]:body}});toast('Saved');closeDrawer();if(S.D)delete S.D._cbr;if(stay){const ci=$('#f-cust');if(ci){ci.focus()}}else openDrawer({k:'cust',v:ck})}
         else{const k=slug(n);if(S.cust[k]){toast(n+' already exists');return}if(S.custDoc)await S.db.doc('cust/all').update({list:{[k]:Object.assign(body,{by:S.uid,at:new Date().toISOString()})}});else await S.db.doc('cust/all').set({list:{[k]:body}});toast('Added '+n);closeDrawer()}}catch(e){toast(dbErr(e))}},ck?'Save':'Add customer')}
 document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(!f)return;if(el.tagName==='A')e.preventDefault();f(el,e)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.drawer)closeDrawer();
