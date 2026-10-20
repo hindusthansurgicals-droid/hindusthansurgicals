@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='3.5.4';window.CD_BUILD='2026-10-20';
+window.CD_VERSION='3.6.0';window.CD_BUILD='2026-10-20';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -22,7 +22,10 @@ const OWNER_EMAILS = ['hindusthansurgicals@gmail.com'];
    Firestore cannot store an array directly inside another array, which the old
    Excel history and purchase records use. Inner arrays are stored as {__j:"<json>"}
    and turned back into arrays when read. */
+/* Marks a field to be removed when written (e.g. a customer merged into another). */
+const DEL=Object.freeze({__cd_del:true});
 function enc(v){
+  if(v===DEL)return firebase.firestore.FieldValue.delete();
   if(Array.isArray(v)) return v.map(x=>Array.isArray(x)?{__j:JSON.stringify(x)}:enc(x));
   if(v&&typeof v==='object'&&Object.getPrototypeOf(v)===Object.prototype){
     const o={};for(const k in v){if(v[k]!==undefined)o[k]=enc(v[k])}return o;
@@ -206,6 +209,7 @@ window.FBC={
   },
   signOut:()=>auth.signOut(),
   sync:()=>Object.assign({},sync),
+  DEL,
   backupAll,
   /* what the Firebase server itself holds (not this device's copy) */
   serverData:()=>backupAll('server',{skip:['members','profiles']}),

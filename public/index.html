@@ -127,7 +127,7 @@ textarea.inp{min-height:60px;resize:vertical}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 
 /* type toggle on entry */
-.typepick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.typepick{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px}
 @media (max-width:1100px){.typepick{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .typepick button{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 14px;text-align:left;display:flex;flex-direction:column;gap:2px}
 .typepick b{font:800 20px/1 var(--f-display)}
@@ -237,6 +237,25 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.k{background:color-mix(in srgb,#8A4FB3 14%,var(--surface));color:#8A4FB3}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
+.tabbar{display:none}
+.panel.merge{padding:10px 12px;margin-bottom:10px}
+.mg{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.mg>div:not(.mg-or){display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.mg-or{color:var(--muted);font-size:18px}
+.btn.wa{color:#1C8A4A}.btn.wa svg{width:16px;height:16px}
+.fullret{border:1px dashed var(--line);border-radius:9px;padding:8px 10px;display:flex;gap:8px;align-items:flex-start}
+.fullret.on{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+@media (max-width:900px){
+  body.staff .rail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:30;background:var(--surface);border-top:1px solid var(--line);border-bottom:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(0,0,0,.08)}
+  body.staff .rail>button{display:none}
+  body.staff .tabbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
+  body.staff .tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 4px;min-height:56px;color:var(--ink);font-weight:600;font-size:12px}
+  body.staff .tabbar button b{font:800 18px/1 var(--f-display)}
+  body.staff .tabbar button span{font-size:11px;color:var(--muted)}
+  body.staff .tabbar button svg{width:20px;height:20px}
+  body.staff .tabbar button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent)}
+  body.staff main{padding-bottom:100px}
+}
 .mtlist{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface)}
 .mt-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .mt-h .sp{flex:1}
@@ -360,9 +379,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.5.4';
+const APP_VERSION=window.CD_VERSION||'3.6.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.6.0','2026-10-20',['Staff see only New entry, Entries, Customers, Cylinders; on a phone they get big DC / MT / Customers / Cylinders buttons at the bottom','FILL / FULL hidden unless switched on in Settings','Alt+D = DC, Alt+M = MT','MT: “Came back FULL (not used)” — the cylinders go to the godown as full','WhatsApp: send a DC (PDF on phones) or a reminder to the customer; dashboard “Today’s summary” with Send on WhatsApp','Customer page shows bill outstanding ₹','Owner tools: merge look-alike customer names; fix old entries that have no date']],
  ['3.5.4','2026-10-20',['MT: after choosing the customer, their cylinders are listed — tick the ones that came back (or “All came back”); typed numbers tick too, and numbers not in the list can still be typed']],
  ['3.5.3','2026-10-20',['New entry: when “Check before saving” shows, Space ticks “Save anyway” and moves to Save','After saving, the cursor goes to the date and the last date stays (Tab keeps it and goes to the customer)']],
  ['3.5.2','2026-10-20',['Fix: backup and “Check data on the server” failed because the security rules do not allow reading the whole settings folder; settings are now read one by one']],
@@ -446,6 +466,7 @@ function setLang(l){LANG=l;try{localStorage.setItem('cd-lang',l)}catch(e){}docum
 
 const statusPill=s=>`<span class="pill ${STATUS[s][1]}">${STATUS[s][0]}</span>`;
 const ICON={
+  wa:'<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c.3 1.6 1.4 3.2 3 4l1.2-1 1.8.8-.4 1.6c-3 .2-6.2-2.8-6.4-6l1.6-.4.8 1.8z"/>',
   cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   dash:'<path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 4v4h6V4z"/>',
   entry:'<path d="M12 5v14M5 12h14"/>',
@@ -517,7 +538,7 @@ function derive(){
       if(!r||!r.t||!Array.isArray(r.cy))continue;
       const rec=Object.assign({},r,{rid,docId});recs.push(rec);
       if(r.del)continue;
-      r.cy.forEach(c=>moves.push({src:'new',t:r.t,d:r.d,at:r.at||'',ck:r.ck||'',cn:r.cn,dc:r.dc,by:r.by,br:r.br,pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',rid,docId,cyl:c,vf:r.vf&&r.vf[c]||null,rm:r.rm||''}));
+      r.cy.forEach(c=>moves.push({src:'new',t:r.t,full:!!r.full,d:r.d,at:r.at||'',ck:r.ck||'',cn:r.cn,dc:r.dc,by:r.by,br:r.br,pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',rid,docId,cyl:c,vf:r.vf&&r.vf[c]||null,rm:r.rm||''}));
     }
   }
   moves.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:numCmp(a,b));
@@ -543,7 +564,7 @@ function derive(){
     }
     const c=S.cyl[id]||{};
     let st='unused',d=null;
-    if(prev){d=prev.d;st=ST[prev.t]||'empty'}
+    if(prev){d=prev.d;st=prev.t==='MT'&&prev.full?'full':(ST[prev.t]||'empty')}
     const ck=st==='out'?prev.ck:lastCk;
     const r=(c.r||'').toUpperCase();
     if(r==='MISSING')st='missing';else if(r==='SOLD')st='sold';
@@ -632,6 +653,8 @@ function dbErr(e){
 }
 
 /* ---------------- shell ---------------- */
+/* Staff see only what they use every day. */
+const STAFF_NAV=['entry','entries','cust','cyl','help'];
 const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').textContent='Cylinder tracking · '+(S.company.branches||[]).map(brName).join(' · ')}
 function paintShell(){
@@ -643,12 +666,75 @@ function paintShell(){
     if(k==='entry'&&!canEnter())return false;
     if(k==='settings'&&!canManage())return false;
     if(k==='oldimp'&&!S.isOwner)return false;
+    if(r==='staff'&&!STAFF_NAV.includes(k))return false;
     return true;
   }).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
+  (r==='staff'?`<div class="tabbar">${[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']].map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button><button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button></div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
   $('#who').innerHTML='<span id="sync-slot" class="sync-slot"></span>'+(window.FBC?'<button class="btn sm ghost" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+myBranch():'Viewer')}</span>`:''}</div>`:'');
   paintSync();
+}
+/* ---------------- owner clean-up tools ---------------- */
+/* 5. Same customer saved under two spellings */
+const nkTok=n=>String(n||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean).map(w=>({hospital:'hos',hospitals:'hos',hosp:'hos',engineering:'eng',engineers:'eng',engg:'eng',industries:'ind',industry:'ind'})[w]||w).filter(w=>!['m','s','ms','the','and','sri','shri','sree'].includes(w));
+function levD(a,b){if(a===b)return 0;let p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const c=[i];for(let j=1;j<=b.length;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[b.length]}
+function similarCustomers(){
+  const not=S.company.notSame||{};
+  const L=Object.entries(S.cust).filter(([k,c])=>c&&c.n&&!c.off).map(([k,c])=>{const t=nkTok(c.n);return {k,n:c.n,key:t.join(''),t}});
+  const pairs=[];
+  for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const a=L[i],b=L[j];if(!a.key||!b.key)continue;
+    const mx=Math.max(a.key.length,b.key.length);if(Math.abs(a.key.length-b.key.length)>3)continue;
+    const d=levD(a.key,b.key);const sc=1-d/mx;
+    if(sc<0.84||d>3)continue;
+    // different numbers in the name (Annai 1 / Annai 2) are different customers
+    const na=a.n.match(/\d+/g)||[],nb=b.n.match(/\d+/g)||[];if(na.join()!==nb.join())continue;
+    const key=[a.k,b.k].sort().join('|');if(not[key])continue;
+    pairs.push({a:a.k,b:b.k,sc,key})}
+  return pairs.sort((x,y)=>y.sc-x.sc);
+}
+async function mergeCustomers(from,to){
+  const F=S.cust[from],T=S.cust[to];if(!F||!T)return;
+  const toName=T.n;
+  // entries made in the app
+  for(const [docId,doc] of Object.entries(S.logs)){const ch={};for(const [rid,r] of Object.entries(doc.recs||{}))if(r&&r.ck===from)ch[rid]={ck:to,cn:toName};
+    if(Object.keys(ch).length)await S.db.doc('log/'+docId).update({recs:ch})}
+  // invoices
+  for(const [id,b] of Object.entries(S.bill||{})){const ch={};for(const [iid,v] of Object.entries(b.inv||{}))if(v&&v.ck===from)ch[iid]={ck:to,cn:toName};
+    if(Object.keys(ch).length)await S.db.doc('bill/'+id).update({inv:ch})}
+  // old Excel history (names)
+  if(S.hist){const names=S.hist.meta.cust.map(n=>slug(n)===from?toName:n);
+    if(names.some((n,i)=>n!==S.hist.meta.cust[i])){await S.db.doc('hist/meta').update({cust:names});S.hist.meta.cust=names}}
+  // customer details: keep what the second one had where the first is empty, then remove it
+  const keep={};['ph','ad','gst','town','br','dep','rate','free'].forEach(k=>{if((T[k]==null||T[k]==='')&&F[k]!=null&&F[k]!=='')keep[k]=F[k]});
+  await S.db.doc('cust/all').update({list:Object.assign({[from]:window.FBC?FBC.DEL:null},Object.keys(keep).length?{[to]:keep}:{})});
+  toast((LANG==='ta'?'இணைக்கப்பட்டது: ':'Merged: ')+F.n+' → '+toName);scheduleDerive();
+}
+function mergePanel(){
+  const pairs=similarCustomers();const ta=LANG==='ta';
+  const info=k=>{const c=S.cust[k]||{};const mv=(S.D.custMoves[k]||[]).length;const h=(S.D.holding[k]||[]).length;return `<b>${esc(c.n)}</b> ${brTag(k)}<div class="small muted">${h} ${ta?'வைத்திருப்பது':'holding'} · ${mv} ${ta?'நகர்வுகள்':'moves'}${c.ph?' · '+esc(c.ph):''}${S.D.lastMove[k]?' · '+fmtD(S.D.lastMove[k]):''}</div>`};
+  const head=`<h3>${ta?'ஒரே வாடிக்கையாளர், வேறு எழுத்து?':'Same customer, different spelling?'}</h3>`;
+  const body=`<p class="muted" style="margin-top:0">${ta?'பெயர்கள் ஒத்திருப்பவை. ஒரே customer என்றால் சரியான பெயரை “இதை வை” அழுத்தவும் — மற்றதன் எல்லா பதிவுகளும் (பழைய history, app பதிவுகள், பில்) அதற்கு மாறும். வேறு என்றால் “வேறு வேறு”.':'Names that look alike. If they are the same customer, press “Keep this” on the right spelling — all entries of the other (old history, app entries, invoices) move to it. If they are different, press “Different”.'}</p>
+  ${pairs.length?pairs.map(p=>`<div class="panel merge"><div class="mg"><div>${info(p.a)}<button class="btn sm ok" data-act="mergekeep" data-from="${esc(p.b)}" data-to="${esc(p.a)}">${ta?'இதை வை':'Keep this'}</button></div><div class="mg-or">⇄</div><div>${info(p.b)}<button class="btn sm ok" data-act="mergekeep" data-from="${esc(p.a)}" data-to="${esc(p.b)}">${ta?'இதை வை':'Keep this'}</button></div></div><div style="text-align:right"><button class="btn sm ghost" data-act="notsame" data-v="${esc(p.key)}">${ta?'வேறு வேறு':'Different'}</button></div></div>`).join(''):`<div class="empty"><b>${ta?'ஒத்த பெயர்கள் எதுவும் இல்லை':'No look-alike names left'}</b></div>`}`;
+  return [head,body];
+}
+/* 6. Old Excel entries that have no date */
+function datelessList(){
+  if(!S.hist)return [];const {meta,chunks}=S.hist;const out=[];const seq={};
+  chunks.forEach((ch,ci)=>ch.forEach((e,pos)=>{const id=meta.cyl[e[0]];(seq[id]=seq[id]||[]).push({ci,pos,e})}));
+  for(const [id,list] of Object.entries(seq))list.forEach((x,i)=>{if(x.e[2]>=0)return;
+    let prev=null,next=null;for(let j=i-1;j>=0;j--)if(list[j].e[2]>=0){prev=list[j].e[2];break}for(let j=i+1;j<list.length;j++)if(list[j].e[2]>=0){next=list[j].e[2];break}
+    out.push({id,ci:x.ci,pos:x.pos,t:x.e[1]?'MT':'DC',cn:x.e[3]>=0?meta.cust[x.e[3]]:'',prev,next})});
+  return out;
+}
+async function saveHistChunk(ci){await S.db.doc('hist/e'+ci).set({ev:S.hist.chunks[ci],i:ci});scheduleDerive()}
+function datelessPanel(){
+  const L=datelessList();const ta=LANG==='ta';
+  const head=`<h3>${ta?'தேதி இல்லாத பழைய பதிவுகள்':'Old entries without a date'} · ${L.length}</h3>`;
+  const body=`<p class="muted" style="margin-top:0">${ta?'பழைய Excel-இல் தேதி தவறாக type ஆனவை. சரியான தேதியை type செய்து சேமியுங்கள் (24-9 போல). தெரியாவிட்டால் அப்படியே விடலாம்.':'These came from the old Excel with a mistyped date. Type the right date (like 24-9) and save. If you do not know it, leave it.'}</p>
+  ${L.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'சிலிண்டர்':'Cylinder'}</th><th></th><th>${ta?'வாடிக்கையாளர்':'Customer'}</th><th>${ta?'இடையில்':'Between'}</th><th>${ta?'தேதி':'Date'}</th><th></th></tr></thead><tbody>${L.map((x,i)=>`<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(x.id)}">${esc(x.id)}</button></td><td><span class="${x.t==='DC'?'t-dc':'t-mt'}">${x.t}</span></td><td>${esc(x.cn||'—')}</td><td class="small muted">${x.prev!=null?fmtD(isoFromDay(x.prev)):'…'} → ${x.next!=null?fmtD(isoFromDay(x.next)):'…'}</td>
+    <td><input class="inp mono" style="width:110px;min-height:32px" data-dl="${i}" placeholder="${x.prev!=null?fmtD(isoFromDay(x.prev)).slice(0,5):'24-9'}"></td><td style="white-space:nowrap"><button class="btn sm primary" data-act="dlsave" data-i="${i}">${ta?'சேமி':'Save'}</button></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'எல்லாம் சரி':'All fixed'}</b></div>`}`;
+  return [head,body];
 }
 /* ---------------- cloud sync status + automatic backup ---------------- */
 const BK={last:null,dir:null,dirName:'',auto:true,busy:false,due:false,lastChange:0,check:null,checking:false};
@@ -761,6 +847,8 @@ function refresh(){
   if(!role()){v.innerHTML=noAccessView();mounted='noaccess';return}
   if(S.view==='entry'&&!canEnter())S.view='dash';
   if(S.view==='settings'&&!canManage())S.view='dash';
+  if(role()==='staff'&&!STAFF_NAV.includes(S.view))S.view=canEnter()?'entry':'cust';
+  document.body.classList.toggle('staff',role()==='staff');
   const V=VIEWS[S.view];
   if(mounted!==S.view){v.innerHTML=V.mount();mounted=S.view;V.after&&V.after()}
   else V.update&&V.update();
@@ -808,7 +896,9 @@ VIEWS.dash={
     const todayHtml=`<div class="tbl-wrap"><table><thead><tr><th>Branch</th><th class="r">DC out</th><th class="r">MT in</th><th class="r">To filling</th><th class="r">Filled</th><th class="r">Mismatch</th></tr></thead><tbody>
       ${brs.map(b=>{const rs=allToday.filter(r=>r.br===b);return `<tr><td>${esc(brName(b))}</td><td class="r num">${sumT(rs,'DC')}</td><td class="r num">${sumT(rs,'MT')}</td><td class="r num">${sumT(rs,'FS')}</td><td class="r num">${sumT(rs,'FR')}</td><td class="r num">${todayMism.filter(x=>x.br===b).length||'<span class="muted">0</span>'}</td></tr>`}).join('')}</tbody></table></div>
       ${Object.keys(staff).length?`<div class="chips" style="margin-top:12px">${Object.entries(staff).map(([id,s])=>`<span class="pill unused"><span data-name="${esc(id)}">${esc(personName(id))}</span> · ${s.n} entries · ${s.c} cyl</span>`).join('')}</div>`:`<div class="small muted" style="margin-top:10px">No entries yet today.</div>`}`;
+    const sm=canManage()?daySummary():null;
     $('#dash-body').innerHTML=`
+    ${sm?`<div class="panel daysum"><div class="panel-head"><h3>${LANG==='ta'?'இன்றைய சுருக்கம்':'Today’s summary'}</h3><span class="muted small">${fmtD(S.D.today)}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="btn sm wa" data-act="wasum">${ic('wa')}${LANG==='ta'?'WhatsApp-இல் அனுப்பு':'Send on WhatsApp'}</button><button class="btn sm" data-act="copysum">${LANG==='ta'?'நகலெடு':'Copy'}</button></span></div><div class="kv">${sm.lines.map(([a,b])=>`<div><span>${esc(a)}</span><b style="font-size:14px">${esc(b)}</b></div>`).join('')}</div></div>`:''}
     ${open?`<div class="notice crit">${ic('warn')}<div><b>${open} cylinder ${open===1?'movement needs':'movements need'} checking.</b> A cylinder came back from the wrong customer or an entry is missing. <button class="btn sm" data-act="nav" data-v="mism" style="margin-left:6px">Open mismatches</button></div></div>`:''}
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
     ${canManage()&&(S.company.lastBackup||'')<t.slice(0,7)?`<div class="notice info">${ic('dl')}<div><b>This month's backup is not downloaded yet.</b> Keep one copy every month. <button class="btn sm" data-act="backupnow" style="margin-left:6px">Download backup</button></div></div>`:''}
@@ -838,6 +928,37 @@ VIEWS.dash={
   names(){$$('#dash-body [data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
 };
 
+function custDue(ck){let t=0;for(const b of Object.values(S.bill||{}))for(const v of Object.values(b.inv||{})){if(v.ck!==ck||v.cancel)continue;t+=Math.max(0,(+v.total||0)-invPaid(v))}return Math.round(t)}
+/* Today in a few lines — for the dashboard and to send on WhatsApp. */
+function daySummary(){
+  const t=S.D.today;const ta=LANG==='ta';const recs=S.D.recs.filter(r=>!r.del&&r.d===t);
+  const by=k=>recs.filter(r=>r.t===k);const cyl=a=>a.reduce((x,r)=>x+r.cy.length,0);
+  const dc=by('DC'),mt=by('MT'),full=mt.filter(r=>r.full);
+  const newMism=S.D.mism.filter(m=>!m.vf&&m.d===t).length,openMism=S.D.mism.filter(m=>!m.vf).length;
+  const over=Object.values(S.D.state).filter(x=>x.st==='out'&&x.days>90);
+  const topC=Object.entries(over.reduce((a,x)=>{a[x.ck]=(a[x.ck]||0)+1;return a},{})).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const brs=S.company.branches.map(b=>[b,cyl(dc.filter(r=>r.br===b)),cyl(mt.filter(r=>r.br===b))]);
+  const lines=[
+    [ta?'DC (Full அனுப்பியது)':'DC (full out)',`${dc.length} ${ta?'பதிவு':'entries'} · ${cyl(dc)} ${ta?'சிலிண்டர்':'cylinders'}`],
+    [ta?'MT (காலி வந்தது)':'MT (empty in)',`${mt.length} ${ta?'பதிவு':'entries'} · ${cyl(mt)} ${ta?'சிலிண்டர்':'cylinders'}${full.length?` · ${cyl(full)} ${ta?'நிரம்பியபடி':'came back full'}`:''}`],
+    [ta?'கிளை வாரியாக':'By branch',brs.map(([b,o,i])=>`${brName(b)} ${o} out / ${i} in`).join(' · ')],
+    [ta?'சரிபார்க்க':'To check',`${newMism} ${ta?'இன்று':'today'} · ${openMism} ${ta?'மொத்தம்':'open'}`],
+    [ta?'90 நாளுக்கு மேல்':'Out over 90 days',`${over.length}${topC.length?' · '+topC.map(([ck,n])=>custName(ck)+' '+n).join(', '):''}`]];
+  const text=`${S.company.name||'Cylinder Desk'} — ${fmtD(t)}\n`+lines.map(([a,b])=>`${a}: ${b}`).join('\n');
+  return {lines,text};
+}
+/* WhatsApp: 10-digit Indian numbers get 91 in front. */
+const waPhone=p=>{const d=String(p||'').replace(/\D/g,'');if(d.length===10)return '91'+d;if(d.length===12&&d.startsWith('91'))return d;if(d.length===11&&d.startsWith('0'))return '91'+d.slice(1);return ''};
+function waOpen(phone,text){window.open('https://wa.me/'+(phone||'')+'?text='+encodeURIComponent(text),'_blank','noopener');if(!phone)toast(LANG==='ta'?'இந்த வாடிக்கையாளருக்கு phone எண் இல்லை — WhatsApp-இல் chat-ஐத் தேர்வு செய்யவும்.':'No phone number saved for this customer — pick the chat in WhatsApp.')}
+function dcText(r){const ta=LANG==='ta';return `${S.company.name||''}\n${r.t==='DC'?'DC':'MT'}${r.dc?' #'+r.dc:''} · ${fmtD(r.d)}\n${custName(r.ck)}\n${r.cy.length} ${ta?'சிலிண்டர்':'cylinder'+(r.cy.length===1?'':'s')}: ${r.cy.join(', ')}${r.vh?'\n'+(ta?'வாகனம் ':'Vehicle ')+r.vh:''}`}
+/* DC to the customer's WhatsApp: on a phone the PDF itself is shared; otherwise the chat opens with the details (PDF downloads to attach). */
+async function waDC(docId,rid){
+  const doc=S.logs[docId];const r=doc&&doc.recs&&doc.recs[rid];if(!r)return;const ph=waPhone((S.cust[r.ck]||{}).ph);const text=dcText(r);
+  if(r.t==='DC'){const out=await dcPdf(docId,rid,true);
+    if(out&&navigator.canShare&&window.File){try{const file=new File([out.buf],out.name,{type:'application/pdf'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],text});return}}catch(e){if(e&&e.name==='AbortError')return}}
+    if(out&&!/Android|iPhone|iPad/i.test(navigator.userAgent))await saveFile(out.name,out.buf)}
+  waOpen(ph,text);
+}
 /* Customer branch: set in the customer details, or worked out from which branch's cylinders they took. */
 function custBr(ck){
   const c=S.cust[ck]||{};if(c.br)return {br:c.br,set:true};
@@ -899,7 +1020,7 @@ VIEWS.entry={
   mount(){
     if(!S.form)S.form=newForm();const f=S.form;
     if(!f.dc&&isCust(f.t)&&!f.edit){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc}
-    const T=[['DC','dc','Full to customer'],['MT','mt','Empty from customer'],['FS','fs','Send for filling'],['FR','fr','Received full']];
+    const T=[['DC','dc','Full to customer'],['MT','mt','Empty from customer'],['FS','fs','Send for filling'],['FR','fr','Received full']].filter(([k])=>S.company.useFill||k==='DC'||k==='MT'||f.t===k);
     return `<div class="page-head"><div><h2>${f.edit?'Edit entry':'New entry'}</h2><p>One entry per DC or trip. Type the customer once, then add or scan every cylinder number.</p></div>${f.edit?`<div class="actions"><button class="btn" data-act="cancelEdit">Cancel edit</button></div>`:''}</div>
     <div class="split">
       <form class="panel" id="entry-form" autocomplete="off" style="display:flex;flex-direction:column;gap:14px">
@@ -922,6 +1043,7 @@ VIEWS.entry={
           <div class="small muted" id="f-cyl-help"></div>
         </div>
         <div id="f-expect"></div>
+        <label class="check fullret" id="f-full-wrap" ${f.t==='MT'?'':'hidden'}><input type="checkbox" id="f-full" tabindex="-1" ${f.full?'checked':''}> <span><b>${LANG==='ta'?'நிரம்பியபடியே திரும்பி வந்தது (பயன்படுத்தவில்லை)':'Came back FULL (not used)'}</b> <span class="muted small">${LANG==='ta'?'— குடோனில் “நிரம்பியது” என்று சேரும்':'— goes to the godown as full'}</span></span></label>
         <details class="more" id="f-more" ${f.rm||S.ui.moreOpen?'open':''}><summary><span>More details: vehicle, driver, remarks</span> <span class="muted small" id="f-more-sum">${esc([f.vh,f.dr,f.rm].filter(Boolean).join(' · '))}</span></summary><div class="more-body">
         <div class="row">
           <div class="field"><label for="f-vh">Vehicle no.</label><input class="inp mono" id="f-vh" list="dl-vh" value="${esc(f.vh)}" placeholder="TN 29 AB 1234"><datalist id="dl-vh">${datalistVals('vh').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
@@ -965,6 +1087,7 @@ VIEWS.entry={
     $('#f-more').addEventListener('toggle',e=>{S.ui.moreOpen=e.target.open});
     ['#f-rm','#f-vh','#f-dr'].forEach(id=>$(id).addEventListener('input',()=>setTimeout(moreSum)));
     $('#f-rm').addEventListener('input',e=>{f.rm=e.target.value});
+    $('#f-full').addEventListener('change',e=>{f.full=e.target.checked;$('#f-full-wrap').classList.toggle('on',f.full)});
     $('#f-vh').addEventListener('input',e=>{f.vh=e.target.value.toUpperCase()});
     $('#f-dr').addEventListener('input',e=>{f.dr=e.target.value});
     $('#f-pl').addEventListener('input',e=>{f.pl=e.target.value;this.update()});
@@ -1118,7 +1241,7 @@ async function saveEntry(){
   if((cust&&!f.ck)||(!cust&&!f.pl.trim())||!f.cy.length)return;
   f.busy=true;VIEWS.entry.updateSave();
   const now=new Date().toISOString();
-  const body={t:f.t,d:f.d,ck:cust?f.ck:'',cn:cust?custName(f.ck):'',pl:cust?'':f.pl.trim(),dc:f.dc||'',cy:f.cy.slice(),rm:f.rm||'',vh:(f.vh||'').trim(),dr:(f.dr||'').trim(),br:f.br,by:S.uid,at:now};
+  const body={full:f.t==='MT'&&f.full?true:false,t:f.t,d:f.d,ck:cust?f.ck:'',cn:cust?custName(f.ck):'',pl:cust?'':f.pl.trim(),dc:f.dc||'',cy:f.cy.slice(),rm:f.rm||'',vh:(f.vh||'').trim(),dr:(f.dr||'').trim(),br:f.br,by:S.uid,at:now};
   try{
     if(f.edit){
       body.by=f.edit.by;body.at=f.edit.at;body.ed={by:S.uid,at:now};
@@ -1142,8 +1265,8 @@ function entryCard(r){
   return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
   <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div><b>${esc(recTitle(r))}</b> ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}</div>
   <div class="chips">${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
-  <div class="meta"><span>${fmtD(r.d)} · ${esc(brName(r.br))}</span><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span><span>${fmtDT(r.at)}</span>${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
-  <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
+  <div class="meta"><span>${fmtD(r.d)} · ${esc(brName(r.br))}</span><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span><span>${fmtDT(r.at)}</span>${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
+  <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
 }
 
 VIEWS.entry.updateNo=function(){const f=S.form;const el=$('#f-no-info');if(!f||!el)return;const c=noCheck(f);
@@ -1203,7 +1326,7 @@ VIEWS.cyl={
 
 /* Customers */
 VIEWS.cust={
-  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions"><button class="btn" data-act="newcust">${ic('plus')}Add customer</button></div>`:''}</div>
+  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return n?`<button class="btn" data-act="mergeopen">${ic('warn')}${LANG==='ta'?'ஒத்த பெயர்கள்':'Look-alike names'} · ${n}</button>`:''})():''}<button class="btn" data-act="newcust">${ic('plus')}Add customer</button></div>`:''}</div>
     <div class="panel"><div class="row"><div class="field search"><label for="k-q">Customer</label><div class="rel">${ic('search')}<input class="inp" id="k-q" value="${esc(u.custQ)}" placeholder="Search by name"></div></div>
     <div class="field" style="flex:0 1 auto"><label>Sort</label><div class="seg" id="k-sort"></div></div></div></div><div class="panel" id="k-list"></div>`},
   after(){$('#k-q').addEventListener('input',e=>{S.ui.custQ=e.target.value;this.update()});this.update()},
@@ -1230,7 +1353,7 @@ VIEWS.fu={
     $('#fu-list').innerHTML=rs.length?`<div class="small muted">${rs.length} customers · ${rs.reduce((a,r)=>a+r.h.length,0)} cylinders</div>`+rs.map(r=>{const fu=r.c.fu;return `<div class="panel" style="display:flex;flex-direction:column;gap:10px">
       <div class="row" style="align-items:flex-start"><div style="flex:1 1 220px;min-width:0"><h3><a href="#" data-act="opencust" data-v="${esc(r.ck)}">${esc(r.c.n)}</a></h3><div class="small muted" style="margin-top:3px">${r.c.ph?`Phone <span class="mono" style="user-select:all">${esc(r.c.ph)}</span>`:'No phone number saved'} · ${r.h.length} cylinder${r.h.length===1?'':'s'} · oldest ${r.h[0].days} days</div>
       ${fu?`<div class="small" style="margin-top:4px"><span class="pill unused">Last follow-up ${fmtDT(fu.at)}</span> ${esc(fu.note||'')}</div>`:''}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" data-act="copymsg" data-v="${esc(r.ck)}">Copy message</button>${canEnter()?`<button class="btn sm" data-act="logcall" data-v="${esc(r.ck)}">${ic('check')}Log follow-up</button>`:''}</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm wa" data-act="wamsg" data-v="${esc(r.ck)}">${ic('wa')}WhatsApp</button><button class="btn sm" data-act="copymsg" data-v="${esc(r.ck)}">Copy message</button>${canEnter()?`<button class="btn sm" data-act="logcall" data-v="${esc(r.ck)}">${ic('check')}Log follow-up</button>`:''}</div></div>
       <div class="chips">${r.h.map(s=>`<button class="cyl" data-act="opencyl" data-v="${esc(s.id)}">${esc(s.id)} <span class="muted" style="font-family:var(--f-body)">${s.days}d</span></button>`).join('')}</div></div>`}).join('')
       :`<div class="panel empty"><b>No one over the limit</b>Every customer has returned cylinders within ${esc(S.ui.fuDays)} days.</div>`}
 };
@@ -1240,7 +1363,7 @@ function fuMessage(ck){const d=+S.ui.fuDays||+S.company.fuDays||90;const h=(S.D.
 
 /* Mismatches */
 VIEWS.mism={
-  mount(){return `<div class="page-head"><div><h2>Mismatches</h2><p>Entries that do not match where the cylinder should be. Fix the entry if it was typed wrong, or verify it after checking with the customer.</p></div><div class="actions"><div class="seg" id="m-seg"></div></div></div>
+  mount(){return `<div class="page-head"><div><h2>Mismatches</h2><p>Entries that do not match where the cylinder should be. Fix the entry if it was typed wrong, or verify it after checking with the customer.</p></div><div class="actions">${S.isOwner&&datelessList().length?`<button class="btn" data-act="dlopen">${ic('cal')}${LANG==='ta'?'தேதி இல்லாத பழைய பதிவுகள்':'Old entries without date'} · ${datelessList().length}</button>`:''}<div class="seg" id="m-seg"></div></div></div>
     <div class="grid g3">
       <div class="panel"><div class="eyebrow">Wrong number on DC</div><p style="margin:6px 0 0">The driver gave 1108 but wrote 1100. Edit the DC entry and change the number. Everything recalculates.</p></div>
       <div class="panel"><div class="eyebrow">Customer swapped cylinders</div><p style="margin:6px 0 0">The customer really returned another cylinder. Call them, then press Verify and write what you found.</p></div>
@@ -1471,6 +1594,7 @@ VIEWS.settings={
       <div><button class="btn primary" type="submit">${ic('check')}Save details</button></div></form>
     <div class="grid g2">
     <form class="panel" id="s-fill" style="display:flex;flex-direction:column;gap:12px"><h3>Filling</h3>
+      <label class="check"><input type="checkbox" id="s-usefill" ${c.useFill?'checked':''}> Show FILL / FULL in New entry (send for filling, received full)</label>
       <label class="check"><input type="checkbox" id="s-track" ${c.trackFill?'checked':''}> Warn when a DC sends a cylinder that is not marked full</label>
       <div class="field"><label for="s-plants">Filling plants / suppliers (one per line)</label><textarea class="inp" id="s-plants" placeholder="Own plant&#10;HS &amp; AP&#10;ADGS">${esc((c.plants||[]).join('\n'))}</textarea></div>
       <div><button class="btn primary" type="submit">${ic('check')}Save filling</button></div></form>
@@ -1499,7 +1623,7 @@ VIEWS.settings={
     const saveCo=async patch=>{try{await S.db.doc('settings/company').set(Object.assign({},S.company,patch));toast('Saved')}catch(err){toast(dbErr(err))}};
     $('#s-co').addEventListener('submit',e=>{e.preventDefault();const bn=Object.assign({},S.company.branchNames);$$('[data-br]').forEach(i=>bn[i.dataset.br]=i.value.trim()||i.dataset.br);
       saveCo({name:$('#s-name').value.trim(),phone:$('#s-phone').value.trim(),gst:$('#s-gst').value.trim(),addr:$('#s-addr').value.trim(),branchNames:bn})});
-    $('#s-fill').addEventListener('submit',e=>{e.preventDefault();saveCo({trackFill:$('#s-track').checked,plants:$('#s-plants').value.split('\n').map(x=>x.trim()).filter(Boolean)})});
+    $('#s-fill').addEventListener('submit',e=>{e.preventDefault();saveCo({useFill:$('#s-usefill').checked,trackFill:$('#s-track').checked,plants:$('#s-plants').value.split('\n').map(x=>x.trim()).filter(Boolean)})});
     $('#s-rent').addEventListener('submit',e=>{e.preventDefault();const rates={};$$('[data-rate]').forEach(i=>{if(i.value!=='')rates[i.dataset.rate]=+i.value});saveCo({rent:{free:+$('#s-free').value||0,rates}})});
     $('#s-bill').addEventListener('submit',e=>{e.preventDefault();const price={},hsn={};$$('[data-bp]').forEach(i=>{if(i.value!=='')price[i.dataset.bp]=+i.value});$$('[data-bh]').forEach(i=>{if(i.value.trim())hsn[i.dataset.bh]=i.value.trim()});saveCo({bill:{prefix:$('#s-bpre').value.trim()||'INV',gst:$('#s-bgst').value,price,hsn}})});
     $('#s-fu').addEventListener('submit',e=>{e.preventDefault();saveCo({fuDays:+$('#s-fudays').value||90,fuMsg:$('#s-fumsg').value.trim()||DEFAULT_FU_MSG})});
@@ -1590,11 +1714,11 @@ function custDrawer(ck){
   const dc=mv.filter(m=>m.t==='DC').length,mt=mv.filter(m=>m.t==='MT').length;const rent=openRent(ck);const rc=h[0]?rentCfg(ck,h[0].g):rentCfg(ck,'O2');
   const head=`<h3>${esc(c.n)}</h3>`;
   let body=`<div class="kv"><div><span>Holding now</span><b class="num">${h.length}</b></div><div><span>Over 90 days</span><b class="num" style="color:${h.filter(s=>s.days>90).length?'var(--crit)':'inherit'}">${h.filter(s=>s.days>90).length}</b></div><div><span>Last movement</span><b class="num">${fmtD(S.D.lastMove[ck])}</b></div>
-    <div><span>Phone</span><b class="mono" style="user-select:all">${esc(c.ph||'—')}</b></div><div><span>Deposit held</span><b class="num">${c.dep?rupee(+c.dep):'—'}</b></div><div><span>Rent so far (open)</span><b class="num">${rent?rupee(rent):'—'}</b></div>
+    <div><span>Phone</span><b class="mono" style="user-select:all">${esc(c.ph||'—')}</b></div><div><span>${LANG==='ta'?'பில் நிலுவை':'Bill outstanding'}</span><b class="num" style="color:${custDue(ck)?'var(--crit)':'inherit'}">${custDue(ck)?rupee(custDue(ck)):'—'}</b></div><div><span>Deposit held</span><b class="num">${c.dep?rupee(+c.dep):'—'}</b></div><div><span>Rent so far (open)</span><b class="num">${rent?rupee(rent):'—'}</b></div>
     <div><span>Type</span><b>${esc(c.t||'—')}</b></div><div><span>Total DC / MT</span><b class="num">${dc} / ${mt}</b></div><div><span>Free days · rate</span><b class="num">${rc.free} · ${c.rate!=null&&c.rate!==''?rupee(+c.rate)+'/day':'default'}</b></div></div>
     ${c.ad?`<div class="small muted">${esc(c.ad)}</div>`:''}
     ${c.fu?`<div class="notice info">${ic('info')}<div>Last follow-up ${fmtDT(c.fu.at)} by <span data-name="${esc(c.fu.by)}">${esc(personName(c.fu.by))}</span>: ${esc(c.fu.note||'')}</div></div>`:''}
-    <div class="row">${canEnter()?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button><button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button></div>
+    <div class="row">${canEnter()?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button><button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm wa" data-act="wamsg" data-v="${esc(ck)}">${ic('wa')}${LANG==='ta'?'WhatsApp நினைவூட்டல்':'WhatsApp reminder'}</button><button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button></div>
     ${custHistory(ck,h)}`;
   return [head,body];
 }
@@ -1822,7 +1946,7 @@ async function labelsPdf(ids){
   });
   await saveFile(ids.length===1?`Label ${ids[0]}.pdf`:`Cylinder labels ${ids.length}.pdf`,p.output('arraybuffer'));
 }
-async function dcPdf(docId,rid){
+async function dcPdf(docId,rid,ret){
   const doc=S.logs[docId];const r=doc&&doc.recs&&doc.recs[rid];if(!r){toast('Entry not found');return}
   try{await loadScript(JSPDF_SRC)}catch(e){toast('Could not load the PDF tool. Check your connection.');return}
   const {jsPDF}=window.jspdf;const p=new jsPDF({unit:'mm',format:'a5'});const W=148;const co=S.company;const c=S.cust[r.ck]||{};
@@ -1845,12 +1969,24 @@ async function dcPdf(docId,rid){
   p.setFont('helvetica','normal');p.text('Empty cylinders received: ________________________________',10,y);y+=7;
   if(r.rm){p.text('Remarks: '+r.rm,10,y);y+=7}
   y=Math.max(y+14,186);p.line(10,y,58,y);p.line(W-58,y,W-10,y);p.setFontSize(8.5);p.text("Receiver's signature",10,y+4);p.text('For '+(co.name||''),W-10,y+4,{align:'right'});
-  await saveFile(`DC ${r.dc||''} ${custName(r.ck)} ${r.d}.pdf`.replace(/\s+/g,' '),p.output('arraybuffer'));
+  const pdfName=`DC ${r.dc||''} ${custName(r.ck)} ${r.d}.pdf`.replace(/\s+/g,' ');
+  if(ret)return {name:pdfName,buf:p.output('arraybuffer'),r};
+  await saveFile(pdfName,p.output('arraybuffer'));
 }
 
 /* ---------------- actions ---------------- */
 const A={
   syncpanel:()=>openSyncPanel(),
+  mergeopen:()=>openDrawer({k:'form',render:mergePanel}),
+  mergekeep:async el=>{const F=S.cust[el.dataset.from],T=S.cust[el.dataset.to];if(!F||!T)return;
+    if(!confirm((LANG==='ta'?`“${F.n}”-இன் எல்லா பதிவுகளும் “${T.n}”-க்கு மாறும். “${F.n}” நீக்கப்படும். தொடரவா?`:`All entries of “${F.n}” move to “${T.n}”, and “${F.n}” is removed. Continue?`)))return;
+    try{await mergeCustomers(el.dataset.from,el.dataset.to);setTimeout(()=>{if(S.drawer)paintDrawer()},300)}catch(e){toast(dbErr(e))}},
+  notsame:async el=>{try{await S.db.doc('settings/company').update({notSame:{[el.dataset.v]:true}});S.company.notSame=Object.assign({},S.company.notSame,{[el.dataset.v]:true});paintDrawer()}catch(e){toast(dbErr(e))}},
+  dlopen:()=>openDrawer({k:'form',render:datelessPanel}),
+  dlsave:async el=>{const L=datelessList();const x=L[+el.dataset.i];const inp=document.querySelector(`[data-dl="${el.dataset.i}"]`);if(!x||!inp)return;
+    const iso=parseTypedDate(inp.value,x.prev!=null?isoFromDay(x.prev).slice(0,4):undefined);
+    if(!iso||iso>todayISO()){inp.classList.add('bad');toast(LANG==='ta'?'தேதி சரியில்லை':'Not a valid date');return}
+    S.hist.chunks[x.ci][x.pos][2]=dayNum(iso);try{await saveHistChunk(x.ci);toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+x.id+' '+fmtD(iso));paintDrawer()}catch(e){S.hist.chunks[x.ci][x.pos][2]=-1;toast(dbErr(e))}},
   cdtab:el=>{S.ui.cd.tab=el.dataset.v;paintDrawer()},
   cdt:el=>{S.ui.cd.t=el.dataset.v;S.ui.cd.n=100;paintDrawer()},
   cdclear:()=>{Object.assign(S.ui.cd,{t:'all',from:'',to:'',q:'',n:100});paintDrawer()},
@@ -1858,10 +1994,11 @@ const A={
   datacheck:()=>dataCheck(),
   bknow:()=>bkRun('manual'),
   bkdir:()=>bkChooseDir(),
+  quick:el=>{if(!S.form)S.form=newForm();const t=el.dataset.v;if(S.view!=='entry')go('entry');const b=document.querySelector(`[data-act="ftype"][data-v="${t}"]`);if(b&&S.form.t!==t)A.ftype(b);else if(!b){S.form.t=t}paintShell();setTimeout(()=>{const c=$('#f-cust');c&&c.focus()},60)},
   nav:el=>{if(el.dataset.v==='oldimp'){location.href='old-files.html';return}go(el.dataset.v)},
   dashbr:el=>{S.ui.dashBr=el.dataset.v;VIEWS.dash.update()},
   testfilter:()=>{S.ui.cylTest='over';S.ui.cylSt='all';go('cyl')},
-  ftype:el=>{const f=S.form;const was=f.t;f.t=el.dataset.v;f.confirm=false;if(!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}if(isCust(was)!==isCust(f.t))f.cy=[];VIEWS.entry.update()},
+  ftype:el=>{const f=S.form;const was=f.t;f.t=el.dataset.v;f.confirm=false;f.full=false;{const w=$('#f-full-wrap'),c=$('#f-full');if(w){w.hidden=f.t!=='MT';w.classList.remove('on')}if(c)c.checked=false}if(!f.edit&&(f.dcAuto||!f.dc)){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc;$('#f-dc').value=f.dc}if(isCust(was)!==isCust(f.t))f.cy=[];VIEWS.entry.update()},
   usedate:el=>{S.form.d=el.dataset.v;$('#f-date').value=fmtD(el.dataset.v);$('#f-date-pick').value=el.dataset.v;$('#f-date').classList.remove('bad');$('#f-date-msg').textContent='';VIEWS.entry.updateNo()},
   rmchip:el=>{S.form.cy.splice(+el.dataset.i,1);VIEWS.entry.update();$('#f-cyl').focus()},
   clearchips:()=>{S.form.cy=[];S.form.confirm=false;VIEWS.entry.update()},
@@ -1880,6 +2017,10 @@ const A={
   report:el=>runReport(el.dataset.v),
   stmt:el=>custStatement(el.dataset.v),
   dcpdf:el=>dcPdf(el.dataset.doc,el.dataset.rid),
+  wadc:el=>waDC(el.dataset.doc,el.dataset.rid),
+  wamsg:el=>waOpen(waPhone((S.cust[el.dataset.v]||{}).ph),fuMessage(el.dataset.v)),
+  wasum:()=>waOpen('',daySummary().text),
+  copysum:()=>{const t=daySummary().text;try{navigator.clipboard.writeText(t).then(()=>toast(LANG==='ta'?'நகலெடுக்கப்பட்டது':'Copied'))}catch(e){}},
   onelabel:el=>labelsPdf([el.dataset.v]),
   copymsg:el=>{const msg=fuMessage(el.dataset.v);
     const fallback=()=>formDrawer('Reminder message',`<p class="muted">Select the text and copy it.</p><textarea class="inp" id="fu-txt" style="min-height:160px">${esc(msg)}</textarea>`,async()=>closeDrawer(),'Done');
@@ -1887,7 +2028,7 @@ const A={
   logcall:el=>{const ck=el.dataset.v;formDrawer('Follow-up · '+custName(ck),`<div class="field"><label for="lc-note">What happened?</label><textarea class="inp" id="lc-note" required placeholder="eg. Called, will return 5 empties on Monday"></textarea></div>`,
     async()=>{const note=$('#lc-note').value.trim();if(!note){toast('Write a short note first');return}try{await S.db.doc('cust/all').update({list:{[ck]:{fu:{at:new Date().toISOString(),by:S.uid,note}}}});toast('Follow-up saved');closeDrawer()}catch(e){toast(dbErr(e))}},'Save follow-up')},
   editrec:el=>{const doc=S.logs[el.dataset.doc];const r=doc&&doc.recs[el.dataset.rid];if(!r)return;
-    S.form=Object.assign(newForm(),{t:r.t,d:r.d,br:r.br,dc:r.dc||'',ck:r.ck||'',pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',cy:r.cy.slice(),rm:r.rm||'',edit:{docId:el.dataset.doc,rid:el.dataset.rid,by:r.by,at:r.at}});closeDrawer();go('entry')},
+    S.form=Object.assign(newForm(),{t:r.t,d:r.d,br:r.br,dc:r.dc||'',ck:r.ck||'',pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',cy:r.cy.slice(),rm:r.rm||'',full:!!r.full,edit:{docId:el.dataset.doc,rid:el.dataset.rid,by:r.by,at:r.at}});closeDrawer();go('entry')},
   delrec:el=>{const doc=S.logs[el.dataset.doc];const r=doc&&doc.recs[el.dataset.rid];if(!r)return;
     formDrawer('Delete this entry?',`<p>${esc(TLABEL[r.t])} · ${esc(recTitle(r))} · ${fmtD(r.d)} · ${r.cy.length} cylinder${r.cy.length===1?'':'s'}: <span class="mono">${esc(r.cy.join(', '))}</span></p><p class="muted">The entry is removed from stock and history. It stays in the audit trail as deleted.</p>`,
       async()=>{try{await patchRec(el.dataset.doc,el.dataset.rid,{del:{by:S.uid,at:new Date().toISOString()}});toast('Entry deleted');closeDrawer()}catch(e){toast(dbErr(e))}},'Delete entry')},
@@ -1958,7 +2099,9 @@ function custForm(ck,stay){const c=ck?S.cust[ck]:{n:'',t:'Hospital',ph:'',ad:''}
       try{if(ck){await S.db.doc('cust/all').update({list:{[ck]:body}});toast('Saved');closeDrawer();if(S.D)delete S.D._cbr;if(stay){const ci=$('#f-cust');if(ci){ci.focus()}}else openDrawer({k:'cust',v:ck})}
         else{const k=slug(n);if(S.cust[k]){toast(n+' already exists');return}if(S.custDoc)await S.db.doc('cust/all').update({list:{[k]:Object.assign(body,{by:S.uid,at:new Date().toISOString()})}});else await S.db.doc('cust/all').set({list:{[k]:body}});toast('Added '+n);closeDrawer()}}catch(e){toast(dbErr(e))}},ck?'Save':'Add customer')}
 document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(!f)return;if(el.tagName==='A')e.preventDefault();f(el,e)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.drawer)closeDrawer();
+document.addEventListener('keydown',e=>{
+  if(e.altKey&&!e.ctrlKey&&(e.key==='d'||e.key==='D'||e.key==='m'||e.key==='M')&&canEnter()){e.preventDefault();A.quick({dataset:{v:/d/i.test(e.key)?'DC':'MT'}});return}
+  if(e.key==='Escape'&&S.drawer)closeDrawer();
   if(e.key==='Enter'){const tr=e.target.closest&&e.target.closest('tr.click');if(tr){const f=A[tr.dataset.act];f&&f(tr)}}});
 
 /* ---------------- boot ---------------- */
