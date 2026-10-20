@@ -16,15 +16,26 @@ service cloud.firestore {
 
     function rolesDoc() { return /databases/$(database)/documents/settings/roles; }
 
-    function myRole() {
+    function me() {
       return signedIn() && exists(rolesDoc())
-        ? get(rolesDoc()).data.get('users', {}).get(request.auth.uid, {}).get('role', '')
-        : '';
+        ? get(rolesDoc()).data.get('users', {}).get(request.auth.uid, {})
+        : {};
     }
+    function myRole() { return me().get('role', ''); }
 
     function canRead()   { return isOwner() || myRole() in ['manager', 'staff', 'viewer']; }
     function canWrite()  { return isOwner() || myRole() in ['manager', 'staff']; }
     function canManage() { return isOwner() || myRole() == 'manager'; }
+
+    // Per-person permissions set by the owner (Settings → People → Permissions).
+    // Without a setting, the role's default applies (same defaults as the app).
+    function roleDefault(k) {
+      return myRole() == 'manager'
+        || (myRole() == 'staff' && k in ['entries', 'cyl', 'cust', 'entry', 'editOwn', 'saveLoc']);
+    }
+    function can(k) {
+      return isOwner() || (canWrite() && me().get('perm', {}).get(k, roleDefault(k)) == true);
+    }
 
     // Each person keeps their own name card; anyone signed in may read names.
     match /profiles/{uid} {
@@ -38,10 +49,10 @@ service cloud.firestore {
       allow write: if signedIn() && request.auth.uid == uid;
     }
 
-    // Everyone signed in reads roles, so a new person's page opens as soon as a role is set.
+    // Everyone signed in reads roles; only the owner changes roles and permissions.
     match /settings/roles {
       allow read: if signedIn();
-      allow write: if canManage();
+      allow write: if isOwner();
     }
 
     match /settings/company {
@@ -55,10 +66,48 @@ service cloud.firestore {
       allow write: if isOwner();
     }
 
-    // Entries, cylinders, customers, billing, purchases and sales, cancelled numbers.
-    match /{col}/{doc} {
-      allow read: if col in ['log', 'cyl', 'cust', 'bill', 'trade', 'reg'] && canRead();
-      allow write: if col in ['log', 'cyl', 'cust', 'bill', 'trade', 'reg'] && canWrite();
+    // DC / MT entries. Each person's entries live in documents ending with their id.
+    // Without "edit anyone's entries", a person can write only their own documents.
+    match /log/{doc} {
+      allow read: if canRead();
+      allow create, update: if can('editAny')
+        || ((can('entry') || can('editOwn')) && doc.matches('.*_' + request.auth.uid));
+      allow delete: if isOwner();
+    }
+
+    // Customers (one document with the whole list).
+    match /cust/{doc} {
+      allow read: if canRead();
+      allow create: if can('newCust') || canManage();
+      allow update: if canManage() || (
+        canWrite()
+        && request.resource.data.list.diff(resource.data.list).removedKeys().size() == 0
+        && (can('newCust') || request.resource.data.list.diff(resource.data.list).addedKeys().size() == 0)
+        && (can('newCust') || can('editCust') || can('saveLoc'))
+      );
+      allow delete: if isOwner();
+    }
+
+    // Cylinder master list: managers, or whoever handles purchases & sales.
+    match /cyl/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || can('trade');
+    }
+
+    match /bill/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || can('bill');
+    }
+
+    match /trade/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || can('trade');
+    }
+
+    // Cancelled DC numbers and import records.
+    match /reg/{doc} {
+      allow read: if canRead();
+      allow write: if canManage();
     }
   }
 }
