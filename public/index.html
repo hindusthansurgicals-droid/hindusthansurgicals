@@ -549,7 +549,7 @@ function dbErr(e){
 }
 
 /* ---------------- shell ---------------- */
-const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['help','Help','help']];
+const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['renew','Renewals','book'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').textContent='Cylinder tracking · '+(S.company.branches||[]).map(brName).join(' · ')}
 function paintShell(){
   paintBrand();
@@ -934,6 +934,59 @@ VIEWS.fu={
 function fuMessage(ck){const d=+S.ui.fuDays||+S.company.fuDays||90;const h=(S.D.holding[ck]||[]).filter(s=>s.days>d);
   const tpl=S.company.fuMsg||DEFAULT_FU_MSG;
   return tpl.replace(/\{customer\}/g,custName(ck)).replace(/\{count\}/g,h.length).replace(/\{days\}/g,d).replace(/\{cylinders\}/g,h.map(s=>s.id+' ('+fmtD(s.d)+')').join(', ')).replace(/\{company\}/g,S.company.name||'').replace(/\{phone\}/g,S.company.phone||'')}
+
+/* Renewals: licence, insurance, FC, service, EMI and parcel expiry dates */
+const RENEW_CATS=['Licence','Insurance','FC','Service','EMI','Parcel','Other'];
+VIEWS.renew={
+  items:{},unsub:null,
+  mount(){return `<div class="page-head"><div><h2>Renewals</h2><p>Expiry dates for licences, insurance, FC, service, EMI and parcels. Send a WhatsApp reminder to the contact before the date.</p></div></div>
+    ${canEnter()?`<div class="panel"><div class="grid g3">
+      <div class="field"><label for="rn-t">Title</label><input class="inp" id="rn-t" placeholder="e.g. Drug licence"></div>
+      <div class="field"><label for="rn-c">Category</label><select class="inp" id="rn-c">${RENEW_CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+      <div class="field"><label for="rn-d">Expiry date</label><input class="inp" id="rn-d" type="date"></div>
+      <div class="field"><label for="rn-p">Contact name</label><input class="inp" id="rn-p" placeholder="Person to contact"></div>
+      <div class="field"><label for="rn-ph">WhatsApp number</label><input class="inp" id="rn-ph" inputmode="tel" placeholder="919876543210"></div>
+      <div class="field"><label for="rn-n">Note</label><input class="inp" id="rn-n" placeholder="Optional"></div>
+    </div><div style="margin-top:10px"><button class="btn primary" id="rn-save">Save renewal</button></div></div>`:''}
+    <div id="rn-list" style="display:flex;flex-direction:column;gap:10px;margin-top:12px"></div>`},
+  after(){
+    if(canEnter())$('#rn-save').addEventListener('click',()=>this.save());
+    if(this.unsub)this.unsub();
+    this.unsub=S.db.doc('renew/all').onSnapshot(s=>{this.items=(s.exists&&s.data().list)||{};this.update()},e=>toast(dbErr(e)));
+    this.update();
+  },
+  update(){
+    const el=$('#rn-list');
+    if(!el){if(this.unsub)this.unsub();this.unsub=null;return}   /* left the page: stop listening */
+    const today=new Date();today.setHours(0,0,0,0);
+    const rows=Object.entries(this.items).filter(([,v])=>v&&v.d&&!v.done).sort((a,b)=>a[1].d<b[1].d?-1:1);
+    el.innerHTML=rows.length?rows.map(([id,v])=>{
+      const days=Math.round((new Date(v.d+'T00:00:00')-today)/86400000);
+      const tone=days<0?'crit':days<=30?'warn':'info';
+      const label=days<0?`Expired ${-days} days ago`:days===0?'Expires today':`${days} days left`;
+      const msg=`Hello ${v.p||''}, reminder: ${v.t} (${v.c}) ${days<0?'expired on':'expires on'} ${fmtD(v.d)}. Please renew. Thank you.`;
+      return `<div class="panel" style="display:flex;flex-direction:column;gap:8px">
+        <div class="row" style="align-items:flex-start"><div style="flex:1 1 220px;min-width:0"><h3>${esc(v.t)}</h3><div class="small muted">${esc(v.c)} · ${fmtD(v.d)}${v.p?' · '+esc(v.p):''}</div>${v.n?`<div class="small">${esc(v.n)}</div>`:''}</div>
+        <span class="pill ${tone}">${label}</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${v.ph?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/${esc(v.ph)}?text=${encodeURIComponent(msg)}">WhatsApp</a>`:''}${canEnter()?`<button class="btn sm" data-act="rn-done" data-v="${esc(id)}">Mark renewed</button>`:''}</div></div>`;
+    }).join('')
+    :`<div class="panel empty"><b>No renewals saved</b>Add a licence, insurance or other expiry date above.</div>`;
+  },
+  async save(){
+    const t=$('#rn-t').value.trim(),d=$('#rn-d').value;
+    if(!t||!d){toast('Enter a title and expiry date');return}
+    const id='r'+Date.now().toString(36);
+    try{
+      await S.db.doc('renew/all').update({list:{[id]:{t,c:$('#rn-c').value,d,p:$('#rn-p').value.trim(),ph:$('#rn-ph').value.replace(/\D/g,''),n:$('#rn-n').value.trim(),done:false,by:S.uid,at:new Date().toISOString()}}});
+      ['#rn-t','#rn-p','#rn-ph','#rn-n','#rn-d'].forEach(sel=>$(sel).value='');
+      toast('Renewal saved');
+    }catch(e){toast(dbErr(e))}
+  },
+  async done(id){
+    try{await S.db.doc('renew/all').update({list:{[id]:{done:true,doneAt:new Date().toISOString(),by:S.uid}}});toast('Marked renewed')}
+    catch(e){toast(dbErr(e))}
+  }
+};
 
 /* Mismatches */
 VIEWS.mism={
@@ -1431,6 +1484,7 @@ const A={
   cpage:el=>{S.ui.cylPage+=+el.dataset.v;VIEWS.cyl.update()},
   ksort:el=>{S.ui.custSort=el.dataset.v;VIEWS.cust.update()},
   mmseg:el=>{S.ui.mmShow=el.dataset.v;VIEWS.mism.update()},
+  'rn-done':el=>VIEWS.renew.done(el.dataset.v),
   report:el=>runReport(el.dataset.v),
   stmt:el=>custStatement(el.dataset.v),
   dcpdf:el=>dcPdf(el.dataset.doc,el.dataset.rid),
