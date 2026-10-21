@@ -33,7 +33,7 @@ service cloud.firestore {
     // Without a setting, the role's default applies (same defaults as the app).
     function roleDefault(k) {
       return myRole() == 'manager'
-        || (myRole() == 'staff' && k in ['entries', 'cyl', 'cust', 'entry', 'editOwn', 'saveLoc']);
+        || (myRole() == 'staff' && k in ['entries', 'cyl', 'cust', 'entry', 'editOwn', 'saveLoc', 'fill', 'insp']);
     }
     function can(k) {
       return isOwner() || (canWrite() && me().get('perm', {}).get(k, roleDefault(k)) == true);
@@ -104,6 +104,31 @@ service cloud.firestore {
     match /trade/{doc} {
       allow read: if canRead();
       allow write: if canManage() || can('trade');
+    }
+
+    // Factory filling register and physical inspections: one document per day per person.
+    match /fill/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || (can('fill') && doc.matches('.*_' + request.auth.uid));
+    }
+    match /insp/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || (can('insp') && doc.matches('.*_' + request.auth.uid));
+    }
+
+    // Attendance, login register and location trail: each person writes only their own;
+    // the owner and managers read everyone's.
+    match /att/{doc} {
+      allow read: if canManage() || (signedIn() && doc.matches('.*_' + request.auth.uid));
+      allow write: if signedIn() && myRole() in ['manager', 'staff'] && doc.matches('.*_' + request.auth.uid);
+    }
+    match /logins/{doc} {
+      allow read: if canManage();
+      allow create: if signedIn() && (isOwner() || myRole() != '') && doc.matches('.*_' + request.auth.uid);
+    }
+    match /loc/{doc} {
+      allow read: if canManage();
+      allow write: if signedIn() && myRole() in ['manager', 'staff'] && doc.matches('.*_' + request.auth.uid);
     }
 
     // Cancelled DC numbers and import records.
