@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.19.1"><link rel="icon" href="icon.svg?v=3.19.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.19.1">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.20.0"><link rel="icon" href="icon.svg?v=3.20.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.20.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,14 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+#dash-sub .dsub{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 12px 0 0}
+#dash-sub .dsub .dc,#dash-sub .dsub .mt{padding:2px 8px;border-radius:999px;font-size:12.5px}
+#dash-sub .dsub .dc{background:var(--info-bg);color:var(--info)}#dash-sub .dsub .mt{background:var(--mt-bg);color:var(--mt)}
+.att-card{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;margin-bottom:12px;border-radius:12px;border:1px solid #FDE68A;background:#FFFBEB}
+.att-card.on{border-color:#86EFAC;background:#F0FDF4}.att-card.done{border-color:var(--line);background:var(--surface-2);color:var(--muted)}
+.att-card .btn{font-weight:700}.btn.danger-soft{background:#FEE2E2;border-color:#FCA5A5;color:#B91C1C}
+.attgrid .flex{color:#2563EB}.attgrid .auto{color:#B45309}.attgrid sup.edm{color:#B45309;margin-left:1px}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
 .whybox{margin-bottom:12px}
 .locpop ol{margin:8px 0 0 18px;padding:0}.locpop li{margin:4px 0}
 .locpop .big{font-size:44px;text-align:center;line-height:1}
@@ -728,7 +736,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.19.1" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.20.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -748,7 +756,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.19.1"></script>
+<script src="fb.js?v=3.20.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -783,9 +791,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.19.1';
+const APP_VERSION=window.CD_VERSION||'3.20.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.20.0','2026-10-21',['Attendance: In / Out card on the staff home screen (no working hours shown to staff)','Work time for each person; drivers can be “No fixed time” (no late mark, no reminder, no OT)','After a person’s end time the app asks “Record Out?” (again every hour if still working)','Out not pressed: the last time they worked in the app is shown as Out with *','Owner sees total hours and OT in the monthly ledger','Owner and manager can correct or add In / Out with a reason (“edited” mark) and delete attendance photos','Dashboard title line now reads “Today: DC sent full · MT came back empty” and the same for this month']],
  ['3.19.1','2026-10-21',['Location: staff and managers are asked after every login until they allow it; once allowed it never asks again; if blocked, the popup shows how to allow it','When someone cannot make DC / MT or inspect, the page now says why (Viewer role, View only on, or permission off) instead of hiding it silently']],
  ['3.19.0','2026-10-21',['New entry: live time and date on the right of the title box','Attendance photo: owner switches it on or off for each person in Settings → People; without it only time and place are saved','Filling register: opening / closing time, Cum (m³) and Kg with the used amount; next filling starts from the last closing','Filling register: “Dealer name” instead of filler — Hindusthan Surgicals (ours) or a dealer; dealers list with mobile, GSTIN, address','Only our own C and D fillings go to the cylinder list; A, B and every dealer filling stay in the ledger only (owner can change which types)','Ledger by party and type with totals, Cum and Kg','Phones: fits small and zoomed screens (big system font) — header, bottom bar, popups and tables shrink to fit']],
  ['3.18.0','2026-10-21',['Filling register: record cylinders filled at the factory (date, type A/B/C/D, filler, many numbers at once); a filling counts as the cylinder being back','Late DC / MT paper: anything that does not match before a filling waits as “Entry pending” for 45 days instead of a mismatch; reminder every 10 days','Physical inspection: visit a customer, tick ✓ / ✗ each cylinder, add extras and a note; name, time and place saved; findings list for the office','Attendance: In and Out with selfie, time and place; monthly ledger with late marks; office time setting','Login register: every login with its place','Location trail every 15 minutes while the app is open (owner can switch on)']],
@@ -1131,6 +1140,7 @@ async function patchRec(docId,rid,patch){await S.db.doc('log/'+docId).update({re
 function dbErr(e){
   const c=e&&e.code;
   if(c==='quota_exceeded')return 'The database is full. Ask the owner to archive old entries.';
+  if(c==='invalid_argument'&&S.isOwner)return LANG==='ta'?'Firebase rules பழையவை — app-இன் புதிய firestore.rules-ஐ Firebase Console → Firestore → Rules-இல் paste செய்து Publish செய்யவும்.':'Firebase rules are out of date — paste the new firestore.rules in Firebase Console → Firestore → Rules and press Publish.';
   if(c==='invalid_argument')return 'You do not have permission to save this. Ask the owner for access.';
   if(c==='revoked')return 'Your access was changed. Reload the page.';
   return 'Could not save. Check your connection and try again.';
@@ -1169,7 +1179,7 @@ function gBind(inp,dd){let res=[],sel=0;
     else if(e.key==='Enter'){e.preventDefault();if(res[sel]){const x=res[sel];dd.hidden=true;inp.blur();gOpen(x)}}else if(e.key==='Escape'){inp.value='';dd.hidden=true;inp.blur()}});
   dd.addEventListener('mousedown',e=>{const b=e.target.closest('[data-gi]');if(!b)return;e.preventDefault();const x=res[+b.dataset.gi];dd.hidden=true;inp.blur();gOpen(x)});
   inp.addEventListener('blur',()=>setTimeout(()=>{dd.hidden=true},150))}
-function paintShell(){
+function paintShell(){try{paintAttCard()}catch(e){}
   paintBrand();
   const r=role();
   const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
@@ -1590,7 +1600,8 @@ VIEWS.dash={
     const todayR=live.filter(r=>r.d===t),monR=live.filter(r=>r.d.slice(0,7)===m);
     const open=D.mism.filter(x=>!x.vf).length;
     const tOver=cyls.filter(s=>s.tdue==='over'&&s.st!=='sold').length,tSoon=cyls.filter(s=>s.tdue==='soon'&&s.st!=='sold').length;
-    $('#dash-sub').textContent=`${fmtD(t)} · ${sumT(todayR,'DC')} full out, ${sumT(todayR,'MT')} empty in today · this month ${sumT(monR,'DC')} out, ${sumT(monR,'MT')} in`;
+    {const ta=LANG==='ta';const chip=(lbl,dc,mt)=>`<span class="dsub"><b>${lbl}</b> <span class="dc">DC ${ta?'அனுப்பியது':'sent full'}: <b>${dc}</b></span> <span class="mt">MT ${ta?'திரும்பியது':'came back empty'}: <b>${mt}</b></span></span>`;
+     $('#dash-sub').innerHTML=`${chip((ta?'இன்று':'Today')+' ('+fmtD(t)+')',sumT(todayR,'DC'),sumT(todayR,'MT'))}${chip(ta?'இந்த மாதம்':'This month',sumT(monR,'DC'),sumT(monR,'MT'))}<span class="small muted" style="display:block;margin-top:4px">${ta?'எண்கள் = சிலிண்டர் எண்ணிக்கை':'Numbers = cylinders'}</span>`}
     const gasRows=[['O2',brName('DPI'),s=>s.g==='O2'&&s.b==='DPI'],['O2',brName('KGIRI'),s=>s.g==='O2'&&s.b==='KGIRI'],['CO2 30kg','',s=>s.g==='CO2 30kg'],['CO2 40kg','',s=>s.g==='CO2 40kg'],['CO2','',s=>s.g==='CO2'],['N2','',s=>s.g==='N2'],['Argon','',s=>s.g==='Argon'],['DURO','',s=>s.g==='DURO']];
     const gasHtml=gasRows.map(([g,sub,f])=>{const a=cyls.filter(f).filter(s=>s.st!=='sold');if(!a.length)return '';const c=k=>a.filter(s=>s.st===k).length;const o=c('out'),fu=c('full'),em=c('empty'),fi=c('filling');
       const gx=sub?{cylGas:g,cylBr:g==='O2'?(sub===brName('DPI')?'DPI':'KGIRI'):(S.ui.dashBr||'all')}:{cylGas:g};
@@ -1608,7 +1619,7 @@ VIEWS.dash={
       ${brs.map(b=>{const rs=allToday.filter(r=>r.br===b);return `<tr class="click" ${entGo({entBr:b})}><td>${esc(brName(b))}</td><td class="r num"><a href="#" ${entGo({entBr:b,entType:'DC'})}>${sumT(rs,'DC')}</a></td><td class="r num"><a href="#" ${entGo({entBr:b,entType:'MT'})}>${sumT(rs,'MT')}</a></td><td class="r num">${sumT(rs,'FS')}</td><td class="r num">${sumT(rs,'FR')}</td><td class="r num">${todayMism.filter(x=>x.br===b).length||'<span class="muted">0</span>'}</td></tr>`}).join('')}</tbody></table></div>
       ${Object.keys(staff).length?`<div class="chips" style="margin-top:12px">${Object.entries(staff).map(([id,s])=>`<a href="#" class="pill unused" ${entGo({entBr:'all'})}><span data-name="${esc(id)}">${esc(personName(id))}</span> · ${s.n} entries · ${s.c} cyl</a>`).join('')}</div>`:`<div class="small muted" style="margin-top:10px">No entries yet today.</div>`}`;
     const sm=canManage()?daySummary():null;
-    $('#dash-body').innerHTML=`${!S.isOwner&&!canEnter()?whyBox('entry',LANG==='ta'?'DC / MT பதிவு':'DC / MT entry'):''}
+    $('#dash-body').innerHTML=`<div class="att-slot">${attCard()}</div>${!S.isOwner&&!canEnter()?whyBox('entry',LANG==='ta'?'DC / MT பதிவு':'DC / MT entry'):''}
     ${sm?`<div class="panel daysum"><div class="panel-head"><h3>${LANG==='ta'?'இன்றைய சுருக்கம்':'Today’s summary'}</h3><span class="muted small">${fmtD(S.D.today)}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="btn sm wa" data-act="wasum">${ic('wa')}${LANG==='ta'?'WhatsApp-இல் அனுப்பு':'Send on WhatsApp'}</button><button class="btn sm" data-act="copysum">${LANG==='ta'?'நகலெடு':'Copy'}</button></span></div><div class="kv">${sm.lines.map(([a,b],i)=>`<div class="click" ${[entGo({entType:'DC',entBr:'all'}),entGo({entType:'MT',entBr:'all'}),entGo({entBr:'all'}),dgo('mism'),fuGo(91)][i]||''}><span>${esc(a)}</span><b style="font-size:14px">${esc(b)}</b></div>`).join('')}</div></div>`:''}
     ${open?`<div class="notice crit">${ic('warn')}<div><b>${open} cylinder ${open===1?'movement needs':'movements need'} checking.</b> A cylinder came back from the wrong customer or an entry is missing. <button class="btn sm" data-act="nav" data-v="mism" style="margin-left:6px">Open mismatches</button></div></div>`:''}
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
@@ -1739,7 +1750,7 @@ VIEWS.entry={
     if(!S.form)S.form=newForm();const f=S.form;
     if(!f.dc&&isCust(f.t)&&!f.edit){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc}
     const T=[['DC','dc','Full to customer'],['MT','mt','Empty from customer'],['FS','fs','Send for filling'],['FR','fr','Received full']].filter(([k])=>S.company.useFill||k==='DC'||k==='MT'||f.t===k);
-    return `<div class="page-head"><div><h2>${f.edit?'Edit entry':'New entry'}</h2><p>One entry per DC or trip. Type the customer once, then add or scan every cylinder number.</p></div><div class="actions">${f.edit?`<button class="btn" data-act="cancelEdit">Cancel edit</button>`:''}<div class="ph-clock">${phClock()}</div></div></div>
+    return `<div class="page-head"><div><h2>${f.edit?'Edit entry':'New entry'}</h2><p>One entry per DC or trip. Type the customer once, then add or scan every cylinder number.</p></div><div class="actions">${f.edit?`<button class="btn" data-act="cancelEdit">Cancel edit</button>`:''}<div class="ph-clock">${phClock()}</div></div></div><div class="att-slot">${attCard()}</div>
     <div class="split">
       <form class="panel" id="entry-form" autocomplete="off" style="display:flex;flex-direction:column;gap:14px">
         <div class="mine" id="f-mine"></div>
@@ -2348,6 +2359,76 @@ function attPanelNoPhoto(kind){
       catch(e){toast(dbErr(e));save.disabled=false}}}});
 }
 const officeIn=()=>S.company.officeIn||'09:30';
+/* Work time for each person. flex = no fixed time (drivers): no late mark, no Out reminder, no OT. */
+const shiftOf=uid=>{const x=(S.company.shifts||{})[uid];if(x&&x.flex)return {flex:true};return {s:(x&&x.s)||officeIn(),e:(x&&x.e)||S.company.officeOut||'18:00'}};
+const localD=iso=>{const d=new Date(iso);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const minsOf=t=>+t.slice(0,2)*60+ +t.slice(3,5);
+const hmDur=m=>Math.floor(m/60)+'h '+pad(Math.round(m%60))+'m';
+/* Out not pressed: take the last thing the person did in the app that day (app use, DC/MT, filling, inspection) */
+function autoOut(r){if(!r||!r.in||r.out)return null;if(r.d>=todayISO())return null;let last=r.seen&&localD(r.seen)===r.d?r.seen:'';
+  const by=r.uid;const chk=at=>{if(at&&localD(at)===r.d&&at>last)last=at};
+  (S.D&&S.D.recs||[]).forEach(x=>{if(x.by===by)chk(x.at)});(S.D&&S.D.fills||[]).forEach(x=>{if(x.by===by)chk(x.at)});
+  try{inspRecs().forEach(x=>{if(x.by===by)chk(x.at)})}catch(e){}
+  return last&&last>r.in.at?{at:last,auto:true}:null}
+const outOf=r=>r&&(r.out||autoOut(r));
+function attCard(){if(!needsAtt()||!ATT.checked)return '';const ta=LANG==='ta';const t=ATT.today||{};
+  if(!t.in)return `<div class="att-card"><div><b>${ta?'இன்னும் வருகை பதிவில்லை':'Attendance not recorded yet'}</b></div><button class="btn primary" data-act="attin">🟢 ${ta?'வருகை (In) பதிவு செய்':'Record In'}</button></div>`;
+  if(!t.out)return `<div class="att-card on"><div>🟢 ${ta?'வருகை':'In'} <b>${hm(t.in.at)}</b></div><button class="btn danger-soft" data-act="attout">🔴 ${ta?'வெளியேறல் (Out) பதிவு செய்':'Record Out'}</button></div>`;
+  return `<div class="att-card done"><div>✓ ${ta?'இன்று':'Today'} · ${ta?'வருகை':'In'} <b>${hm(t.in.at)}</b> · ${ta?'வெளியேறல்':'Out'} <b>${hm(t.out.at)}</b></div></div>`}
+function paintAttCard(){$$('.att-slot').forEach(el=>{el.innerHTML=attCard()})}
+/* last time the person used the app today — used when they forget Out */
+async function attSeen(){if(!needsAtt()||!ATT.today||!ATT.today.in||ATT.today.out||document.visibilityState!=='visible')return;
+  try{await S.db.doc('att/'+todayISO()+'_'+S.uid).update({seen:new Date().toISOString()})}catch(e){}}
+setInterval(attSeen,10*60e3);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')attSeen()});
+/* After the person's end time: ask once an hour whether to record Out */
+function outNudge(){if(!needsAtt()||window.__NOATT||!ATT.today||!ATT.today.in||ATT.today.out||S.drawer||document.visibilityState!=='visible')return;
+  const sh=shiftOf(S.uid);if(sh.flex)return;const n=new Date();if(n.getHours()*60+n.getMinutes()<minsOf(sh.e))return;
+  let snooze=0;try{snooze=+localStorage.getItem('cd-outsnooze')||0}catch(e){}if(Date.now()<snooze)return;
+  const ta=LANG==='ta';
+  openDrawer({k:'form',dlg:1,render:()=>[`<h3>🔴 ${ta?'வேலை நேரம் முடிந்தது':'Work time is over'}</h3>`,
+    `<p>${ta?`உங்கள் வேலை நேரம் ${sh.e} வரை. வெளியேறல் (Out) பதிவு செய்யவா?`:`Your work time ends at ${sh.e}. Record Out now?`}</p>
+     <div class="row"><button class="btn primary" type="button" id="on-out">🔴 ${ta?'Out பதிவு செய்':'Record Out'}</button><button class="btn" type="button" id="on-more">${ta?'இன்னும் வேலை உள்ளது':'Still working'}</button></div>
+     <p class="small muted">${ta?'“இன்னும் வேலை” அழுத்தினால் 1 மணி நேரம் கழித்து மீண்டும் கேட்கும்.':'“Still working” asks again in 1 hour.'}</p>`],
+    after(){const sn=()=>{try{localStorage.setItem('cd-outsnooze',String(Date.now()+60*60e3))}catch(e){}};
+      $('#on-out').onclick=()=>{closeDrawer();attPanel('out')};$('#on-more').onclick=()=>{sn();closeDrawer()};
+      const obs=new MutationObserver(()=>{if(!document.getElementById('on-out')){obs.disconnect();sn()}});obs.observe(document.getElementById('drawer-root'),{childList:true})}})}
+setInterval(outNudge,60e3);
+/* owner + manager: edit or add In / Out with a reason, delete photos */
+function attEdit(d,uid){const ta=LANG==='ta';const k=d+'_'+uid;const r=(VIEWS.att.by||{})[k]||{d,uid};const ao=autoOut(r);
+  const tv=x=>x&&x.at?hm(x.at):'';
+  openDrawer({k:'form',render:()=>[`<h3>${esc(personName(uid))} · ${fmtD(d)}</h3>`,
+    `<div class="attday">${['in','out'].map(kk=>{const x=r[kk];return `<div><div class="eyebrow">${kk==='in'?(ta?'வருகை':'In'):(ta?'வெளியேறல்':'Out')} · <b>${x?hm(x.at):(kk==='out'&&ao?hm(ao.at)+' <span class="pill unused">auto</span>':'—')}</b>${x&&x.ed?` <span class="pill warn">${ta?'மாற்றப்பட்டது':'edited'}</span>`:''}</div>
+      ${x&&x.ph?`<img src="${x.ph}" alt="">${canManage()?`<div><button class="btn sm ghost" type="button" data-phdel="${kk}" style="color:var(--crit)">${ic('x')}${ta?'Photo நீக்கு':'Delete photo'}</button></div>`:''}`:`<div class="muted small">${x&&x.phDel?(ta?'Photo நீக்கப்பட்டது':'Photo deleted'):(ta?'படம் இல்லை':'No photo')}</div>`}
+      ${x?`<div class="small">${mapLink(x.loc)}</div>`:''}${x&&x.ed?`<div class="small muted">✎ ${esc(shortName(x.ed.by))} · ${fmtDT(x.ed.at)}${x.ed.old?` · ${ta?'முன்பு':'was'} ${esc(x.ed.old)}`:''}<br>“${esc(x.ed.why||'')}”</div>`:''}</div>`}).join('')}</div>
+     ${canManage()?`<form id="ae-form" class="ae-form"><h4 style="margin:14px 0 6px">${ta?'நேரம் திருத்து / சேர்':'Correct or add the time'}</h4><div class="row">
+       <div class="field" style="flex:1 1 120px"><label for="ae-in">${ta?'வருகை':'In'}</label><input type="time" class="inp" id="ae-in" value="${esc(tv(r.in))}"></div>
+       <div class="field" style="flex:1 1 120px"><label for="ae-out">${ta?'வெளியேறல்':'Out'}</label><input type="time" class="inp" id="ae-out" value="${esc(tv(r.out)||(ao?hm(ao.at):''))}"></div></div>
+       <div class="field" style="margin-top:8px"><label for="ae-why">${ta?'காரணம் (கட்டாயம்)':'Reason (needed)'}</label><input class="inp" id="ae-why" required placeholder="${ta?'எ.கா. Out போட மறந்தார், 9 PM வரை delivery':'eg. forgot Out, delivery till 9 PM'}"></div>
+       <div class="row" style="margin-top:10px"><button class="btn primary">${ic('check')}${ta?'சேமி':'Save'}</button></div></form>`:''}`],
+    after(){const ref=S.db.doc('att/'+k);const who={by:S.uid,at:new Date().toISOString()};
+      $$('[data-phdel]').forEach(b=>b.onclick=async()=>{if(!confirm(ta?'இந்த photo-வை நீக்கவா?':'Delete this photo?'))return;const kk=b.dataset.phdel;
+        try{await ref.update({[kk]:{ph:'',phDel:who}});r[kk]=Object.assign({},r[kk],{ph:'',phDel:who});toast(ta?'Photo நீக்கப்பட்டது':'Photo deleted');closeDrawer();VIEWS.att.load()}catch(e){toast(dbErr(e))}});
+      const f=$('#ae-form');if(!f)return;
+      f.addEventListener('submit',async e=>{e.preventDefault();const why=$('#ae-why').value.trim();if(!why){$('#ae-why').focus();return}
+        const vi=$('#ae-in').value,vo=$('#ae-out').value;const iso=t=>new Date(d+'T'+t+':00').toISOString();
+        if(!vi&&!r.in){toast(ta?'வருகை நேரம் போடவும்':'Enter the In time');return}
+        if(vi&&vo&&vo<=vi){toast(ta?'Out, In-க்குப் பிறகு இருக்க வேண்டும்':'Out must be after In');return}
+        const up={d,uid,name:personName(uid)};
+        if(vi&&vi!==tv(r.in))up.in={at:iso(vi),ed:Object.assign({why,old:tv(r.in)||'—'},who)};
+        if(vo&&vo!==tv(r.out))up.out={at:iso(vo),ed:Object.assign({why,old:tv(r.out)||(ao?hm(ao.at)+' auto':'—')},who)};
+        if(!up.in&&!up.out){toast(ta?'மாற்றம் எதுவும் இல்லை':'Nothing changed');return}
+        try{await ref.update(up);toast(ta?'சேமிக்கப்பட்டது':'Saved');closeDrawer();VIEWS.att.load()}catch(err){toast(dbErr(err))}})}});
+}
+function shiftPanel(){const ta=LANG==='ta';
+  const ids=Object.entries(S.roles).filter(([id,r])=>['staff','manager'].includes(r.role)).map(([id])=>id);
+  openDrawer({k:'form',render:()=>[`<h3>⏰ ${ta?'ஒவ்வொருவரின் வேலை நேரம்':'Work time for each person'}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?'தொடக்க நேரத்துக்குப் பிறகு வந்தால் தாமதம். முடிவு நேரத்துக்குப் பிறகு Out நினைவூட்டல் வரும்; அதைத் தாண்டிய நேரம் OT. Driver போன்றவர்களுக்கு “நிலையான நேரம் இல்லை” — தாமதம், நினைவூட்டல், OT இல்லை.':'After the start time = late. After the end time the app reminds them to record Out; time beyond it is OT. For drivers tick “No fixed time” — no late mark, no reminder, no OT.'}</p>
+     <div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>${ta?'தொடக்கம்':'Start'}</th><th>${ta?'முடிவு':'End'}</th><th>${ta?'நிலையான நேரம் இல்லை':'No fixed time'}</th></tr></thead><tbody>${ids.map(id=>{const x=(S.company.shifts||{})[id]||{};const sh=shiftOf(id);return `<tr data-sid="${esc(id)}"><td><b>${esc(personName(id))}</b></td><td><input type="time" class="inp" data-s value="${esc(x.s||officeIn())}" ${x.flex?'disabled':''}></td><td><input type="time" class="inp" data-e value="${esc(x.e||S.company.officeOut||'18:00')}" ${x.flex?'disabled':''}></td><td><label class="switch"><input type="checkbox" data-f ${x.flex?'checked':''}><span></span></label></td></tr>`}).join('')||`<tr><td colspan="4" class="muted">${ta?'Staff இல்லை':'No staff yet'}</td></tr>`}</tbody></table></div>
+     <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="sh-save">${ic('check')}${ta?'சேமி':'Save'}</button></div>`],
+    after(){$$('[data-sid] [data-f]').forEach(cb=>cb.onchange=()=>{const tr=cb.closest('tr');tr.querySelectorAll('[data-s],[data-e]').forEach(i=>i.disabled=cb.checked)});
+      $('#sh-save').onclick=async()=>{const o={};$$('[data-sid]').forEach(tr=>{const f=tr.querySelector('[data-f]').checked;o[tr.dataset.sid]=f?{flex:true}:{s:tr.querySelector('[data-s]').value||officeIn(),e:tr.querySelector('[data-e]').value||'18:00'}});
+        try{await S.db.doc('settings/company').update({shifts:o});S.company.shifts=o;toast(ta?'சேமிக்கப்பட்டது':'Saved');closeDrawer();VIEWS.att.paint()}catch(e){toast(dbErr(e))}}}});
+}
 const hm=iso=>{const d=new Date(iso);return pad(d.getHours())+':'+pad(d.getMinutes())};
 VIEWS.att={
   mount(){const u=S.ui;const ta=LANG==='ta';if(!u.atM)u.atM=todayISO().slice(0,7);if(!u.atTab)u.atTab='att';
@@ -2355,6 +2436,7 @@ VIEWS.att={
     <div class="panel"><div class="row" style="align-items:flex-end"><div class="seg" id="at-tabs"></div>
       <div class="field" style="flex:0 1 170px"><label for="at-m">${ta?'மாதம்':'Month'}</label><input type="month" class="inp" id="at-m" value="${esc(u.atM)}"></div>
       ${canManage()?`<div class="field" style="flex:0 1 190px"><label for="at-off">${ta?'Office நேரம் (தாமதக் குறி)':'Office time (late mark)'}</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input type="time" class="inp" id="at-off" value="${esc(officeIn())}"><button class="btn sm" type="button" id="at-offsave">${ta?'சேமி':'Save'}</button></div></div>
+ <button class="btn" type="button" data-act="shifts" style="align-self:flex-end">⏰ ${ta?'ஒவ்வொருவரின் வேலை நேரம்':'Work time per person'}</button>
       <label class="check" style="align-self:center"><input type="checkbox" id="at-trail" ${S.company.trail?'checked':''}> ${ta?'App திறந்திருக்கும்போது 15 நிமிடத்துக்கு ஒருமுறை இடம் பதிவு':'Record location every 15 min while the app is open'}</label>`:''}</div></div>
     <div id="at-body"><div class="panel"><div class="loading"><div><div class="spin"></div></div></div></div></div>`},
   after(){const u=S.ui;$('#at-m').addEventListener('change',e=>{u.atM=e.target.value;this.load()});
@@ -2371,9 +2453,16 @@ VIEWS.att={
     this.paint()},
   paint(){const u=S.ui;const ta=LANG==='ta';const rows=this.rows||[];const el=$('#at-body');if(!el)return;
     const people=[...new Set(Object.entries(S.roles).filter(([id,r])=>['staff','manager'].includes(r.role)).map(([id])=>id).concat(rows.map(r=>r.uid)))];
-    if(u.atTab==='att'){const [y,mo]=u.atM.split('-').map(Number);const nd=new Date(y,mo,0).getDate();const days=[...Array(nd)].map((_,i)=>u.atM+'-'+pad(i+1));const by={};rows.forEach(r=>{by[r.d+'_'+r.uid]=r});const off=officeIn();
-      el.innerHTML=`<div class="panel"><div class="tbl-wrap"><table class="attgrid"><thead><tr><th>${ta?'பெயர்':'Name'}</th><th class="r">${ta?'நாட்கள்':'Days'}</th><th class="r">${ta?'தாமதம்':'Late'}</th>${days.map(d=>`<th class="r">${+d.slice(8)}</th>`).join('')}</tr></thead><tbody>${people.map(id=>{let n=0,late=0;const cells=days.map(d=>{const r=by[d+'_'+id];if(!r||!r.in)return `<td class="r ${d<=todayISO()&&new Date(d).getDay()!==0?'abs':''}">${d<=todayISO()?'·':''}</td>`;n++;const t=hm(r.in.at);const lt=t>off;if(lt)late++;return `<td class="r click" data-act="attday" data-k="${esc(d+'_'+id)}"><b class="${lt?'late':'ontime'}">${t}</b>${r.out?`<br><span class="small muted">${hm(r.out.at)}</span>`:''}</td>`}).join('');return `<tr><td><b>${esc(personName(id))}</b></td><td class="r num">${n}</td><td class="r num">${late?`<span style="color:var(--crit)">${late}</span>`:0}</td>${cells}</tr>`}).join('')||`<tr><td colspan="${nd+3}" class="muted">${ta?'Staff இல்லை':'No staff yet'}</td></tr>`}</tbody></table></div>
-        <div class="small muted" style="margin-top:8px">${ta?`பச்சை = நேரத்துக்கு, சிவப்பு = ${off}-க்குப் பிறகு. நேரத்தைத் தொட்டால் photo, இடம் தெரியும்.`:`Green = on time, red = after ${off}. Tap a time to see the photos and places.`}</div></div>`;this.by=by;return}
+    if(u.atTab==='att'){const [y,mo]=u.atM.split('-').map(Number);const nd=new Date(y,mo,0).getDate();const days=[...Array(nd)].map((_,i)=>u.atM+'-'+pad(i+1));const by={};rows.forEach(r=>{by[r.d+'_'+r.uid]=r});
+      const own=S.isOwner;const ed=canManage();
+      el.innerHTML=`<div class="panel"><div class="tbl-wrap"><table class="attgrid"><thead><tr><th>${ta?'பெயர்':'Name'}</th><th class="r">${ta?'நாட்கள்':'Days'}</th><th class="r">${ta?'தாமதம்':'Late'}</th>${own?`<th class="r">${ta?'மணி':'Hours'}</th><th class="r">OT</th>`:''}${days.map(d=>`<th class="r">${+d.slice(8)}</th>`).join('')}</tr></thead><tbody>${people.map(id=>{let n=0,late=0,mins=0,ot=0;const sh=shiftOf(id);
+        const cells=days.map(d=>{const r=by[d+'_'+id];const k=esc(d+'_'+id);
+          if(!r||!r.in)return `<td class="r ${d<=todayISO()&&new Date(d).getDay()!==0?'abs':''} ${ed&&d<=todayISO()?'click':''}" ${ed&&d<=todayISO()?`data-act="attday" data-k="${k}"`:''}>${d<=todayISO()?'·':''}</td>`;
+          n++;const t=hm(r.in.at);const lt=!sh.flex&&t>sh.s;if(lt)late++;const o=outOf(r);
+          if(o){const m=(new Date(o.at)-new Date(r.in.at))/60e3;if(m>0){mins+=m;if(!sh.flex){const extra=minsOf(hm(o.at))-minsOf(sh.e);if(extra>0)ot+=extra}}}
+          return `<td class="r click" data-act="attday" data-k="${k}"><b class="${sh.flex?'flex':lt?'late':'ontime'}">${t}</b>${o?`<br><span class="small ${o.auto?'auto':'muted'}">${hm(o.at)}${o.auto?'*':''}</span>`:''}${(r.in.ed||(r.out&&r.out.ed))?'<sup class="edm">✎</sup>':''}</td>`}).join('');
+        return `<tr><td><b>${esc(personName(id))}</b><div class="small muted">${sh.flex?(ta?'நிலையான நேரம் இல்லை':'no fixed time'):sh.s+'–'+sh.e}</div></td><td class="r num">${n}</td><td class="r num">${late?`<span style="color:var(--crit)">${late}</span>`:0}</td>${own?`<td class="r num">${mins?hmDur(mins):'—'}</td><td class="r num">${ot?`<b style="color:#7C3AED">${hmDur(ot)}</b>`:'—'}</td>`:''}${cells}</tr>`}).join('')||`<tr><td colspan="${nd+5}" class="muted">${ta?'Staff இல்லை':'No staff yet'}</td></tr>`}</tbody></table></div>
+        <div class="small muted" style="margin-top:8px">${ta?'பச்சை = நேரத்துக்கு, சிவப்பு = தாமதம், நீலம் = நிலையான நேரம் இல்லை. கீழே உள்ள நேரம் = Out; * = Out போட மறந்ததால் app-இல் கடைசியாக வேலை செய்த நேரம்; ✎ = மாற்றப்பட்டது. நேரத்தைத் தொட்டால் photo, இடம்'+(ed?', திருத்தம்':'')+'.':'Green = on time, red = late, blue = no fixed time. Lower time = Out; * = Out was not pressed, so the last time they worked in the app; ✎ = corrected. Tap a time for photos and place'+(ed?', and to correct it':'')+'.'}</div></div>`;this.by=by;return}
     if(u.atTab==='log'){el.innerHTML=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${ta?'நேரம்':'Time'}</th><th>${ta?'பெயர்':'Name'}</th><th>${ta?'கருவி':'Device'}</th><th>${ta?'இடம்':'Place'}</th></tr></thead><tbody>${rows.slice(0,500).map(r=>`<tr><td class="num">${fmtD(r.d)} ${hm(r.at)}</td><td>${esc(personName(r.uid))}</td><td class="small">${esc(r.dev||'')} · ${esc(r.app||'')}</td><td>${mapLink(r.loc)}</td></tr>`).join('')||`<tr><td colspan="4" class="muted">${ta?'இந்த மாதம் login இல்லை':'No logins this month'}</td></tr>`}</tbody></table></div></div>`;return}
     el.innerHTML=`<div class="panel">${S.company.trail?'':`<div class="notice info">${ic('info')}<div>${ta?'இடப் பதிவு off-இல் உள்ளது. மேலே tick செய்தால் தொடங்கும்.':'The location trail is off. Tick the box above to start it.'}</div></div>`}${rows.length?rows.sort((a,b)=>a.d<b.d?1:-1).map(r=>{const pts=Object.entries(r.pts||{}).sort(([a],[b])=>a<b?-1:1);const route=pts.length>1?`https://www.google.com/maps/dir/${pts.slice(-10).map(([k,p])=>p.lat+','+p.lng).join('/')}`:'';return `<div class="trailrow"><b>${esc(personName(r.uid))}</b> · ${fmtD(r.d)} · ${pts.length} ${ta?'இடங்கள்':'points'} ${route?`<a href="${route}" target="_blank" rel="noopener">🧭 ${ta?'பாதை':'Route'}</a>`:''}<div class="small">${pts.map(([k,p])=>`<a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" rel="noopener">${k.slice(0,2)}:${k.slice(2)}</a>`).join(' · ')}</div></div>`}).join(''):`<div class="empty"><b>${ta?'இந்த மாதம் இடப் பதிவு இல்லை':'No trail this month'}</b></div>`}</div>`}
 };
@@ -3180,9 +3269,10 @@ const A={
   inspopen:el=>{if(!canInsp()){toast((LANG==='ta'?'சரிபார்ப்பு செய்ய முடியாது: ':'Cannot inspect: ')+whyNot('insp'));return}inspPanel(el.dataset.v)},
   inspres:async el=>{try{await S.db.doc('insp/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{res:{[el.dataset.c]:{by:S.uid,at:new Date().toISOString()}}}}});toast(LANG==='ta'?'சரி செய்ததாகக் குறிக்கப்பட்டது':'Marked as sorted')}catch(e){toast(dbErr(e))}},
   attin:()=>attPanel('in'),attout:()=>attPanel('out'),
-  attday:el=>{const r=VIEWS.att.by&&VIEWS.att.by[el.dataset.k];if(!r)return;const ta=LANG==='ta';
+  attday:el=>{const k=el.dataset.k;const i=k.indexOf('_');attEdit(k.slice(0,i),k.slice(i+1));return;const r=VIEWS.att.by&&VIEWS.att.by[el.dataset.k];if(!r)return;const ta=LANG==='ta';
     openDrawer({k:'form',render:()=>[`<h3>${esc(personName(r.uid))} · ${fmtD(r.d)}</h3>`,`<div class="attday">${['in','out'].map(k=>r[k]?`<div><div class="eyebrow">${k==='in'?(ta?'வருகை':'In'):(ta?'வெளியேறல்':'Out')} · <b>${hm(r[k].at)}</b></div>${r[k].ph?`<img src="${r[k].ph}" alt="">`:`<div class="muted small">${ta?'படம் இல்லை':'No photo'}</div>`}<div class="small">${mapLink(r[k].loc)}</div></div>`:`<div class="muted">${k==='out'?(ta?'Out பதிவில்லை':'No out'):''}</div>`).join('')}</div>`]})},
   dealers:()=>dealerPanel(false),
+  shifts:()=>shiftPanel(),
   fldel:async el=>{if(!confirm(LANG==='ta'?'இந்த நிரப்பல் பதிவை நீக்கவா?':'Delete this filling entry?'))return;try{await S.db.doc('fill/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{del:{by:S.uid,at:new Date().toISOString()}}}});toast(LANG==='ta'?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}},
   pendok:async()=>{try{await S.db.doc('settings/company').update({pendRemAt:todayISO()});S.company.pendRemAt=todayISO();VIEWS.dash.update()}catch(e){toast(dbErr(e))}},
   bigtext:()=>{BIG=!BIG;try{localStorage.setItem('cd-big',BIG?'1':'0')}catch(e){}document.body.classList.toggle('bigtext',BIG);closeDrawer();toast(BIG?(LANG==='ta'?'பெரிய எழுத்து':'Bigger text'):(LANG==='ta'?'சாதாரண எழுத்து':'Normal text'))},
@@ -3370,7 +3460,7 @@ async function boot(){
   bootData();registerMember();watchMembers();
   paintShell();
 }
-if(window.__TEST)window.__T={NAV,VIEWS,go,openDrawer,closeDrawer,BK,bkRun,S,dcPdf,saveLoc,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
+if(window.__TEST)window.__T={NAV,VIEWS,go,outNudge,ATT,openDrawer,closeDrawer,BK,bkRun,S,dcPdf,saveLoc,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
 boot();
 })();
 </script>
