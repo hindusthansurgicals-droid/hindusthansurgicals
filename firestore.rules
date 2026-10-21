@@ -111,6 +111,11 @@ service cloud.firestore {
       allow read: if canRead();
       allow write: if canManage() || (can('fill') && doc.matches('.*_' + request.auth.uid));
     }
+    // Dealers (other parties we fill for): the filling team can add them.
+    match /dealers/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || can('fill');
+    }
     match /insp/{doc} {
       allow read: if canRead();
       allow write: if canManage() || (can('insp') && doc.matches('.*_' + request.auth.uid));
