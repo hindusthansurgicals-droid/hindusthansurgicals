@@ -1,6 +1,11 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.14.0"><link rel="icon" href="icon.svg?v=3.14.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.14.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.15.0"><link rel="icon" href="icon.svg?v=3.15.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.15.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -238,6 +243,28 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.gsearch{position:relative;width:min(340px,30vw)}
+.gsearch .gs-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);display:grid}
+.gsearch .gs-ic svg{width:16px;height:16px}
+.gsearch .inp{padding:7px 10px 7px 34px;width:100%;font-size:14px}
+.gq-dd{position:absolute;right:0;left:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);z-index:50;max-height:60vh;overflow:auto;min-width:360px}
+.gq-dd.inline{position:static;box-shadow:none;margin-top:10px;min-width:0;max-height:none}
+.gq-dd button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink);font-size:14px}
+.gq-dd button.on,.gq-dd button:hover{background:color-mix(in srgb,var(--accent) 9%,var(--surface))}
+.gs-btn{display:none}
+@media (max-width:900px){.gsearch{display:none}.gs-btn{display:inline-flex}}
+body.pro:not(.skin-light) .gsearch .inp{background:rgba(255,255,255,.95)}
+#s-people td{vertical-align:top}
+#s-people .phrow{display:flex;gap:6px;align-items:center}
+#s-people .pinfo{margin-top:4px;line-height:1.35;min-height:2.7em}
+.cyl-lbl{display:flex!important;align-items:center;flex-wrap:wrap;gap:4px 10px}
+.cyl-lbl .lbl-t{flex:1 1 auto;min-width:0}
+.gascount{order:2;margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.gascount:empty{display:none}
+@media (max-width:700px){.gascount{order:3;margin-left:0;justify-content:flex-start;width:100%}}
+.gascount .gc{font:600 12.5px/1 var(--f-body);padding:5px 9px;border-radius:999px;color:var(--gc);background:color-mix(in srgb,var(--gc) 13%,var(--surface));border:1px solid color-mix(in srgb,var(--gc) 35%,transparent)}
+.gascount .gc b{font-size:14px}
+.gascount .gc.tot{--gc:var(--accent)}
 .switch{position:relative;display:inline-block;width:42px;height:24px}
 .switch input{opacity:0;width:0;height:0}
 .switch span{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.15s;cursor:pointer}
@@ -554,12 +581,15 @@ body.pro .btn.wa{color:#15803D;background:#DCFCE7;border-color:#BBF7D0}
   :root:not([data-theme="light"]) body.pro .panel-head{background:var(--surface-2)}}
 </style>
 
+</head>
+<body>
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.14.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.15.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
+    <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
     <div class="top-right" id="who"></div>
   </header>
   <div class="layout">
@@ -575,9 +605,11 @@ body.pro .btn.wa{color:#15803D;background:#DCFCE7;border-color:#BBF7D0}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.14.0"></script>
+<script src="fb.js?v=3.15.0"></script>
 <script>
 document.body.classList.add('pro');
+/* always the normal (light) colours, even when the phone itself is in dark mode */
+document.documentElement.setAttribute('data-theme','light');
 let SKIN='light';try{SKIN=localStorage.getItem('cd-skin')||'light'}catch(e){}
 document.body.classList.toggle('skin-light',SKIN==='light');
 (function(){
@@ -607,9 +639,12 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.14.0';
+const APP_VERSION=window.CD_VERSION||'3.15.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.15.0','2026-10-21',['Search from every page: box in the top bar (computer) / 🔍 button (phone) — type a cylinder number or customer name, Enter opens it','View only: can open every page and search everything, but cannot add, edit or delete','Install as app fixed: the app details (name, icons, manifest) were outside the page header, so Chrome could not see them — now checked in Chrome','Phones in dark mode now also show the normal light look']],
+ ['3.14.2','2026-10-21',['People: Google name and email shown under each name box; the call button sits beside the mobile number so the row stays in line']],
+ ['3.14.1','2026-10-21',['New entry: count by gas above the cylinder box (O2 · CO2 · N2 · Argon · DURO · Total), each in its own colour']],
  ['3.14.0','2026-10-21',['Cylinder box: Tab after a number adds it and stays for the next number; Tab in an empty box goes to Save','Phone / browser Back button: closes the popup, then goes to the previous page','Light (normal) look by default; ☀️/🌙 button switches to the dark menu','Live clock in the status bar','Softer icon colours','Backups every 10 minutes when something changed; automatic and daily files kept 10 days then deleted','Install banner on the Dashboard and an Install button in the phone menu']],
  ['3.13.0','2026-10-21',['New look: desktop-software style — coloured title bar, dark side menu in 4 groups with colourful icons, page icons, coloured KPI cards, Excel-like tables, dialogs for small forms, status bar','Computers: larger text and the full screen width used','Entry cards: email line removed; shows came back / still out, how many the customer holds now, entered time, and who entered it (only when it was someone else)']],
  ['3.12.0','2026-10-21',['App version shown under the company name on phone and computer','People: type each person’s real name and mobile (owner too); the typed name shows everywhere instead of the email','People: “View only” switch for staff and managers — they can look but not add, edit or delete','Phone: Dashboard in the bottom bar; the other pages under ☰ Menu at the top']],
@@ -771,7 +806,7 @@ const PRESET={manager:Object.fromEntries(PERM_KEYS.map(k=>[k,true])),
 function permsFor(uid){const r=S.roles[uid]||{};const base=PRESET[r.role]||{};const o={};PERM_KEYS.forEach(k=>{o[k]=!!(r.perm&&k in r.perm?r.perm[k]:base[k])});return o}
 const WORK_KEYS=['entry','editOwn','editAny','otherBr','newCust','editCust','saveLoc'];
 const viewOnly=uid=>{const r=S.roles[uid||S.uid];return !!(r&&r.viewOnly)};
-function can(k){if(S.isOwner)return true;if(!role())return false;if(viewOnly()&&WORK_KEYS.includes(k))return false;return permsFor(S.uid)[k]}
+function can(k){if(S.isOwner)return true;if(!role())return false;if(viewOnly()){if(WORK_KEYS.includes(k))return false;if(PAGE_KEYS.includes(k))return true}return permsFor(S.uid)[k]}
 const canManage=()=>role()==='owner'||(role()==='manager'&&!viewOnly());
 const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly&&!(!S.isOwner&&viewOnly())&&can('entry');
 const madeToday=r=>!!r.at&&new Date(r.at).toDateString()===new Date().toDateString();
@@ -936,6 +971,23 @@ function navOk(k){const r=role();
   if(k==='oldimp')return S.isOwner;
   if(PAGE_KEYS.includes(k))return can(k);
   return true}
+/* one search for the whole app: cylinder numbers and customer names */
+function gFind(q){q=String(q||'').trim();if(!q)return [];const ql=q.toLowerCase(),qc=normCyl(q);const out=[];
+  if(qc&&S.cyl[qc])out.push({k:'cyl',v:qc,exact:1});
+  for(const id of Object.keys(S.cyl)){if(out.length>=8)break;if(id!==qc&&String(id).toLowerCase().startsWith(ql))out.push({k:'cyl',v:id})}
+  const cs=Object.entries(S.cust).filter(([k,c])=>c.n.toLowerCase().includes(ql)).sort((a,b)=>(a[1].n.toLowerCase().startsWith(ql)?0:1)-(b[1].n.toLowerCase().startsWith(ql)?0:1)).slice(0,8);
+  cs.forEach(([k])=>out.push({k:'cust',v:k}));return out.slice(0,14)}
+function gRow(x,i){const ta=LANG==='ta';if(x.k==='cyl'){const st=S.D.state[x.v]||{};const g=(S.cyl[x.v]||{}).g||'';
+    return `<button type="button" data-gi="${i}" class="${i===0?'on':''}"><span class="mono" style="font-weight:700">${esc(x.v)}</span> <span class="small muted">${esc(g)}</span><span class="small" style="margin-left:auto">${st.st==='out'?esc(custName(st.ck))+' · '+(st.days??'')+(ta?' நாள்':'d'):esc(STATUS[st.st]?STATUS[st.st][0]:'')}</span></button>`}
+  const c=S.cust[x.v]||{};return `<button type="button" data-gi="${i}" class="${i===0?'on':''}">👥 <b>${esc(c.n)}</b> ${brTag(x.v)}<span class="small" style="margin-left:auto">${(S.D.holding[x.v]||[]).length} ${ta?'சிலிண்டர்':'cyl'}</span></button>`}
+function gOpen(x){if(!x)return;openDrawer({k:x.k==='cyl'?'cyl':'cust',v:x.v})}
+function gBind(inp,dd){let res=[],sel=0;
+  const draw=()=>{res=gFind(inp.value);sel=0;if(!res.length){dd.hidden=!inp.value.trim();dd.innerHTML=inp.value.trim()?`<div class="small muted" style="padding:10px">${LANG==='ta'?'பொருந்தவில்லை':'No match'}</div>`:'';return}dd.innerHTML=res.map(gRow).join('');dd.hidden=false};
+  inp.addEventListener('input',draw);inp.addEventListener('focus',()=>{if(inp.value.trim())draw()});
+  inp.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!res.length)return;sel=(sel+(e.key==='ArrowDown'?1:-1)+res.length)%res.length;$$('[data-gi]',dd).forEach((b,i)=>b.classList.toggle('on',i===sel))}
+    else if(e.key==='Enter'){e.preventDefault();if(res[sel]){const x=res[sel];dd.hidden=true;inp.blur();gOpen(x)}}else if(e.key==='Escape'){inp.value='';dd.hidden=true;inp.blur()}});
+  dd.addEventListener('mousedown',e=>{const b=e.target.closest('[data-gi]');if(!b)return;e.preventDefault();const x=res[+b.dataset.gi];dd.hidden=true;inp.blur();gOpen(x)});
+  inp.addEventListener('blur',()=>setTimeout(()=>{dd.hidden=true},150))}
 function paintShell(){
   paintBrand();
   const r=role();
@@ -945,8 +997,9 @@ function paintShell(){
   (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
-  $('#who').innerHTML=`<button class="btn sm skin-btn" data-act="skin" title="${LANG==='ta'?'மெனு நிறம்: வெளிர் / இருண்ட':'Menu colour: light / dark'}">${SKIN==='light'?'🌙':'☀️'}</button>`+(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
+  $('#who').innerHTML=(r?`<button class="btn sm gs-btn" data-act="gsearch" aria-label="Search">${ic('search')}</button>`:'')+`<button class="btn sm skin-btn" data-act="skin" title="${LANG==='ta'?'மெனு நிறம்: வெளிர் / இருண்ட':'Menu colour: light / dark'}">${SKIN==='light'?'🌙':'☀️'}</button>`+(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
   paintSync();
+  {const w=$('#gs-wrap');if(w){w.hidden=!r;const i=$('#gq');if(!w._b){w._b=1;w.querySelector('.gs-ic').innerHTML=ic('search');gBind(i,$('#gq-dd'))}i.placeholder=LANG==='ta'?'சிலிண்டர் / customer தேடு…':'Find cylinder / customer…'}}
 }
 /* Owner: merge this customer into any other one (picked by name). */
 function mergeIntoPanel(from){
@@ -1041,7 +1094,7 @@ setTimeout(()=>{try{const u=sessionStorage.getItem('cd-updated');if(u){sessionSt
 let INSTALL=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL=e;try{paintShell();if(S.view==='dash'&&mounted==='dash'){mounted=null;refresh()}}catch(err){}});
 window.addEventListener('appinstalled',()=>{INSTALL=null;try{paintShell();toast(LANG==='ta'?'App நிறுவப்பட்டது — home screen-இல் பார்க்கவும்':'App installed — find it on your home screen')}catch(err){}});
-if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 /* ---------------- phone helpers for staff ---------------- */
 const isTouch=()=>window.matchMedia&&matchMedia('(pointer:coarse)').matches;
 /* customers this person used most recently (then anyone's) */
@@ -1492,7 +1545,7 @@ VIEWS.entry={
           <div class="small muted" id="f-cust-info"></div>
         </div>
         <div class="field" id="f-pl-wrap"><label for="f-pl">Filling plant / supplier</label><input class="inp" id="f-pl" list="dl-pl" value="${esc(f.pl)}" placeholder="eg. Own plant, HS &amp; AP"><datalist id="dl-pl">${datalistVals('pl').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
-        <div class="field rel"><label for="f-cyl">Cylinder numbers <span class="muted" style="font-weight:400">· Enter / Tab after each · empty box Tab → Save</span></label>
+        <div class="field rel"><label for="f-cyl" class="cyl-lbl"><span class="lbl-t">Cylinder numbers <span class="muted" style="font-weight:400">· Enter / Tab after each · empty box Tab → Save</span></span><span id="f-gascount" class="gascount"></span></label>
           <div class="cylbox" id="f-cylbox"><span id="f-chips" class="chips"></span><input id="f-cyl" placeholder="505, C1008, D101" inputmode="${isTouch()?'numeric':'text'}" aria-describedby="f-cyl-help" aria-controls="f-cyl-dd"></div>
           <div class="dd pick" id="f-cyl-dd" role="listbox" hidden></div>
           <div class="prefbar" id="f-pref">${['C','N','A','D','K'].map(x=>`<button type="button" data-pre="${x}" tabindex="-1">${x}</button>`).join('')}<button type="button" data-pre="abc" tabindex="-1">ABC</button><button type="button" data-pre="ok" tabindex="-1" class="ok">${LANG==='ta'?'சேர் ↵':'Add ↵'}</button></div>
@@ -1673,8 +1726,11 @@ VIEWS.entry={
     const info=$('#f-cust-info');
     if(f.ck){const h=S.D.holding[f.ck]||[];const c=S.cust[f.ck]||{};const o=h.filter(x=>x.days>90).length;info.innerHTML=`${esc(c.t||'')}${c.ph?' · '+esc(c.ph):''} · holding <b class="num">${h.length}</b> cylinder${h.length===1?'':'s'}${o?` · <span class="pill crit">${o} over 90 days</span>`:''} · <a href="#" data-act="opencust" data-v="${esc(f.ck)}" tabindex="-1">${LANG==='ta'?'நிலுவை & வரலாறு':'Outstanding & history'}</a>`}
     else info.textContent=f.cq?'Pick a customer from the list, or add a new one.':'';
-    $('#f-chips').innerHTML=f.cy.map((id,i)=>{const [k,msg]=chipStatus(id,f);const st=S.D.state[id];return `<span class="chip ${k}" title="${esc(msg)}">${esc(id)}${st&&st.known?`<span class="chip-note">${esc(st.g)}</span>`:''}<button type="button" data-act="rmchip" data-i="${i}" aria-label="Remove ${esc(id)}">×</button></span>`}).join('');
+    $('#f-chips').innerHTML=f.cy.map((id,i)=>{const [k,msg]=chipStatus(id,f);const st=S.D.state[id];return `<span class="chip ${k}" title="${esc(msg)}">${esc(id)}${st&&st.known?`<span class="chip-note" style="color:${({O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'})[String(st.g).split(' ')[0]]||'inherit'};font-weight:700">${esc(st.g)}</span>`:''}<button type="button" data-act="rmchip" data-i="${i}" aria-label="Remove ${esc(id)}">×</button></span>`}).join('');
     const probs=f.cy.map(id=>[id,...chipStatus(id,f)]).filter(x=>x[1]!=='ok');
+    {/* count by gas, shown on the right above the box */
+      const cnt={};f.cy.forEach(id=>{const g=((S.cyl[id]||{}).g||'?').replace(/\s*kg$/i,'');cnt[g]=(cnt[g]||0)+1});
+      const el=$('#f-gascount');if(el)el.innerHTML=f.cy.length?Object.entries(cnt).map(([g,n])=>{const full=Object.keys(GAS_VAR).find(k=>k.replace(/\s*kg$/i,'')===g)||g;const GC={O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'};return `<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`}).join('')+`<span class="gc tot">${LANG==='ta'?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:''}
     $('#f-cyl-help').innerHTML=f.cy.length?`${f.cy.length} cylinder${f.cy.length===1?'':'s'}${probs.length?` · <span style="color:var(--warn);font-weight:600">${probs.length} to check</span>`:' · all look right'}${f.cy.length>1?` · <a href="#" data-act="clearchips">clear all</a>`:''}`:'Type a number and press Enter or Tab for the next one. When done, press Tab in the empty box, then Enter to save.';
     const ex=$('#f-expect');let list=null,label='';
     if(f.t==='MT'&&f.ck){list=S.D.holding[f.ck]||[];label='Cylinders with '+custName(f.ck)+' now';
@@ -1937,7 +1993,7 @@ function fuMessage(ck,list){
   const d=Math.min(...h.map(s=>s.days||0));
   const tpl=S.company.fuMsg||DEFAULT_FU_MSG;
   return tpl.replace(/\{customer\}/g,custName(ck)).replace(/\{count\}/g,h.length).replace(/\{days\}/g,d).replace(/\{cylinders\}/g,h.map(s=>s.id+' ('+s.days+' days'+(outDc(s.id)?', DC '+outDc(s.id):'')+', '+fmtD(s.d)+')').join(', ')).replace(/\{company\}/g,S.company.name||'').replace(/\{phone\}/g,S.company.phone||'')}
-async function markReminded(ck){try{await S.db.doc('cust/all').update({list:{[ck]:{rem:{at:new Date().toISOString(),by:S.uid}}}});if(S.cust[ck])S.cust[ck].rem={at:new Date().toISOString(),by:S.uid};if(S.view==='fu')VIEWS.fu.update()}catch(e){toast(dbErr(e))}}
+async function markReminded(ck){if(!S.isOwner&&(viewOnly()||!['manager','staff'].includes(role())))return;try{await S.db.doc('cust/all').update({list:{[ck]:{rem:{at:new Date().toISOString(),by:S.uid}}}});if(S.cust[ck])S.cust[ck].rem={at:new Date().toISOString(),by:S.uid};if(S.view==='fu')VIEWS.fu.update()}catch(e){toast(dbErr(e))}}
 
 /* Mismatches */
 VIEWS.mism={
@@ -2220,8 +2276,11 @@ VIEWS.settings={
   update(){if(!S.isOwner||!$('#s-people'))return;
     const ids=[...new Set([...Object.keys(S.members),...Object.keys(S.roles)])].filter(i=>i!==S.uid&&(S.members[i]||(S.roles[i]&&S.roles[i].role)));
     const ta=LANG==='ta';
-    const nameCell=(id,r,p)=>`<input class="inp" data-pn="${esc(id)}" value="${esc(r.name||'')}" placeholder="${esc(p.name||(ta?'பெயர்':'Name'))}" style="min-width:150px"><div class="small muted" style="margin-top:3px">${esc(p.email||'')}</div>`;
-    const phCell=(id,r)=>`<input class="inp mono" data-pp="${esc(id)}" value="${esc(r.ph||'')}" placeholder="98xxxxxxxx" inputmode="tel" style="min-width:120px">${r.ph?` <a class="small" href="tel:${esc(telOf(r.ph))}">📞</a>`:''}`;
+    /* Google account name and email under the name box */
+    const gInfo=(id,p)=>{const raw=String(p.name||'');const em=p.email||((raw.match(/\(([^)]*@[^)]*)\)/)||[])[1])||(id===S.uid&&S.me&&S.me.email)||'';const nm=cleanName(raw);return [nm,em].filter(Boolean)};
+    const nameCell=(id,r,p)=>{const [gn,ge]=(()=>{const g=gInfo(id,p);return g.length===2?g:[g[0]&&!/@/.test(g[0])?g[0]:'',g.find(x=>/@/.test(x))||'']})();
+      return `<input class="inp" data-pn="${esc(id)}" value="${esc(r.name||'')}" placeholder="${esc(gn||(ta?'பெயர்':'Name'))}" style="min-width:160px"><div class="small muted pinfo">${gn?`👤 ${esc(gn)}`:''}${ge?`<br>✉️ ${esc(ge)}`:''}</div>`};
+    const phCell=(id,r)=>`<div class="phrow"><input class="inp mono" data-pp="${esc(id)}" value="${esc(r.ph||'')}" placeholder="98xxxxxxxx" inputmode="tel" style="min-width:130px">${r.ph?`<a class="btn sm" href="tel:${esc(telOf(r.ph))}" title="Call">📞</a>`:''}</div><div class="small muted pinfo">&nbsp;</div>`;
     const me=S.roles[S.uid]||{};const mp=S.profiles[S.uid]||{};
     const ownerRow=`<tr><td>${nameCell(S.uid,me,mp)}</td><td>${phCell(S.uid,me)}</td><td class="muted small">—</td><td><b>Owner</b></td><td class="muted small">—</td><td class="muted small">—</td><td class="muted small">${ta?'எல்லாம்':'Everything'}</td></tr>`;
     $('#s-people').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>${ta?'Mobile':'Mobile'}</th><th>${ta?'கடைசியாகத் திறந்தது':'Last opened'}</th><th>Role</th><th>${ta?'கிளை':'Branch'}</th><th>${ta?'பார்வை மட்டும்':'View only'}</th><th>${ta?'அனுமதிகள்':'Permissions'}</th></tr></thead><tbody>${ownerRow}${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td>${nameCell(id,r,p)}</td><td>${phCell(id,r)}</td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
@@ -2579,6 +2638,7 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
+  gsearch:()=>{const ta=LANG==='ta';openDrawer({k:'form',render:()=>[`<h3>🔍 ${ta?'தேடு':'Search'}</h3>`,`<input id="gq2" class="inp" autocomplete="off" inputmode="search" placeholder="${ta?'சிலிண்டர் எண் அல்லது customer பெயர்':'Cylinder number or customer name'}"><div id="gq2-dd" class="gq-dd inline"></div>`],after(){const i=$('#gq2');gBind(i,$('#gq2-dd'));setTimeout(()=>i.focus(),50)}})},
   skin:()=>{SKIN=SKIN==='light'?'dark':'light';try{localStorage.setItem('cd-skin',SKIN)}catch(e){}document.body.classList.toggle('skin-light',SKIN==='light');paintShell();toast(SKIN==='light'?(LANG==='ta'?'வெளிர் (normal) நிறம்':'Light (normal) look'):(LANG==='ta'?'இருண்ட மெனு':'Dark menu'))},
   installnow:async()=>{if(!INSTALL){toast(LANG==='ta'?'Chrome ⋮ மெனு → “Install app” / “Add to Home screen”':'Chrome ⋮ menu → “Install app” / “Add to Home screen”');return}INSTALL.prompt();try{await INSTALL.userChoice}catch(e){}INSTALL=null;paintShell();if(S.view==='dash')VIEWS.dash.update&&VIEWS.dash.update()},
   installhide:()=>{try{localStorage.setItem('cd-inst-hide','1')}catch(e){}const b=$('#inst-banner');if(b)b.remove()},
