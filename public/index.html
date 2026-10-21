@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.19.0"><link rel="icon" href="icon.svg?v=3.19.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.19.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.19.1"><link rel="icon" href="icon.svg?v=3.19.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.19.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,9 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.whybox{margin-bottom:12px}
+.locpop ol{margin:8px 0 0 18px;padding:0}.locpop li{margin:4px 0}
+.locpop .big{font-size:44px;text-align:center;line-height:1}
 .notice.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
 .fl-mode{margin-top:10px}
 .fl-read{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1fr) 110px;gap:6px 10px;align-items:center;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
@@ -725,7 +728,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.19.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.19.1" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -745,7 +748,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.19.0"></script>
+<script src="fb.js?v=3.19.1"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -780,9 +783,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.19.0';
+const APP_VERSION=window.CD_VERSION||'3.19.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.19.1','2026-10-21',['Location: staff and managers are asked after every login until they allow it; once allowed it never asks again; if blocked, the popup shows how to allow it','When someone cannot make DC / MT or inspect, the page now says why (Viewer role, View only on, or permission off) instead of hiding it silently']],
  ['3.19.0','2026-10-21',['New entry: live time and date on the right of the title box','Attendance photo: owner switches it on or off for each person in Settings → People; without it only time and place are saved','Filling register: opening / closing time, Cum (m³) and Kg with the used amount; next filling starts from the last closing','Filling register: “Dealer name” instead of filler — Hindusthan Surgicals (ours) or a dealer; dealers list with mobile, GSTIN, address','Only our own C and D fillings go to the cylinder list; A, B and every dealer filling stay in the ledger only (owner can change which types)','Ledger by party and type with totals, Cum and Kg','Phones: fits small and zoomed screens (big system font) — header, bottom bar, popups and tables shrink to fit']],
  ['3.18.0','2026-10-21',['Filling register: record cylinders filled at the factory (date, type A/B/C/D, filler, many numbers at once); a filling counts as the cylinder being back','Late DC / MT paper: anything that does not match before a filling waits as “Entry pending” for 45 days instead of a mismatch; reminder every 10 days','Physical inspection: visit a customer, tick ✓ / ✗ each cylinder, add extras and a note; name, time and place saved; findings list for the office','Attendance: In and Out with selfie, time and place; monthly ledger with late marks; office time setting','Login register: every login with its place','Location trail every 15 minutes while the app is open (owner can switch on)']],
  ['3.17.1','2026-10-21',['DC / MT numbers follow the date by themselves: an older-dated entry takes its place and later numbers move up; deleting closes the gap; no more “cannot be earlier” warning']],
@@ -959,6 +963,14 @@ const WORK_KEYS=['entry','editOwn','editAny','otherBr','newCust','editCust','sav
 const viewOnly=uid=>{const r=S.roles[uid||S.uid];return !!(r&&r.viewOnly)};
 function can(k){if(S.isOwner)return true;if(!role())return false;if(viewOnly()){if(WORK_KEYS.includes(k))return false;if(PAGE_KEYS.includes(k))return true}return permsFor(S.uid)[k]}
 const canManage=()=>role()==='owner'||(role()==='manager'&&!viewOnly());
+/* Plain reason why this person cannot do a piece of work, or '' when they can */
+function whyNot(k){const ta=LANG==='ta';if(S.isOwner)return '';const r=role();
+  if(!r)return ta?'உங்களுக்கு இன்னும் role கொடுக்கப்படவில்லை.':'You have no role yet.';
+  if(S.readOnly)return ta?'அணுகல் மாறியுள்ளது — app-ஐ மீண்டும் திறக்கவும்.':'Your access changed — reopen the app.';
+  if(r==='viewer')return ta?'உங்கள் role “Viewer” — பார்க்க மட்டும்.':'Your role is “Viewer” — look only.';
+  if(viewOnly())return ta?'உங்களுக்கு “பார்வை மட்டும்” (View only) on-இல் உள்ளது.':'“View only” is switched on for you.';
+  if(!permsFor(S.uid)[k])return ta?'இந்த வேலைக்கான அனுமதி off-இல் உள்ளது.':'This permission is switched off for you.';return ''}
+const whyBox=(k,what)=>{const w=whyNot(k);if(!w)return '';const ta=LANG==='ta';return `<div class="notice warn whybox">${ic('info')}<div><b>${esc(what)} — ${ta?'உங்களுக்கு இல்லை':'not available to you'}.</b> ${esc(w)} ${ta?'Owner: Settings → People-இல் உங்கள் role-ஐ <b>Staff</b> ஆக்கி, “View only”-ஐ off செய்யலாம்.':'The owner can change this in Settings → People (role <b>Staff</b>, “View only” off).'}</div></div>`};
 const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly&&!(!S.isOwner&&viewOnly())&&can('entry');
 const madeToday=r=>!!r.at&&new Date(r.at).toDateString()===new Date().toDateString();
 const canView=()=>!!role();
@@ -1519,7 +1531,7 @@ function openSyncPanel(){openDrawer({k:'form',sync:true,render:syncPanel,after()
 
 let mounted=null;
 function refresh(){
-  if(S.D&&role()&&!ATT.started){ATT.started=true;attLoad().then(()=>{if(needsAtt()&&(!ATT.today||!ATT.today.in)&&!S.drawer&&!window.__NOATT)setTimeout(()=>attPanel('in'),900)});loginLog();trailStart()}
+  if(S.D&&role()&&!ATT.started){ATT.started=true;locGate().then(()=>{attLoad().then(()=>{if(needsAtt()&&(!ATT.today||!ATT.today.in)&&!S.drawer&&!window.__NOATT)setTimeout(()=>attPanel('in'),900)});loginLog();trailStart()})}
   if(!HIST.init){HIST.init=true;try{history.replaceState({v:S.view},'')}catch(e){}}
   paintShell();
   const allLoaded=Object.values(S.loaded).every(Boolean);
@@ -1596,7 +1608,7 @@ VIEWS.dash={
       ${brs.map(b=>{const rs=allToday.filter(r=>r.br===b);return `<tr class="click" ${entGo({entBr:b})}><td>${esc(brName(b))}</td><td class="r num"><a href="#" ${entGo({entBr:b,entType:'DC'})}>${sumT(rs,'DC')}</a></td><td class="r num"><a href="#" ${entGo({entBr:b,entType:'MT'})}>${sumT(rs,'MT')}</a></td><td class="r num">${sumT(rs,'FS')}</td><td class="r num">${sumT(rs,'FR')}</td><td class="r num">${todayMism.filter(x=>x.br===b).length||'<span class="muted">0</span>'}</td></tr>`}).join('')}</tbody></table></div>
       ${Object.keys(staff).length?`<div class="chips" style="margin-top:12px">${Object.entries(staff).map(([id,s])=>`<a href="#" class="pill unused" ${entGo({entBr:'all'})}><span data-name="${esc(id)}">${esc(personName(id))}</span> · ${s.n} entries · ${s.c} cyl</a>`).join('')}</div>`:`<div class="small muted" style="margin-top:10px">No entries yet today.</div>`}`;
     const sm=canManage()?daySummary():null;
-    $('#dash-body').innerHTML=`
+    $('#dash-body').innerHTML=`${!S.isOwner&&!canEnter()?whyBox('entry',LANG==='ta'?'DC / MT பதிவு':'DC / MT entry'):''}
     ${sm?`<div class="panel daysum"><div class="panel-head"><h3>${LANG==='ta'?'இன்றைய சுருக்கம்':'Today’s summary'}</h3><span class="muted small">${fmtD(S.D.today)}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="btn sm wa" data-act="wasum">${ic('wa')}${LANG==='ta'?'WhatsApp-இல் அனுப்பு':'Send on WhatsApp'}</button><button class="btn sm" data-act="copysum">${LANG==='ta'?'நகலெடு':'Copy'}</button></span></div><div class="kv">${sm.lines.map(([a,b],i)=>`<div class="click" ${[entGo({entType:'DC',entBr:'all'}),entGo({entType:'MT',entBr:'all'}),entGo({entBr:'all'}),dgo('mism'),fuGo(91)][i]||''}><span>${esc(a)}</span><b style="font-size:14px">${esc(b)}</b></div>`).join('')}</div></div>`:''}
     ${open?`<div class="notice crit">${ic('warn')}<div><b>${open} cylinder ${open===1?'movement needs':'movements need'} checking.</b> A cylinder came back from the wrong customer or an entry is missing. <button class="btn sm" data-act="nav" data-v="mism" style="margin-left:6px">Open mismatches</button></div></div>`:''}
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
@@ -2208,11 +2220,43 @@ const canInsp=()=>role()&&!S.readOnly&&(S.isOwner||(['manager','staff'].includes
 function inspRecs(){const out=[];for(const [docId,doc] of Object.entries(S.insps||{}))for(const [rid,r] of Object.entries((doc&&doc.recs)||{})){if(r&&!r.del)out.push(Object.assign({},r,{rid,docId}))}return out.sort((a,b)=>(b.at||'').localeCompare(a.at||''))}
 function inspFindings(){const out=[];for(const r of inspRecs()){const res=r.res||{};(r.miss||[]).forEach(c=>{if(!res[c])out.push({k:'miss',c,r})});(r.extra||[]).forEach(c=>{if(!res[c])out.push({k:'extra',c,r})})}return out}
 function gpsOnce(ms=9000){return new Promise(res=>{if(!navigator.geolocation)return res(null);let done=false;const t=setTimeout(()=>{if(!done){done=true;res(null)}},ms);
-  navigator.geolocation.getCurrentPosition(p=>{if(done)return;done=true;clearTimeout(t);res({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy)})},()=>{if(done)return;done=true;clearTimeout(t);res({denied:true})},{enableHighAccuracy:true,timeout:ms,maximumAge:60000})})}
+  navigator.geolocation.getCurrentPosition(p=>{if(done)return;done=true;clearTimeout(t);res({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy)})},e=>{if(done)return;done=true;clearTimeout(t);res(e&&e.code===1?{denied:true}:{off:true})},{enableHighAccuracy:true,timeout:ms,maximumAge:60000})})}
+async function geoPerm(){try{if(navigator.permissions&&navigator.permissions.query)return await navigator.permissions.query({name:'geolocation'})}catch(e){}return null}
+async function locGate(){
+  if(!needsAtt()||window.__NOLOC||!navigator.geolocation)return;
+  const p=await geoPerm();
+  if(p&&p.state==='granted')return;                 // allowed once → never ask again
+  if(!p||p.state==='prompt'){const r=await gpsOnce(20000);if(r&&r.lat!=null)return}
+  const now=await geoPerm();if(now&&now.state==='granted')return;
+  await new Promise(res=>locPanel(res));
+}
+function locPanel(done){
+  const ta=LANG==='ta';const app=window.matchMedia&&matchMedia('(display-mode: standalone)').matches;let p=null,fin=false;
+  const finish=()=>{if(fin)return;fin=true;if(p)p.onchange=null;done()};
+  openDrawer({k:'form',dlg:1,render:()=>[`<h3>📍 ${ta?'இடம் (Location) அனுமதி தேவை':'Location permission needed'}</h3>`,
+    `<div class="locpop"><div class="big">📍</div>
+     <p>${ta?'வருகை, login, சரிபார்ப்பு — இவற்றுக்கு உங்கள் இடம் பதிவாக வேண்டும். <b>Allow</b> கொடுக்கும் வரை இந்தச் செய்தி ஒவ்வொரு முறையும் வரும். ஒருமுறை Allow கொடுத்தால் மீண்டும் கேட்காது.':'Attendance, logins and inspections need your location. This message comes every time until you <b>Allow</b> it. Once allowed, it will not ask again.'}</p>
+     <div class="row"><button class="btn primary" type="button" id="lp-ask">📍 ${ta?'Location அனுமதி கொடு':'Allow location'}</button></div>
+     <div id="lp-msg" class="small" style="margin-top:10px"></div>
+     <div class="notice info" id="lp-steps" hidden>${ic('info')}<div><b>${ta?'Location “Block” செய்யப்பட்டுள்ளது. இப்படி Allow செய்யவும்:':'Location is blocked. Allow it like this:'}</b>
+       <ol>${app?`<li>${ta?'Phone home screen-இல் <b>HSAP</b> app icon-ஐ நீண்ட நேரம் அழுத்தவும் → <b>App info</b> (ⓘ)':'Long-press the <b>HSAP</b> app icon on the home screen → <b>App info</b> (ⓘ)'}</li><li>${ta?'<b>Permissions → Location → Allow</b>':'<b>Permissions → Location → Allow</b>'}</li>`
+        :`<li>${ta?'மேலே address bar-இல் உள்ள <b>🔒 / ⚙</b> குறியைத் தொடவும்':'Tap the <b>🔒 / ⚙</b> icon in the address bar'}</li><li>${ta?'<b>Permissions → Location → Allow</b>':'<b>Permissions → Location → Allow</b>'}</li>`}
+        <li>${ta?'அல்லது Chrome ⋮ → <b>Settings → Site settings → Location</b> → இந்த app → <b>Allow</b>':'Or Chrome ⋮ → <b>Settings → Site settings → Location</b> → this app → <b>Allow</b>'}</li>
+        <li>${ta?'பிறகு கீழே “மீண்டும் சோதி” அழுத்தவும்':'Then press “Check again” below'}</li></ol>
+       <div class="row" style="margin-top:8px"><button class="btn sm" type="button" id="lp-again">🔄 ${ta?'மீண்டும் சோதி':'Check again'}</button></div></div></div>`],
+    after(){const msg=$('#lp-msg'),steps=$('#lp-steps');
+      const ok=()=>{toast(ta?'Location அனுமதி கிடைத்தது ✓':'Location allowed ✓');closeDrawer();finish()};
+      const show=st=>{if(st==='granted'){ok();return}steps.hidden=st!=='denied';msg.innerHTML=st==='off'?`<span style="color:var(--crit)">${ta?'Phone-இல் Location (GPS) off-இல் உள்ளது. மேலிருந்து கீழே இழுத்து <b>Location</b>-ஐ on செய்து மீண்டும் அழுத்தவும்.':'Location (GPS) is off on the phone. Pull down from the top, switch <b>Location</b> on, and press again.'}</span>`:''};
+      const ask=async()=>{msg.textContent=ta?'காத்திருக்கவும்…':'Please wait…';const r=await gpsOnce(20000);if(r&&r.lat!=null){ok();return}const q=await geoPerm();show(r&&r.off&&(!q||q.state==='granted')?'off':(q?q.state:(r&&r.denied?'denied':'off')))};
+      $('#lp-ask').onclick=ask;$('#lp-again').onclick=ask;
+      geoPerm().then(q=>{p=q;if(q){show(q.state==='prompt'?'':q.state);q.onchange=()=>{if(q.state==='granted'&&!fin)ok()}}});
+      const obs=new MutationObserver(()=>{if(!document.getElementById('lp-ask')){obs.disconnect();finish()}});obs.observe(document.getElementById('drawer-root'),{childList:true})}});
+}
 const mapLink=l=>l&&l.lat!=null?`<a href="https://www.google.com/maps?q=${l.lat},${l.lng}" target="_blank" rel="noopener">📍 ${LANG==='ta'?'இடம்':'Map'}${l.acc?` ±${l.acc}m`:''}</a>`:`<span class="muted small">${l&&l.denied?(LANG==='ta'?'📍 அனுமதி இல்லை':'📍 not allowed'):'—'}</span>`;
 VIEWS.insp={
   mount(){const u=S.ui;const ta=LANG==='ta';if(!u.inTab)u.inTab='cust';if(u.inBr==null)u.inBr=role()==='staff'?myBranch():'all';
     return `<div class="page-head"><div><h2>Physical inspection</h2><p>${ta?'Customer இடத்துக்குப் போய், app கணக்குப்படி அவரிடம் உள்ள சிலிண்டர்களை நேரில் பார்த்து ✓ / ✗ குறிக்கவும். பட்டியலில் இல்லாததைச் சேர்க்கலாம். Staff பெயர், நேரம், இடம் தானாகச் சேரும்.':'Visit the customer and tick each cylinder you can see. Add any that are not in the list. Your name, time and location are saved.'}</p></div></div>
+    ${!canInsp()?whyBox('insp',ta?'நேரடி சரிபார்ப்பு':'Physical inspection'):''}
     <div class="panel"><div class="seg" id="in-tabs"></div>
       <div class="row" style="margin-top:10px"><div class="field search"><label for="in-q">${ta?'Customer தேடு':'Search customer'}</label><div class="rel">${ic('search')}<input class="inp" id="in-q" value="${esc(u.inQ||'')}"></div></div>
       <div class="field" style="flex:0 1 160px"><label for="in-br">${ta?'கிளை':'Branch'}</label><select class="inp" id="in-br"><option value="all">${ta?'எல்லாம்':'All'}</option>${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.inBr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div></div></div>
@@ -3133,7 +3177,7 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
-  inspopen:el=>{if(!canInsp()){openDrawer({k:'cust',v:el.dataset.v});return}inspPanel(el.dataset.v)},
+  inspopen:el=>{if(!canInsp()){toast((LANG==='ta'?'சரிபார்ப்பு செய்ய முடியாது: ':'Cannot inspect: ')+whyNot('insp'));return}inspPanel(el.dataset.v)},
   inspres:async el=>{try{await S.db.doc('insp/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{res:{[el.dataset.c]:{by:S.uid,at:new Date().toISOString()}}}}});toast(LANG==='ta'?'சரி செய்ததாகக் குறிக்கப்பட்டது':'Marked as sorted')}catch(e){toast(dbErr(e))}},
   attin:()=>attPanel('in'),attout:()=>attPanel('out'),
   attday:el=>{const r=VIEWS.att.by&&VIEWS.att.by[el.dataset.k];if(!r)return;const ta=LANG==='ta';
