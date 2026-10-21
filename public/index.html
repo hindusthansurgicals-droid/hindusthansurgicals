@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg?v=3.10.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.10.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -47,8 +47,8 @@ a{color:var(--accent)}
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
 .brand>div{min-width:0}
-.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;flex:none}
-.brand-mark svg{width:18px;height:18px}
+.brand-mark{width:34px;height:34px;border-radius:8px;background:#fff;display:grid;place-items:center;flex:none;border:1px solid var(--line);overflow:hidden}
+.brand-mark img{width:100%;height:100%;display:block}
 .brand h1{font:800 16px/1.1 var(--f-display);letter-spacing:.01em;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand small{display:block;font:500 11px/1.2 var(--f-body);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
 .top-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex:none}
@@ -238,6 +238,8 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.upd-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(60px + env(safe-area-inset-top,0px));z-index:60;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:6px 8px 6px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);font-size:13px}
+.upd-bar[hidden]{display:none}
 .morelist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .morelist button{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 12px;font:600 14px var(--f-body);color:var(--ink);text-align:left}
 .morelist button svg{width:20px;height:20px;color:var(--accent)}
@@ -372,7 +374,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" stroke-width="2" stroke-linecap="round"><path d="M9 3h6M10 3v3M14 3v3"/><rect x="7" y="6" width="10" height="15" rx="4"/><path d="M7 11h10"/></svg></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.10.1" alt=""></div>
       <div><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="top-right" id="who"></div>
@@ -383,12 +385,13 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
   </div>
 </div>
 <div id="drawer-root"></div>
+<div id="upd-bar" class="upd-bar" hidden><span>⬆ New version · புதிய version <b></b></span><button class="btn sm primary" type="button" onclick="location.reload()">Update</button></div>
 <div id="toast-root" aria-live="polite"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js"></script>
+<script src="fb.js?v=3.10.1"></script>
 <script>
 (function(){
 'use strict';
@@ -417,9 +420,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.10.0';
+const APP_VERSION=window.CD_VERSION||'3.10.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.10.1','2026-10-21',['New HSAP logo (app icon, header, sign-in)','App checks for a new version every 3 minutes and reloads itself when nothing is being typed or saved; otherwise an “Update” button shows','Files load with the version number so old copies are never used']],
  ['3.10.0','2026-10-21',['Phones: simple bottom bar for everyone — DC · MT · Customers · Cylinders · More (all other pages); computers keep the full menu']],
  ['3.9.9','2026-10-20',['One DC number series and one MT series for both branches','Registers → “Renumber all DC / MT from 1” (owner, one time): fresh numbers in date order, backup first, bills updated, cancelled numbers cleared']],
  ['3.9.8','2026-10-20',['Picking a customer switches the entry branch to the customer’s branch (Krishnagiri customer → Krishnagiri) and its DC / MT number','Customer branch guess is again worked out from their cylinders (Krishnagiri*)']],
@@ -803,6 +807,21 @@ function permPanel(id){
       $('#pm-form').addEventListener('submit',e=>{e.preventDefault();const o={};$$('[data-pm]').forEach(x=>{o[x.dataset.pm]=x.checked});save(o)});
       $('#pm-reset').onclick=()=>save(window.FBC&&FBC.DEL?FBC.DEL:null)}});
 }
+/* New version on the server → reload by itself when it is safe (nothing being typed or saved).
+   version.json is changed with every release; the server sends it uncached. */
+const UPD={newV:null,t:null};
+function safeToReload(){const sy=window.FBC&&FBC.sync?FBC.sync():{pending:0};if(sy.pending>0)return false;if(S.drawer)return false;
+  const f=S.form;if(S.view==='entry'&&f&&(f.ck||f.cy.length||f.edit||(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&document.activeElement.value)))return false;return true}
+async function checkUpdate(){
+  try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+    if(j&&j.v&&j.v!==APP_VERSION){UPD.newV=j.v;
+      if(safeToReload()){try{sessionStorage.setItem('cd-updated',j.v)}catch(e){}location.reload();return}
+      const b=$('#upd-bar');if(b){b.hidden=false;b.querySelector('b').textContent=j.v}}}catch(e){}
+}
+setTimeout(checkUpdate,8000);setInterval(checkUpdate,3*60e3);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+window.addEventListener('focus',()=>{if(UPD.newV&&safeToReload())location.reload()});
+setTimeout(()=>{try{const u=sessionStorage.getItem('cd-updated');if(u){sessionStorage.removeItem('cd-updated');toast((LANG==='ta'?'புதிய version-க்கு மாறியது: ':'Updated to version ')+APP_VERSION)}}catch(e){}},2500);
 /* Install as an app (Chrome offers this once the page qualifies). */
 let INSTALL=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL=e;try{paintShell()}catch(err){}});
