@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg?v=3.10.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.10.1">
+<title>HSAP Cylinder Desk</title>
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.11.0"><link rel="icon" href="icon.svg?v=3.11.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.11.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -374,7 +374,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.10.1" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.11.0" alt=""></div>
       <div><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="top-right" id="who"></div>
@@ -391,7 +391,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.10.1"></script>
+<script src="fb.js?v=3.11.0"></script>
 <script>
 (function(){
 'use strict';
@@ -420,9 +420,11 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.10.1';
+const APP_VERSION=window.CD_VERSION||'3.11.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.11.0','2026-10-21',['Follow-up page rebuilt: days out from any range (1–30, 31–60 … or your own), DC-date range (type 1-9, 9 for a month, 30-9-26), branch, search, by customer or by cylinder','Reminders every 30 days (Settings): customers due are marked and counted on the Dashboard; WhatsApp sends their cylinders with days and DC no. and marks them reminded','Cylinder page: edit any app entry, and (owner) edit or delete an old Excel line — type, full date, customer']],
+ ['3.10.2','2026-10-21',['DC / MT numbers as 0001, 0002 …; existing entries renumbered once by themselves in date order (old number kept on each entry)','Registers: “Entered by” replaced — DC shows how many cylinders came back / still out; MT shows which DC they went out on','Mismatches: “By” replaced with where the cylinder is now','Typing only day-month (21-10) works only in New entry; if it would be a future date it takes last year (e.g. in Jan 2027 → 21-10-2026)','Window / taskbar title “HSAP Cylinder Desk” and PNG favicon for desktop shortcuts']],
  ['3.10.1','2026-10-21',['New HSAP logo (app icon, header, sign-in)','App checks for a new version every 3 minutes and reloads itself when nothing is being typed or saved; otherwise an “Update” button shows','Files load with the version number so old copies are never used']],
  ['3.10.0','2026-10-21',['Phones: simple bottom bar for everyone — DC · MT · Customers · Cylinders · More (all other pages); computers keep the full menu']],
  ['3.9.9','2026-10-20',['One DC number series and one MT series for both branches','Registers → “Renumber all DC / MT from 1” (owner, one time): fresh numbers in date order, backup first, bills updated, cancelled numbers cleared']],
@@ -457,7 +459,8 @@ const CHANGELOG=[
 const isNum=v=>/^\d+$/.test(String(v||''));
 /* One DC series and one MT series for all branches (the app's own running numbers). */
 function seriesRecs(t,br){return S.D.recs.filter(r=>!r.del&&r.t===t&&isNum(r.dc))}
-function nextNo(t,br){if(!isCust(t))return '';let mx=0;for(const r of seriesRecs(t,br)){const n=+r.dc;if(n>mx)mx=n}return String(mx+1)}
+const fmtNo=n=>String(+n).padStart(4,'0');
+function nextNo(t,br){if(!isCust(t))return '';let mx=0;for(const r of seriesRecs(t,br)){const n=+r.dc;if(n>mx)mx=n}return fmtNo(mx+1)}
 function noCheck(f){
   if(!isCust(f.t)||!isNum(f.dc))return null;
   const n=+f.dc;const rs=seriesRecs(f.t,f.br).filter(r=>!(f.edit&&r.rid===f.edit.rid));
@@ -595,11 +598,11 @@ function derive(){
   for(const id of Object.keys(S.cyl))tl[id]=[];
   if(S.hist){
     const {meta,chunks}=S.hist;
-    for(const ch of chunks){for(const e of ch){
+    chunks.forEach((ch,ci)=>ch.forEach((e,pos)=>{
       const id=meta.cyl[e[0]];if(!tl[id])tl[id]=[];
       const nm=e[3]>=0?meta.cust[e[3]]:'';
-      tl[id].push({src:'old',t:e[1]?'MT':'DC',d:e[2]>=0?isoFromDay(e[2]):null,ck:nm?slug(nm):'',cn:nm});
-    }}
+      tl[id].push({src:'old',t:e[1]?'MT':'DC',d:e[2]>=0?isoFromDay(e[2]):null,ck:nm?slug(nm):'',cn:nm,ci,pos});
+    }));
   }
   const moves=[];const recs=[];
   for(const [docId,doc] of Object.entries(S.logs)){
@@ -775,25 +778,38 @@ function brPanel(){
         try{await S.db.doc('cust/all').update({list:{[k]:{br:v}}});S.cust[k]=Object.assign({},S.cust[k],{br:v});if(S.D)delete S.D._cbr;toast(`${S.cust[k].n} → ${v==='BOTH'?'Both':brName(v)}`);const row=b.closest('.bprow');if(only&&row)row.remove();else draw()}catch(err){toast(dbErr(err))}});
       draw();$('#bp-q').focus()}});
 }
+/* DC: how many of its cylinders came back. MT: which DCs those cylinders went out on. */
+function recFollow(r){
+  const ta=LANG==='ta';const back=[],out=[],from={};
+  for(const c of r.cy){const ev=S.D.tl[c]||[];const i=ev.findIndex(e=>e.rid===r.rid&&e.cyl===c);if(i<0)continue;
+    if(r.t==='DC'){const nx=ev.slice(i+1).find(e=>e.t==='MT'||e.t==='DC');if(nx&&nx.t==='MT')back.push(c);else out.push(c)}
+    else{const pv=ev.slice(0,i).reverse().find(e=>e.t==='DC'||e.t==='MT');if(pv&&pv.t==='DC'){const k=pv.dc?('DC '+pv.dc):(fmtD(pv.d));from[k]=(from[k]||0)+1}else from['?']=(from['?']||0)+1}}
+  if(r.t==='DC'){if(!r.cy.length)return '<span class="muted">—</span>';
+    if(!out.length)return `<span class="pill ok">${ta?'எல்லாம் திரும்பியது':'All back'} · ${back.length}</span>`;
+    const days=daysSince(r.d);
+    return `${back.length?`<span class="pill ok">${back.length} ${ta?'திரும்பியது':'back'}</span> `:''}<span class="pill ${days>90?'crit':'warn'}">${out.length} ${ta?'இன்னும் அவரிடம்':'still out'} · ${days}d</span>`}
+  const e=Object.entries(from);if(!e.length)return '<span class="muted">—</span>';
+  return e.map(([k,n])=>k==='?'?`<span class="pill warn">${n} ${ta?'DC இல்லை':'no DC'}</span>`:`<span class="mono">${esc(k)}</span>${n>1?` <span class="muted">×${n}</span>`:''}`).join(', ')}
 /* Owner, one time: give every DC and every MT a fresh number 1, 2, 3 … in date order (both branches together).
    A backup file is downloaded first. Bills that list DC numbers are updated too; cancelled numbers are cleared. */
-async function renumberAll(){
+async function renumberAll(silent){
   const ta=LANG==='ta';
   const plan={};const map={};
   for(const t of ['DC','MT']){
     const rs=S.D.recs.filter(r=>!r.del&&r.t===t).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.at||'')<(b.at||'')?-1:(a.at||'')>(b.at||'')?1:0);
-    rs.forEach((r,i)=>{const n=String(i+1);map[r.rid]=n;if(String(r.dc)!==n)(plan[r.docId]=plan[r.docId]||{})[r.rid]={dc:n}});}
+    rs.forEach((r,i)=>{const n=fmtNo(i+1);map[r.rid]=n;if(String(r.dc)!==n){const ch={dc:n};if(r.dc&&!r.dcOld)ch.dcOld=String(r.dc);(plan[r.docId]=plan[r.docId]||{})[r.rid]=ch}});}
   const nDC=S.D.recs.filter(r=>!r.del&&r.t==='DC').length,nMT=S.D.recs.filter(r=>!r.del&&r.t==='MT').length;
-  if(!confirm(ta?`DC ${nDC} பதிவுகளுக்கு 1 முதல் ${nDC} வரை, MT ${nMT} பதிவுகளுக்கு 1 முதல் ${nMT} வரை, தேதி வரிசைப்படி புதிய எண் தரப்படும் (இரண்டு கிளையும் சேர்த்து).\nமுதலில் backup file download ஆகும். தொடரவா?`:`DC ${nDC} entries get 1–${nDC} and MT ${nMT} entries get 1–${nMT}, in date order (both branches together).\nA backup file downloads first. Continue?`))return;
-  toast(ta?'Backup எடுக்கிறது…':'Taking a backup…');
-  try{const ok=await runReport('backup');if(ok===false&&!confirm(ta?'Backup சேமிக்கப்படவில்லை. இருந்தாலும் தொடரவா?':'The backup was not saved. Continue anyway?'))return}catch(e){if(!confirm(ta?'Backup சேமிக்கப்படவில்லை. இருந்தாலும் தொடரவா?':'The backup was not saved. Continue anyway?'))return}
+  if(!silent&&!confirm(ta?`DC ${nDC} பதிவுகளுக்கு 1 முதல் ${nDC} வரை, MT ${nMT} பதிவுகளுக்கு 1 முதல் ${nMT} வரை, தேதி வரிசைப்படி புதிய எண் தரப்படும் (இரண்டு கிளையும் சேர்த்து).\nமுதலில் backup file download ஆகும். தொடரவா?`:`DC ${nDC} entries get 1–${nDC} and MT ${nMT} entries get 1–${nMT}, in date order (both branches together).\nA backup file downloads first. Continue?`))return;
+  if(!silent){toast(ta?'Backup எடுக்கிறது…':'Taking a backup…');
+  try{const ok=await runReport('backup');if(ok===false&&!confirm(ta?'Backup சேமிக்கப்படவில்லை. இருந்தாலும் தொடரவா?':'The backup was not saved. Continue anyway?'))return}catch(e){if(!confirm(ta?'Backup சேமிக்கப்படவில்லை. இருந்தாலும் தொடரவா?':'The backup was not saved. Continue anyway?'))return}}
   try{
     const docs=Object.entries(plan);let k=0;
     for(const [docId,recs] of docs){await S.db.doc('log/'+docId).update({recs});k++;if(k%10===0)toast(`${k}/${docs.length}`)}
     for(const [bid,b] of Object.entries(S.bill||{})){const ch={};for(const [iid,v] of Object.entries(b.inv||{})){if(!Array.isArray(v.dcs))continue;let changed=false;const nd=v.dcs.map(x=>{const a=Array.isArray(x)?x.slice():x;if(Array.isArray(a)&&map[a[1]]&&a[2]!==map[a[1]]){a[2]=map[a[1]];changed=true}return a});if(changed)ch[iid]={dcs:nd}}if(Object.keys(ch).length)await S.db.doc('bill/'+bid).update({inv:ch})}
     if(Object.keys(S.voids||{}).length)await S.db.doc('reg/void').set({list:{}});
     if(S.form&&!S.form.edit){S.form.dcAuto=true}
-    toast(ta?`முடிந்தது — DC 1–${nDC}, MT 1–${nMT}`:`Done — DC 1–${nDC}, MT 1–${nMT}`);
+    await S.db.doc('settings/company').update({numV:'pad4'});
+    toast(ta?`DC / MT எண்கள் புதுப்பிக்கப்பட்டன — DC 0001–${fmtNo(nDC)}, MT 0001–${fmtNo(nMT)}`:`DC / MT numbers updated — DC 0001–${fmtNo(nDC)}, MT 0001–${fmtNo(nMT)}`);
   }catch(e){toast(dbErr(e))}
 }
 /* Owner: switch each permission on/off for one person. */
@@ -921,6 +937,25 @@ function datelessList(){
     out.push({id,ci:x.ci,pos:x.pos,t:x.e[1]?'MT':'DC',cn:x.e[3]>=0?meta.cust[x.e[3]]:'',prev,next})});
   return out;
 }
+/* Owner: change or delete one old Excel history line (type, date, customer). */
+function histEditPanel(ci,pos){
+  const {meta,chunks}=S.hist;const e=chunks[ci]&&chunks[ci][pos];if(!e)return;const ta=LANG==='ta';const id=meta.cyl[e[0]];
+  const names=[...new Set(meta.cust.concat(Object.values(S.cust).map(c=>c.n)))].sort();
+  openDrawer({k:'form',render:()=>[`<h3>${ta?'பழைய பதிவைத் திருத்து':'Edit old entry'} · ${esc(id)}</h3>`,
+    `<form id="he-f" style="display:flex;flex-direction:column;gap:12px">
+     <div class="seg" id="he-t"><button type="button" data-t="0" aria-pressed="${!e[1]}">DC</button><button type="button" data-t="1" aria-pressed="${!!e[1]}">MT</button></div>
+     <div class="field"><label for="he-d">${ta?'தேதி (முழுதும்: 21-10-2026)':'Date (full: 21-10-2026)'}</label><input class="inp mono" id="he-d" value="${e[2]>=0?fmtD(isoFromDay(e[2])):''}" placeholder="dd-mm-yyyy"></div>
+     <div class="field"><label for="he-c">Customer</label><input class="inp" id="he-c" list="he-cl" value="${esc(e[3]>=0?meta.cust[e[3]]:'')}"><datalist id="he-cl">${names.map(n=>`<option value="${esc(n)}">`).join('')}</datalist></div>
+     <div class="row"><button class="btn primary" type="submit">${ic('check')}${ta?'சேமி':'Save'}</button><button class="btn" type="button" id="he-del" style="color:var(--crit)">${ta?'இந்தப் பதிவை நீக்கு':'Delete this line'}</button><button class="btn" type="button" data-act="closedrawer">${ta?'ரத்து':'Cancel'}</button></div></form>`],
+    after(){let t=e[1];$('#he-t').addEventListener('click',ev=>{const b=ev.target.closest('[data-t]');if(!b)return;t=+b.dataset.t;$$('#he-t button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});
+      const done=async msg=>{try{await saveHistChunk(ci);toast(msg);closeDrawer();setTimeout(()=>openDrawer({k:'cyl',v:id}),300)}catch(err){toast(dbErr(err))}};
+      $('#he-f').addEventListener('submit',async ev=>{ev.preventDefault();const dv=$('#he-d').value.trim();let day=-1;
+        if(dv){if(!/^\d{1,2}\D+\d{1,2}\D+\d{2,4}$/.test(dv)){toast(ta?'முழு தேதி போடவும் — எ.கா. 21-10-2026':'Type the full date — e.g. 21-10-2026');return}const iso=parseTypedDate(dv);if(!iso||iso>todayISO()){toast(ta?'தேதி சரியில்லை':'Not a valid date');return}day=dayNum(iso)}
+        const nm=$('#he-c').value.replace(/\s+/g,' ').trim();let cx=-1;
+        if(nm){cx=meta.cust.indexOf(nm);if(cx<0){meta.cust.push(nm);cx=meta.cust.length-1;try{await S.db.doc('hist/meta').update({cust:meta.cust})}catch(err){toast(dbErr(err));return}}}
+        chunks[ci][pos]=[e[0],t,day,cx];done(ta?'சேமிக்கப்பட்டது':'Saved')});
+      $('#he-del').onclick=()=>{if(!confirm(ta?'இந்தப் பழைய பதிவை நீக்கவா?':'Delete this old line?'))return;chunks[ci].splice(pos,1);done(ta?'நீக்கப்பட்டது':'Deleted')}}});
+}
 async function saveHistChunk(ci){await S.db.doc('hist/e'+ci).set({ev:S.hist.chunks[ci],i:ci});scheduleDerive()}
 function datelessPanel(){
   const L=datelessList();const ta=LANG==='ta';
@@ -1039,6 +1074,7 @@ let mounted=null;
 function refresh(){
   paintShell();
   const allLoaded=Object.values(S.loaded).every(Boolean);
+  if(allLoaded&&S.isOwner&&S.D&&!S._renumTried&&S.company.numV!=='pad4'&&!S.readOnly){S._renumTried=true;setTimeout(()=>renumberAll(true),600)}
   const v=$('#view');
   if(!S.db){v.innerHTML=`<div class="loading"><div><b style="font:700 18px var(--f-display);color:var(--ink)">Open this page inside Claude</b><p>Sign in to Claude and open the shared link to use the cylinder desk.</p></div></div>`;mounted=null;return}
   if(!allLoaded||!S.D){v.innerHTML=`<div class="loading"><div><div class="spin"></div>Loading cylinders, customers and history…</div></div>`;mounted=null;return}
@@ -1102,6 +1138,7 @@ VIEWS.dash={
     ${open?`<div class="notice crit">${ic('warn')}<div><b>${open} cylinder ${open===1?'movement needs':'movements need'} checking.</b> A cylinder came back from the wrong customer or an entry is missing. <button class="btn sm" data-act="nav" data-v="mism" style="margin-left:6px">Open mismatches</button></div></div>`:''}
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
     ${canManage()&&(S.company.lastBackup||'')<t.slice(0,7)?`<div class="notice info">${ic('dl')}<div><b>This month's backup is not downloaded yet.</b> Keep one copy every month. <button class="btn sm" data-act="backupnow" style="margin-left:6px">Download backup</button></div></div>`:''}
+    ${(()=>{const n=Object.keys(S.D.holding).filter(remDue).length;return n&&navOk('fu')?`<div class="notice warn">🔔<div><b>${n} ${LANG==='ta'?'customer-களுக்கு நினைவூட்ட வேண்டும்':'customers are due for a reminder'}</b> (${LANG==='ta'?'ஒவ்வொரு':'every'} ${remEvery()} ${LANG==='ta'?'நாள்':'days'}). <button class="btn sm" data-act="fudue">${LANG==='ta'?'பார்':'Open'}</button></div></div>`:''})()}
     ${(()=>{const g=[];['DC','MT'].forEach(ty=>{const n=gaps(ty,'ALL').length;if(n)g.push(n+' '+ty)});return g.length?`<div class="notice warn">${ic('warn')}<div><b>Missing numbers:</b> ${esc(g.join(', '))}. <button class="btn sm" data-act="nav" data-v="reg" style="margin-left:6px">Open registers</button></div></div>`:''})()}
     <div class="stats">
       <div class="stat"><span><i style="background:var(--info)"></i>With customers</span><b>${cnt.out}</b></div>
@@ -1285,11 +1322,15 @@ VIEWS.entry={
     const ta=()=>LANG==='ta';
     const setDate=(iso,msg,cls)=>{f.d=iso;dIn.classList.toggle('bad',cls==='err');dMsg.className='small '+(cls||'');dMsg.textContent=msg||'';if(iso){dIn.value=fmtD(iso);dPick.value=iso}VIEWS.entry.updateNo();VIEWS.entry.updateSave()};
     const readDate=()=>{const v=dIn.value.trim();if(!v){setDate(todayISO(),'','');return true}
-      const r=parseTypedDate(v,yIn.value);
+      let r=parseTypedDate(v,yIn.value);
+      /* only day-month typed and it lands in the future (e.g. 21-10 typed in Jan 2027) → last year */
+      const short=/^\d{1,2}\D+\d{1,2}$|^\d{4}$/.test(v);let note='';
+      if(r&&short&&r>todayISO()){const y=+r.slice(0,4)-1;const r2=y+r.slice(4);if(r2<=todayISO()){r=r2;note=ta()?`${y} என எடுத்துக்கொண்டது`:`Taken as ${y}`}}
+      if(!note&&readDate.k&&readDate.k[0]===v)note=readDate.k[1];if(note&&r)readDate.k=[fmtD(r),note];
       if(!r){setDate('',ta()?`“${v}” தேதி புரியவில்லை — 24-9 போல type செய்யவும்`:`“${v}” is not a date — type it like 24-9`,'err');return false}
       if(r>todayISO()){setDate('',ta()?`${fmtD(r)} எதிர்கால தேதி — சரிபார்க்கவும்`:`${fmtD(r)} is in the future — check the date`,'err');dIn.value=fmtD(r);return false}
       const old=daysSince(r);
-      setDate(r,old>60?(ta()?`${old} நாட்களுக்கு முந்தைய தேதி — சரியா?`:`${old} days ago — is that right?`):'',old>60?'warn':'');return true};
+      setDate(r,[note,old>60?(ta()?`${old} நாட்களுக்கு முந்தைய தேதி — சரியா?`:`${old} days ago — is that right?`):''].filter(Boolean).join(' · '),old>60||note?'warn':'');return true};
     dIn.addEventListener('blur',readDate);
     let dJust=false;dIn.addEventListener('focus',()=>{dJust=true;dIn.select()});dIn.addEventListener('mouseup',e=>{if(dJust){e.preventDefault();dJust=false}});dIn.addEventListener('keydown',()=>{dJust=false},true);
     dIn.addEventListener('keydown',e=>{if(e.key==='Enter'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();if(readDate()){const n=isCust(f.t)?$('#f-cust'):$('#f-pl');(n&&!(isCust(f.t)&&f.ck)?n:cyIn).focus()}}});
@@ -1494,6 +1535,7 @@ async function saveEntry(){
   const own=cust&&f.own&&+f.ownN>0?{n:+f.ownN,g:f.ownG||'O2',nos:(f.ownNos||'').trim()}:null;
   if((cust&&!f.ck)||(!cust&&!f.pl.trim())||(!f.cy.length&&!own))return;
   if(cust&&!f.edit&&f.dcAuto){f.dc=nextNo(f.t,f.br)}
+  if(cust&&isNum(f.dc))f.dc=fmtNo(f.dc);
   f.busy=true;VIEWS.entry.updateSave();
   const now=new Date().toISOString();
   const body={full:f.t==='MT'&&f.full?true:false,t:f.t,d:f.d,ck:cust?f.ck:'',cn:cust?custName(f.ck):'',pl:cust?'':f.pl.trim(),dc:f.dc||'',cy:f.cy.slice(),own,rm:f.rm||'',vh:(f.vh||'').trim(),dr:(f.dr||'').trim(),br:f.br,by:S.uid,at:now};
@@ -1509,7 +1551,7 @@ async function saveEntry(){
     await writeRec({rid,body},f.d,f.br);
     const keep={t:f.t,d:f.d,br:f.br,vh:f.vh,dr:f.dr,pl:cust?'':f.pl};
     S.form=Object.assign(newForm(),keep,{saved:{t:body.t,dc:body.dc,title:recTitle(body),cy:body.cy,rid,docId:f.d+'_'+f.br+'_'+S.uid}});
-    if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?String(nn):'';S.form.dcAuto=!!nn}
+    if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?fmtNo(nn):'';S.form.dcAuto=!!nn}
     if(cust&&isTouch()&&can('saveLoc')&&S.cust[body.ck]&&!S.cust[body.ck].loc)S.ui.askLoc=body.ck;
     toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+(body.cy.length?body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')):'')+(ownN(body)?(body.cy.length?' + ':'')+ownTxt(body):''));
     mounted=null;refresh();setTimeout(()=>{const c=$('#f-date');c&&c.focus()},50);
@@ -1544,7 +1586,7 @@ VIEWS.entries={
   update(){const u=S.ui;const q=u.entQ.trim().toLowerCase();const qc=normCyl(u.entQ);
     /* branch = the customer's branch when it is set, otherwise the branch chosen on the entry */
     const brOf=r=>{const cb=isCust(r.t)&&r.ck&&custBr(r.ck).br;return cb&&cb!=='BOTH'?cb:r.br};
-    const other=r=>(u.entBr==='all'||brOf(r)===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||String(r.dc).toLowerCase()===q||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
+    const other=r=>(u.entBr==='all'||brOf(r)===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||(String(r.dc).toLowerCase()===q||(isNum(q)&&isNum(r.dc)&&+q===+r.dc))||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
     const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&other(r));
     const outside=S.D.recs.filter(r=>!r.del&&other(r)&&((u.entFrom&&r.d<u.entFrom)||(u.entTo&&r.d>u.entTo))).length;
     const ta=LANG==='ta';const allBtn=outside?`<div class="notice info" style="margin-bottom:10px">${ic('info')}<div style="flex:1">${ta?`இந்தத் தேதிகளுக்கு வெளியே <b>${outside}</b> பதிவுகள் பொருந்துகின்றன.`:`<b>${outside}</b> more matching entries on other dates.`} <button class="btn sm" type="button" data-act="entall">${ta?'எல்லா தேதிகளையும் காட்டு':'Show all dates'}</button></div></div>`:'';
@@ -1602,25 +1644,85 @@ VIEWS.cust={
 };
 
 /* Follow-up */
+/* Loose date for filters: 21-10, 21-10-26, 10 (a month), 10-26 (month-year). No year → the latest one that is not in the future. */
+function looseDate(v,end){
+  v=String(v||'').trim();if(!v)return '';const now=new Date();const Y=now.getFullYear(),M=now.getMonth()+1,today=todayISO();
+  const last=(y,m)=>new Date(Date.UTC(y,m,0)).getUTCDate();
+  let x;
+  if((x=/^(\d{1,2})$/.exec(v))){const m=+x[1];if(m<1||m>12)return null;const y=m>M?Y-1:Y;return y+'-'+pad(m)+'-'+(end?pad(last(y,m)):'01')}
+  if((x=/^(\d{1,2})\D+(\d{2}|\d{4})$/.exec(v))&&+x[2]>12){const m=+x[1];let y=+x[2];if(y<100)y+=2000;if(m<1||m>12)return null;return y+'-'+pad(m)+'-'+(end?pad(last(y,m)):'01')}
+  let r=parseTypedDate(v,Y);if(!r)return null;
+  if(/^\d{1,2}\D+\d{1,2}$/.test(v)&&r>today)r=(+r.slice(0,4)-1)+r.slice(4);
+  return r}
+const remEvery=()=>+S.company.fuDays||30;
+function remDue(ck){const c=S.cust[ck]||{};const h=S.D.holding[ck]||[];const n=remEvery();if(!h.some(s=>s.days!=null&&s.days>=n))return false;
+  return !c.rem||daysSince(String(c.rem.at).slice(0,10))>=n}
+function outDc(id){const ev=S.D.tl[id]||[];for(let i=ev.length-1;i>=0;i--)if(ev[i].t==='DC')return ev[i].dc||'';return ''}
 VIEWS.fu={
-  mount(){const u=S.ui;if(!u.fuDays)u.fuDays=String(S.company.fuDays||90);
-    return `<div class="page-head"><div><h2>Follow-up</h2><p>Customers holding cylinders longer than the limit. Copy the message, send it on WhatsApp or SMS, then log the call.</p></div></div>
-    <div class="panel"><div class="row"><div class="field" style="flex:0 1 160px"><label for="fu-days">Holding more than</label><div class="row" style="gap:6px;align-items:center;flex-wrap:nowrap"><input class="inp num" id="fu-days" type="number" min="1" value="${esc(u.fuDays)}" style="max-width:90px"><span class="muted">days</span></div></div>
-    <div class="field search"><label for="fu-q">Customer</label><div class="rel">${ic('search')}<input class="inp" id="fu-q" value="${esc(u.fuQ||'')}" placeholder="Search"></div></div></div></div><div id="fu-list" style="display:flex;flex-direction:column;gap:12px"></div>`},
-  after(){$('#fu-days').addEventListener('input',e=>{S.ui.fuDays=e.target.value;this.update()});$('#fu-q').addEventListener('input',e=>{S.ui.fuQ=e.target.value;this.update()});this.update()},
-  rows(){const d=+S.ui.fuDays||90;const q=(S.ui.fuQ||'').trim().toLowerCase();
-    return Object.entries(S.D.holding).map(([ck,h])=>({ck,c:S.cust[ck]||{n:ck},h:h.filter(s=>s.days!=null&&s.days>d)})).filter(r=>r.h.length&&(!q||r.c.n.toLowerCase().includes(q))).sort((a,b)=>b.h.length-a.h.length)},
-  update(){const rs=this.rows();
-    $('#fu-list').innerHTML=rs.length?`<div class="small muted">${rs.length} customers · ${rs.reduce((a,r)=>a+r.h.length,0)} cylinders</div>`+rs.map(r=>{const fu=r.c.fu;return `<div class="panel" style="display:flex;flex-direction:column;gap:10px">
-      <div class="row" style="align-items:flex-start"><div style="flex:1 1 220px;min-width:0"><h3><a href="#" data-act="opencust" data-v="${esc(r.ck)}">${esc(r.c.n)}</a></h3><div class="small muted" style="margin-top:3px">${r.c.ph?`Phone <span class="mono" style="user-select:all">${esc(r.c.ph)}</span>`:'No phone number saved'} · ${r.h.length} cylinder${r.h.length===1?'':'s'} · oldest ${r.h[0].days} days</div>
-      ${fu?`<div class="small" style="margin-top:4px"><span class="pill unused">Last follow-up ${fmtDT(fu.at)}</span> ${esc(fu.note||'')}</div>`:''}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm wa" data-act="wamsg" data-v="${esc(r.ck)}">${ic('wa')}WhatsApp</button><button class="btn sm" data-act="copymsg" data-v="${esc(r.ck)}">Copy message</button>${canEnter()?`<button class="btn sm" data-act="logcall" data-v="${esc(r.ck)}">${ic('check')}Log follow-up</button>`:''}</div></div>
-      <div class="chips">${r.h.map(s=>`<button class="cyl" data-act="opencyl" data-v="${esc(s.id)}">${esc(s.id)} <span class="muted" style="font-family:var(--f-body)">${s.days}d</span></button>`).join('')}</div></div>`}).join('')
-      :`<div class="panel empty"><b>No one over the limit</b>Every customer has returned cylinders within ${esc(S.ui.fuDays)} days.</div>`}
+  mount(){const u=S.ui;if(u.fuMin==null){u.fuMin='1';u.fuMax=''}const ta=LANG==='ta';this._pre=this._vh=null;
+    return `<div class="page-head"><div><h2>${ta?'வெளியே உள்ள சிலிண்டர்கள் — நாட்கள் & நினைவூட்டல்':'Cylinders out — days & reminders'}</h2><p>${ta?'எத்தனை நாள் வெளியே உள்ளது என்று 1-ஆம் நாளிலிருந்து எந்த வரம்பிலும் பார்க்கலாம். ஒவ்வொரு '+remEvery()+' நாளுக்கும் நினைவூட்ட வேண்டியவர்கள் தனியாக வருவார்கள்.':'See cylinders out for any number of days, from day 1. Customers due for a reminder (every '+remEvery()+' days) are listed separately.'}</p></div></div>
+    <div class="panel"><div class="tchips" id="fu-pre"></div>
+    <div class="row" style="margin-top:12px">
+      <div class="field" style="flex:0 1 210px"><label>${ta?'நாட்கள்':'Days out'}</label><div class="row" style="gap:6px;align-items:center;flex-wrap:nowrap"><input class="inp num" id="fu-min" type="number" min="0" value="${esc(u.fuMin)}" style="max-width:80px" placeholder="1"><span class="muted">${ta?'முதல்':'to'}</span><input class="inp num" id="fu-max" type="number" min="0" value="${esc(u.fuMax)}" style="max-width:80px" placeholder="∞"></div></div>
+      <div class="field" style="flex:0 1 260px"><label>${ta?'DC தேதி (எ.கா. 1-9, 9, 30-9-26)':'DC date (e.g. 1-9, 9, 30-9-26)'}</label><div class="row" style="gap:6px;align-items:center;flex-wrap:nowrap"><input class="inp mono" id="fu-from" value="${esc(u.fuFrom||'')}" placeholder="${ta?'முதல்':'from'}" style="max-width:110px"><span class="muted">–</span><input class="inp mono" id="fu-to" value="${esc(u.fuTo||'')}" placeholder="${ta?'வரை':'to'}" style="max-width:110px"></div><div class="small muted" id="fu-dmsg"></div></div>
+      <div class="field" style="flex:0 1 150px"><label for="fu-br">${ta?'கிளை':'Branch'}</label><select class="inp" id="fu-br"><option value="all">${ta?'எல்லாம்':'All'}</option>${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.fuBr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
+      <div class="field search"><label for="fu-q">${ta?'Customer / சிலிண்டர்':'Customer / cylinder'}</label><div class="rel">${ic('search')}<input class="inp" id="fu-q" value="${esc(u.fuQ||'')}" placeholder="Search"></div></div>
+      <div class="field" style="flex:0 1 auto"><label>${ta?'காட்டும் விதம்':'View'}</label><div class="seg" id="fu-view"></div></div>
+    </div></div><div id="fu-list" style="display:flex;flex-direction:column;gap:12px"></div>`},
+  after(){const u=S.ui;const upd=()=>this.update();
+    $('#fu-min').addEventListener('input',e=>{u.fuMin=e.target.value;u.fuDue=false;upd()});$('#fu-max').addEventListener('input',e=>{u.fuMax=e.target.value;u.fuDue=false;upd()});
+    $('#fu-from').addEventListener('change',e=>{u.fuFrom=e.target.value;upd()});$('#fu-to').addEventListener('change',e=>{u.fuTo=e.target.value;upd()});
+    $('#fu-br').addEventListener('change',e=>{u.fuBr=e.target.value;upd()});$('#fu-q').addEventListener('input',e=>{u.fuQ=e.target.value;upd()});
+    $('#fu-pre').addEventListener('click',e=>{const b=e.target.closest('[data-pr]');if(!b)return;const v=b.dataset.pr;
+      if(v==='due'){u.fuDue=!u.fuDue}else if(v==='clear'){u.fuMin='1';u.fuMax='';u.fuFrom='';u.fuTo='';u.fuQ='';u.fuBr='all';u.fuDue=false;$('#fu-from').value='';$('#fu-to').value='';$('#fu-q').value='';$('#fu-br').value='all'}
+      else{const [a,z]=v.split('-');u.fuMin=a;u.fuMax=z||'';u.fuDue=false}
+      $('#fu-min').value=u.fuMin;$('#fu-max').value=u.fuMax;upd()});
+    $('#fu-view').addEventListener('click',e=>{const b=e.target.closest('[data-fv]');if(!b)return;u.fuView=b.dataset.fv;upd()});
+    upd()},
+  filt(){const u=S.ui;const ta=LANG==='ta';const mn=u.fuMin===''?0:+u.fuMin,mx=u.fuMax===''?Infinity:+u.fuMax;
+    const f=looseDate(u.fuFrom,false),t=looseDate(u.fuTo,true);const msg=[];
+    if(f===null)msg.push(ta?'“முதல்” தேதி புரியவில்லை':'“from” date not understood');else if(f)msg.push(fmtD(f));
+    if(t===null)msg.push(ta?'“வரை” தேதி புரியவில்லை':'“to” date not understood');else if(t)msg.push('→ '+fmtD(t));
+    const dm=$('#fu-dmsg');if(dm)dm.textContent=msg.join(' ');
+    const q=(u.fuQ||'').trim().toLowerCase();
+    const cyls=[];
+    for(const [ck,h] of Object.entries(S.D.holding)){
+      if(u.fuDue&&!remDue(ck))continue;
+      if(u.fuBr&&u.fuBr!=='all'){const b=custBr(ck).br;if(b!==u.fuBr&&b!=='BOTH')continue}
+      const cn=custName(ck).toLowerCase();
+      for(const x of h){if(x.days==null)continue;if(x.days<mn||x.days>mx)continue;if(f&&x.d<f)continue;if(t&&x.d>t)continue;
+        if(q&&!cn.includes(q)&&!String(x.id).toLowerCase().includes(q))continue;cyls.push(x)}}
+    return cyls},
+  update(){const u=S.ui;const ta=LANG==='ta';const cyls=this.filt();
+    const P=[['1-30','1–30'],['31-60','31–60'],['61-90','61–90'],['91-180','91–180'],['181-','180+'],['1-','All']];
+    const dueN=Object.keys(S.D.holding).filter(remDue).length;
+    const preH=P.map(([v,l])=>`<button type="button" data-pr="${v}" aria-pressed="${!u.fuDue&&(u.fuMin+'-'+u.fuMax)===v}">${l} ${ta?'நாள்':'days'}</button>`).join('')+
+      `<button type="button" data-pr="due" aria-pressed="${!!u.fuDue}">🔔 ${ta?'நினைவூட்ட வேண்டியவர்கள்':'Reminder due'} <span class="n">${dueN}</span></button><button type="button" data-pr="clear" class="clr">✕ ${ta?'அழி':'Clear'}</button>`;
+    /* only redraw the buttons when they change, so a click is not lost while a date box is being left */
+    if(this._pre!==preH){this._pre=preH;$('#fu-pre').innerHTML=preH}
+    const view=u.fuView||'cust';
+    const vH=[['cust',ta?'Customer வாரியாக':'By customer'],['cyl',ta?'சிலிண்டர் வாரியாக':'By cylinder']].map(([k,l])=>`<button data-fv="${k}" aria-pressed="${view===k}">${l}</button>`).join('');if(this._vh!==vH){this._vh=vH;$('#fu-view').innerHTML=vH}
+    if(!cyls.length){$('#fu-list').innerHTML=`<div class="panel empty"><b>${ta?'பொருந்தும் சிலிண்டர் இல்லை':'No cylinders match'}</b>${ta?'நாட்கள் / தேதி வரம்பை மாற்றவும்.':'Change the days or dates.'}</div>`;return}
+    const byC={};cyls.forEach(x=>(byC[x.ck]=byC[x.ck]||[]).push(x));
+    const head=`<div class="small muted">${Object.keys(byC).length} ${ta?'customer':'customers'} · ${cyls.length} ${ta?'சிலிண்டர்':'cylinders'}</div>`;
+    if(view==='cyl'){const rows=cyls.slice().sort((a,b)=>b.days-a.days);
+      $('#fu-list').innerHTML=head+`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${ta?'சிலிண்டர்':'Cylinder'}</th><th>Gas</th><th>Customer</th><th>DC</th><th>${ta?'DC தேதி':'DC date'}</th><th class="r">${ta?'நாட்கள்':'Days'}</th></tr></thead><tbody>${rows.slice(0,600).map(x=>`<tr class="click" data-act="opencyl" data-v="${esc(x.id)}"><td><b class="mono">${esc(x.id)}</b></td><td>${gasTag?gasTag(x.g):esc(x.g)}</td><td><a href="#" data-act="opencust" data-v="${esc(x.ck)}">${esc(custName(x.ck))}</a> ${brTag(x.ck)}</td><td class="mono small">${esc(outDc(x.id))}</td><td class="num">${fmtD(x.d)}</td><td class="r"><span class="pill ${x.days>90?'crit':x.days>30?'warn':'ok'} num">${x.days}</span></td></tr>`).join('')}</tbody></table></div>${rows.length>600?`<div class="small muted">+${rows.length-600}</div>`:''}</div>`;return}
+    const groups=Object.entries(byC).map(([ck,h])=>({ck,c:S.cust[ck]||{n:ck},h:h.sort((a,b)=>b.days-a.days)})).sort((a,b)=>b.h[0].days-a.h[0].days);
+    $('#fu-list').innerHTML=head+groups.map(r=>{const fu=r.c.fu,rm=r.c.rem;const due=remDue(r.ck);return `<div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <div class="row" style="align-items:flex-start"><div style="flex:1 1 220px;min-width:0"><h3><a href="#" data-act="opencust" data-v="${esc(r.ck)}">${esc(r.c.n)}</a> ${brTag(r.ck)} ${due?`<span class="pill warn">🔔 ${ta?'நினைவூட்ட வேண்டும்':'Reminder due'}</span>`:''}</h3>
+        <div class="small muted" style="margin-top:3px">${r.c.ph?`📞 <a href="tel:${esc(telOf(r.c.ph))}">${esc(r.c.ph)}</a>`:(ta?'Phone இல்லை':'No phone')} · ${r.h.length} ${ta?'சிலிண்டர்':'cyl'} · ${ta?'அதிகபட்சம்':'longest'} ${r.h[0].days} ${ta?'நாள்':'days'}${rm?` · ${ta?'கடைசி நினைவூட்டல்':'last reminder'} ${fmtDT(rm.at)}`:''}</div>
+        ${fu?`<div class="small" style="margin-top:4px"><span class="pill unused">${ta?'கடைசி பேச்சு':'Last follow-up'} ${fmtDT(fu.at)}</span> ${esc(fu.note||'')}</div>`:''}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm wa" data-act="remwa" data-v="${esc(r.ck)}">${ic('wa')}WhatsApp</button><button class="btn sm" data-act="remcopy" data-v="${esc(r.ck)}">${ta?'நகல்':'Copy'}</button><button class="btn sm" data-act="remdone" data-v="${esc(r.ck)}">${ic('check')}${ta?'நினைவூட்டியது':'Reminded'}</button>${canEnter()?`<button class="btn sm" data-act="logcall" data-v="${esc(r.ck)}">${ta?'பேச்சு குறிப்பு':'Log call'}</button>`:''}</div></div>
+      <div class="chips">${r.h.map(s=>`<button class="cyl" data-act="opencyl" data-v="${esc(s.id)}" title="DC ${esc(outDc(s.id))} · ${fmtD(s.d)}" style="${s.days>90?'border-color:var(--crit)':s.days>30?'border-color:var(--warn)':''}">${esc(s.id)} <span class="muted" style="font-family:var(--f-body)">${s.days}d</span></button>`).join('')}</div></div>`}).join('')}
 };
-function fuMessage(ck){const d=+S.ui.fuDays||+S.company.fuDays||90;const h=(S.D.holding[ck]||[]).filter(s=>s.days>d);
+/* Reminder text: the cylinders now shown for that customer (or all of theirs over the reminder interval). */
+function fuMessage(ck,list){
+  let h=list;if(!h){const sh=S.view==='fu'&&VIEWS.fu.filt?VIEWS.fu.filt().filter(x=>x.ck===ck):[];h=sh.length?sh:(S.D.holding[ck]||[]).filter(s=>s.days>=remEvery())}
+  if(!h.length)h=S.D.holding[ck]||[];
+  const d=Math.min(...h.map(s=>s.days||0));
   const tpl=S.company.fuMsg||DEFAULT_FU_MSG;
-  return tpl.replace(/\{customer\}/g,custName(ck)).replace(/\{count\}/g,h.length).replace(/\{days\}/g,d).replace(/\{cylinders\}/g,h.map(s=>s.id+' ('+fmtD(s.d)+')').join(', ')).replace(/\{company\}/g,S.company.name||'').replace(/\{phone\}/g,S.company.phone||'')}
+  return tpl.replace(/\{customer\}/g,custName(ck)).replace(/\{count\}/g,h.length).replace(/\{days\}/g,d).replace(/\{cylinders\}/g,h.map(s=>s.id+' ('+s.days+' days'+(outDc(s.id)?', DC '+outDc(s.id):'')+', '+fmtD(s.d)+')').join(', ')).replace(/\{company\}/g,S.company.name||'').replace(/\{phone\}/g,S.company.phone||'')}
+async function markReminded(ck){try{await S.db.doc('cust/all').update({list:{[ck]:{rem:{at:new Date().toISOString(),by:S.uid}}}});if(S.cust[ck])S.cust[ck].rem={at:new Date().toISOString(),by:S.uid};if(S.view==='fu')VIEWS.fu.update()}catch(e){toast(dbErr(e))}}
 
 /* Mismatches */
 VIEWS.mism={
@@ -1634,11 +1736,11 @@ VIEWS.mism={
   update(){const u=S.ui;const all=S.D.mism.slice().sort((a,b)=>a.d<b.d?1:-1);const open=all.filter(m=>!m.vf);
     $('#m-seg').innerHTML=[['open','To check · '+open.length],['all','All · '+all.length]].map(([k,l])=>`<button data-act="mmseg" data-v="${k}" aria-pressed="${u.mmShow===k}">${l}</button>`).join('');
     const rs=u.mmShow==='open'?open:all;
-    $('#m-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Cylinder</th><th>Entry</th><th>Problem</th><th>By</th><th></th></tr></thead><tbody>${rs.map(m=>`<tr>
+    $('#m-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Cylinder</th><th>Entry</th><th>Problem</th><th>${LANG==='ta'?'இப்போது எங்கே':'Where now'}</th><th></th></tr></thead><tbody>${rs.map(m=>`<tr>
       <td class="num">${fmtD(m.d)}</td><td><button class="cyl" data-act="opencyl" data-v="${esc(m.id)}">${esc(m.id)}</button></td>
       <td><span class="${m.t==='DC'?'t-dc':'t-mt'}">${TSHORT[m.t]}</span> ${esc(m.ck?custName(m.ck):m.pl||'')} ${m.dc?`<span class="muted mono small">#${esc(m.dc)}</span>`:''}</td>
       <td>${m.vf?`<span class="pill ok">Verified</span> <span class="small muted">${esc(m.vf.note||'')}</span>`:`<span class="pill warn">${esc(m.flag)}</span>`}</td>
-      <td class="small muted"><span data-name="${esc(m.by)}">${esc(personName(m.by))}</span>${m.dr?'<br>Driver '+esc(m.dr):''}</td>
+      <td class="small">${(()=>{const st=S.D.state[m.id];if(!st)return '—';return st.st==='out'?`${esc(custName(st.ck))} <span class="muted">· ${fmtD(st.d)}</span>`:esc(STATUS[st.st]?STATUS[st.st][0]:st.st)})()}</td>
       <td style="white-space:nowrap">${!m.vf&&canEnter()?`<button class="btn sm" data-act="editrec" data-doc="${esc(m.docId)}" data-rid="${esc(m.rid)}">${ic('edit')}Fix entry</button> ${canManage()?`<button class="btn sm" data-act="verify" data-doc="${esc(m.docId)}" data-rid="${esc(m.rid)}" data-cyl="${esc(m.id)}">${ic('check')}Verify</button>`:''}`:''}</td></tr>`).join('')}</tbody></table></div>`
       :`<div class="empty"><b>Nothing to check</b>Every DC and MT matches where the cylinder was.</div>`},
   names(){$$('[data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
@@ -1662,7 +1764,7 @@ VIEWS.reg={
       $('#g-list').innerHTML=html+`<div class="empty"><b>${ta?`இன்னும் ${t} எண் இல்லை`:`No ${t} numbers yet`}</b>${ta?`App-இல் இந்தக் கிளைக்குப் போட்ட ${t} பதிவுகள் மட்டும் இங்கே வரும். பழைய Excel history-இல் DC எண் இல்லை.`:`Only ${t} entries saved in the app for this branch show here. Old Excel history has no DC numbers.`}${others.length?`<div style="margin-top:8px">${others.map(([b,n])=>`<button class="btn sm" type="button" data-act="regbr" data-v="${esc(b)}">${esc(brName(b))} · ${n}</button>`).join(' ')}</div>`:''}</div>`;return}
     if(S.isOwner)html+=`<div class="row" style="margin-bottom:10px;justify-content:flex-end"><button class="btn sm" type="button" data-act="renumber">${ic('rep')}${LANG==='ta'?'எல்லா DC / MT எண்களையும் 1 முதல் மறுஎண் இடு':'Renumber all DC / MT from 1'}</button></div>`;
     if(miss.length)html+=`<div class="notice crit" style="margin-bottom:12px">${ic('warn')}<div><b>Missing ${t} numbers:</b> <span class="mono">${esc(rangesTxt(miss))}</span><div class="small" style="margin-top:4px">Enter them with their real date, or cancel a number that was never used (torn, spoiled).</div></div></div>`;
-    html+=`<div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Date</th><th>${t==='DC'?'Customer':'From customer'}</th><th class="r">Cyl.</th><th>Cylinders</th><th>Entered</th><th></th></tr></thead><tbody>`;
+    html+=`<div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Date</th><th>${t==='DC'?'Customer':'From customer'}</th><th class="r">Cyl.</th><th>Cylinders</th><th>${t==='DC'?(LANG==='ta'?'திரும்பியதா?':'Came back?'):(LANG==='ta'?'எந்த DC-இலிருந்து':'From which DC')}</th><th></th></tr></thead><tbody>`;
     let prev=null;const rows=[];
     for(const r of rs){
       const cbr=u.regCbr&&u.regCbr!=='all'?u.regCbr:null;
@@ -1670,7 +1772,7 @@ VIEWS.reg={
       if(!cbr&&prev&&+prev.dc-(+r.dc)>1){const nums=[];for(let n=+prev.dc-1;n>+r.dc;n--)nums.push(n);const open=nums.filter(n=>!vd[br+'_'+t+'_'+n]);const vds=nums.filter(n=>vd[br+'_'+t+'_'+n]);
         if(!q||nums.some(n=>String(n).includes(q)))rows.push(`<tr style="background:${open.length?'var(--crit-bg)':'var(--surface-2)'}"><td class="mono" colspan="5">${open.length?`<b style="color:var(--crit)">Missing ${esc(rangesTxt(open.slice().reverse()))}</b>`:''}${vds.length?` <span class="muted small">Cancelled ${esc(rangesTxt(vds.slice().reverse()))}</span>`:''}</td><td></td><td style="white-space:nowrap">${open.length&&canEnter()?`<button class="btn sm" data-act="newno" data-t="${t}" data-n="${open[open.length-1]}">${ic('plus')}Enter ${open[open.length-1]}</button> ${canManage()?`<button class="btn sm ghost" data-act="voidno" data-t="${t}" data-br="${esc(br)}" data-n="${esc(open.join(','))}">Cancel</button>`:''}`:''}</td></tr>`)}
       const late=prev&&prev.d<r.d;
-      if(!q||String(r.dc).includes(q)||recTitle(r).toLowerCase().includes(q))rows.push(`<tr><td class="mono"><b>${esc(r.dc)}</b></td><td class="num">${fmtD(r.d)}${late?` <span class="pill warn">after ${esc(prev.dc)}</span>`:''}</td><td>${esc(recTitle(r))} ${r.ck?brTag(r.ck):''}</td><td class="r num">${r.cy.length}${ownN(r)?` <span class="muted small">+${ownN(r)}</span>`:''}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc([r.cy.join(', '),ownTxt(r)].filter(Boolean).join(' · '))}</td><td class="small muted"><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span> · ${fmtDT(r.at)}</td><td style="white-space:nowrap">${r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`);
+      if(!q||String(r.dc).includes(q)||recTitle(r).toLowerCase().includes(q))rows.push(`<tr><td class="mono"><b>${esc(r.dc)}</b></td><td class="num">${fmtD(r.d)}${late?` <span class="pill warn">after ${esc(prev.dc)}</span>`:''}</td><td>${esc(recTitle(r))} ${r.ck?brTag(r.ck):''}</td><td class="r num">${r.cy.length}${ownN(r)?` <span class="muted small">+${ownN(r)}</span>`:''}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc([r.cy.join(', '),ownTxt(r)].filter(Boolean).join(' · '))}</td><td class="small">${recFollow(r)}</td><td style="white-space:nowrap">${r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`);
       prev=r}
     html+=rows.join('')+`</tbody></table></div>`;
     if(u.regCbr&&u.regCbr!=='all')html+=`<div class="small muted" style="margin-top:10px">${LANG==='ta'?`${brName(u.regCbr)} customer-களின் ${t} மட்டும் · missing எண்கள் மறைக்கப்பட்டன`:`Only ${brName(u.regCbr)} customers · missing numbers hidden`}</div>`;
@@ -1871,7 +1973,7 @@ VIEWS.settings={
       <div class="small muted">Leave a rate empty for no rent. A customer can have their own rate and free days (edit the customer).</div>
       <div><button class="btn primary" type="submit">${ic('check')}Save rent</button></div></form>
     <form class="panel" id="s-fu" style="display:flex;flex-direction:column;gap:12px"><h3>Follow-up message</h3>
-      <div class="field" style="max-width:180px"><label for="s-fudays">Remind after (days)</label><input class="inp num" type="number" min="1" id="s-fudays" value="${esc(c.fuDays||90)}"></div>
+      <div class="field" style="max-width:180px"><label for="s-fudays">${LANG==='ta'?'ஒவ்வொரு இத்தனை நாளுக்கும் நினைவூட்டு':'Remind every (days)'}</label><input class="inp num" type="number" min="1" id="s-fudays" value="${esc(c.fuDays||90)}"></div>
       <div class="field"><label for="s-fumsg">Message</label><textarea class="inp" id="s-fumsg" style="min-height:110px">${esc(c.fuMsg||DEFAULT_FU_MSG)}</textarea></div>
       <div class="small muted">Fills in: {customer} {count} {days} {cylinders} {company} {phone}</div>
       <div><button class="btn primary" type="submit">${ic('check')}Save message</button></div></form>
@@ -1893,7 +1995,7 @@ VIEWS.settings={
     $('#s-fill').addEventListener('submit',e=>{e.preventDefault();saveCo({useFill:$('#s-usefill').checked,trackFill:$('#s-track').checked,plants:$('#s-plants').value.split('\n').map(x=>x.trim()).filter(Boolean)})});
     $('#s-rent').addEventListener('submit',e=>{e.preventDefault();const rates={};$$('[data-rate]').forEach(i=>{if(i.value!=='')rates[i.dataset.rate]=+i.value});saveCo({rent:{free:+$('#s-free').value||0,rates}})});
     $('#s-bill').addEventListener('submit',e=>{e.preventDefault();const price={},hsn={};$$('[data-bp]').forEach(i=>{if(i.value!=='')price[i.dataset.bp]=+i.value});$$('[data-bh]').forEach(i=>{if(i.value.trim())hsn[i.dataset.bh]=i.value.trim()});saveCo({bill:{prefix:$('#s-bpre').value.trim()||'INV',gst:$('#s-bgst').value,price,hsn}})});
-    $('#s-fu').addEventListener('submit',e=>{e.preventDefault();saveCo({fuDays:+$('#s-fudays').value||90,fuMsg:$('#s-fumsg').value.trim()||DEFAULT_FU_MSG})});
+    $('#s-fu').addEventListener('submit',e=>{e.preventDefault();saveCo({fuDays:+$('#s-fudays').value||30,fuMsg:$('#s-fumsg').value.trim()||DEFAULT_FU_MSG})});
     $('#s-test').addEventListener('submit',async e=>{e.preventDefault();const res=parseTests($('#s-tests').value);
       if(!res.ok.length){$('#s-test-res').textContent=res.bad.length?'Could not read: '+res.bad.slice(0,8).join(', '):'Nothing to save';return}
       const byDoc={};res.ok.forEach(([id,td])=>{const d=S.cylSrc[id]||'m1';(byDoc[d]=byDoc[d]||{})[id]={td}});
@@ -1970,7 +2072,9 @@ function cylDrawer(id){
     body+=list.map((e,i)=>`<div class="trip"><div style="display:flex;flex-direction:column;align-items:center"><div class="dot" style="background:${e.flag&&!e.vf?'var(--crit)':col[e.t]}"></div>${i<list.length-1?'<div class="line" style="flex:1"></div>':''}</div>
       <div class="body"><div><span style="color:${col[e.t]};font-weight:700">${lbl[e.t]}</span> <b>${e.ck?`<a href="#" data-act="opencust" data-v="${esc(e.ck)}">${esc(custName(e.ck))}</a>`:esc(e.pl||'')}</b></div>
       <div class="small muted">${fmtD(e.d)}${e.src==='old'?' · old Excel':''}${e.dc?' · #'+esc(e.dc):''}${e.vh?' · '+esc(e.vh):''}${e.dr?' · '+esc(e.dr):''}${e.rm?' · '+esc(e.rm):''}</div>
-      ${e.flag?`<div style="margin-top:4px">${e.vf?`<span class="pill ok">Verified</span> <span class="small muted">${esc(e.vf.note||'')}</span>`:`<span class="pill warn">${esc(e.flag)}</span>`}</div>`:''}</div></div>`).join('');
+      ${e.flag?`<div style="margin-top:4px">${e.vf?`<span class="pill ok">Verified</span> <span class="small muted">${esc(e.vf.note||'')}</span>`:`<span class="pill warn">${esc(e.flag)}</span>`}</div>`:''}
+      ${e.src==='old'&&S.isOwner&&e.ci!=null?`<div style="margin-top:4px"><button class="btn sm ghost" data-act="histed" data-ci="${e.ci}" data-pos="${e.pos}">${ic('edit')}${LANG==='ta'?'திருத்து':'Edit'}</button></div>`:''}
+      ${e.src==='new'&&e.rid&&(()=>{const r=S.logs[e.docId]&&S.logs[e.docId].recs&&S.logs[e.docId].recs[e.rid];return r&&canEditRec(Object.assign({},r,{docId:e.docId,rid:e.rid}))})()?`<div style="margin-top:4px"><button class="btn sm ghost" data-act="editrec" data-doc="${esc(e.docId)}" data-rid="${esc(e.rid)}">${ic('edit')}${LANG==='ta'?'முழுதும் திருத்து':'Edit entry'}</button></div>`:''}</div></div>`).join('');
   }
   body+=`</div>`;
   if(trips.length){body+=`<div class="panel"><div class="panel-head"><h3>Trips</h3></div><div class="tbl-wrap"><table><thead><tr><th>Sent</th><th>Customer</th><th>Back</th><th class="r">Days</th></tr></thead><tbody>${trips.slice().reverse().map(t=>`<tr><td class="num">${fmtD(t.e.d)}</td><td>${esc(custName(t.e.ck))}</td><td class="num">${t.back?fmtD(t.back.d):t.open?'<span class="pill out">Still there</span>':'<span class="pill warn">MT missing</span>'}</td><td class="r num">${t.days??'—'}</td></tr>`).join('')}</tbody></table></div></div>`}
@@ -2249,6 +2353,8 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
+  fudue:()=>{S.ui.fuDue=true;go('fu')},
+  histed:el=>histEditPanel(+el.dataset.ci,+el.dataset.pos),
   morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['entry','cust','cyl'].includes(k));
     openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>`]})},
   mgo:el=>{closeDrawer();go(el.dataset.v)},
@@ -2267,7 +2373,8 @@ const A={
   notsame:async el=>{try{await S.db.doc('settings/company').update({notSame:{[el.dataset.v]:true}});S.company.notSame=Object.assign({},S.company.notSame,{[el.dataset.v]:true});paintDrawer()}catch(e){toast(dbErr(e))}},
   dlopen:()=>openDrawer({k:'form',render:datelessPanel}),
   dlsave:async el=>{const L=datelessList();const x=L[+el.dataset.i];const inp=document.querySelector(`[data-dl="${el.dataset.i}"]`);if(!x||!inp)return;
-    const iso=parseTypedDate(inp.value,x.prev!=null?isoFromDay(x.prev).slice(0,4):undefined);
+    if(!/^\s*\d{1,2}\D+\d{1,2}\D+\d{2,4}\s*$/.test(inp.value)){inp.classList.add('bad');toast(LANG==='ta'?'முழு தேதி போடவும் — எ.கா. 21-10-2026':'Type the full date — e.g. 21-10-2026');return}
+    const iso=parseTypedDate(inp.value);
     if(!iso||iso>todayISO()){inp.classList.add('bad');toast(LANG==='ta'?'தேதி சரியில்லை':'Not a valid date');return}
     S.hist.chunks[x.ci][x.pos][2]=dayNum(iso);try{await saveHistChunk(x.ci);toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+x.id+' '+fmtD(iso));paintDrawer()}catch(e){S.hist.chunks[x.ci][x.pos][2]=-1;toast(dbErr(e))}},
   cdtab:el=>{S.ui.cd.tab=el.dataset.v;paintDrawer()},
@@ -2305,6 +2412,9 @@ const A={
   wasum:()=>waOpen('',daySummary().text),
   copysum:()=>{const t=daySummary().text;try{navigator.clipboard.writeText(t).then(()=>toast(LANG==='ta'?'நகலெடுக்கப்பட்டது':'Copied'))}catch(e){}},
   onelabel:el=>labelsPdf([el.dataset.v]),
+  remwa:el=>{const ck=el.dataset.v;waOpen(waPhone((S.cust[ck]||{}).ph),fuMessage(ck));markReminded(ck)},
+  remcopy:el=>{const t=fuMessage(el.dataset.v);try{navigator.clipboard.writeText(t).then(()=>toast(LANG==='ta'?'நகலெடுக்கப்பட்டது':'Copied'))}catch(e){}},
+  remdone:el=>{markReminded(el.dataset.v);toast(LANG==='ta'?'நினைவூட்டியதாகக் குறிக்கப்பட்டது':'Marked as reminded')},
   copymsg:el=>{const msg=fuMessage(el.dataset.v);
     const fallback=()=>formDrawer('Reminder message',`<p class="muted">Select the text and copy it.</p><textarea class="inp" id="fu-txt" style="min-height:160px">${esc(msg)}</textarea>`,async()=>closeDrawer(),'Done');
     try{const pr=navigator.clipboard&&navigator.clipboard.writeText(msg);if(!pr){fallback();setTimeout(()=>{const t=$('#fu-txt');t&&t.select()},60);return}pr.then(()=>toast('Message copied. Paste it in WhatsApp or SMS.')).catch(()=>{fallback();setTimeout(()=>{const t=$('#fu-txt');t&&t.select()},60)})}catch(e){fallback()}},
