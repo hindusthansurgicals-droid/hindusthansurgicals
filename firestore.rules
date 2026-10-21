@@ -125,7 +125,8 @@ service cloud.firestore {
     // the owner and managers read everyone's.
     match /att/{doc} {
       allow read: if canManage() || (signedIn() && doc.matches('.*_' + request.auth.uid));
-      allow write: if signedIn() && myRole() in ['manager', 'staff'] && doc.matches('.*_' + request.auth.uid);
+      // Own In / Out; owner and manager may correct times and delete photos.
+      allow write: if canManage() || (signedIn() && myRole() in ['manager', 'staff'] && doc.matches('.*_' + request.auth.uid));
     }
     match /logins/{doc} {
       allow read: if canManage();
