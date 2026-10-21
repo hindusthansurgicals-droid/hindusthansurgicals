@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.17.1"><link rel="icon" href="icon.svg?v=3.17.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.17.1">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.18.0"><link rel="icon" href="icon.svg?v=3.18.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.18.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -617,6 +617,25 @@ body.bigtext .tabbar{zoom:1.08}
 .enttbl td a{color:inherit}
 .statusbar .kb{opacity:.8}
 @media (max-width:1200px){.statusbar .kb{display:none}}
+
+.inrow{display:flex;align-items:center;gap:10px;width:100%;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;padding:11px 4px;color:var(--ink)}
+.inrow:hover{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.iprow{display:flex;align-items:center;gap:8px;padding:8px 4px;border-bottom:1px solid var(--line)}
+.iprow.isok{background:#ECFDF5}.iprow.isno{background:#FEF2F2}
+.ipb{width:44px;height:38px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:18px;font-weight:800}
+.ipb.ok{color:#15803D}.ipb.no{color:#B91C1C}
+.iprow.isok .ipb.ok{background:#16A34A;color:#fff;border-color:#16A34A}
+.iprow.isno .ipb.no{background:#DC2626;color:#fff;border-color:#DC2626}
+.camwrap{background:#0b0b0b;border-radius:12px;overflow:hidden;display:grid;place-items:center;min-height:220px}
+.camwrap video,.camwrap img{width:100%;max-height:52vh;object-fit:cover;transform:scaleX(-1)}
+.camwrap img{transform:none}
+.attbtn.in{background:#DCFCE7!important;border-color:#86EFAC!important;color:#15803D!important;font-weight:700}
+.attgrid th,.attgrid td{padding:6px 5px!important;font-size:12.5px;white-space:nowrap}
+.attgrid .ontime{color:#15803D}.attgrid .late{color:#B91C1C}
+.attgrid td.abs{color:#CBD5E1}
+.attday{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.attday img{width:100%;border-radius:10px;margin:6px 0}
+.trailrow{padding:10px 0;border-bottom:1px solid var(--line)}
 /* status bar at the bottom like desktop software */
 .statusbar{display:none}
 @media (min-width:901px){
@@ -652,7 +671,7 @@ body.bigtext .tabbar{zoom:1.08}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.17.1" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.18.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -672,7 +691,7 @@ body.bigtext .tabbar{zoom:1.08}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.17.1"></script>
+<script src="fb.js?v=3.18.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -701,15 +720,16 @@ const BUCKETS=['0–30','31–90','91–180','181–365','1 yr+'];
 const GAS_VAR={'O2':'--gas-o2','CO2':'--gas-co2','CO2 30kg':'--gas-co2','CO2 40kg':'--gas-co2','N2':'--gas-n2','Argon':'--gas-ar','DURO':'--gas-duro'};
 const gasTag=g=>`<span class="gas" style="--gc:var(${GAS_VAR[g]||'--muted'})">${esc(g||'—')}</span>`;
 const STATUS={out:['With customer','out'],full:['Godown · full','in'],empty:['Godown · empty','unused'],filling:['At filling','warn'],unused:['Not used yet','unused'],missing:['Missing','missing'],sold:['Sold','sold']};
-const TSHORT={DC:'DC',MT:'MT',FS:'FILL',FR:'FULL'};
+const TSHORT={DC:'DC',MT:'MT',FS:'FILL',FR:'FULL',FL:'🏭'};
 const TLABEL={DC:'DC',MT:'MT',FS:'To filling',FR:'Received full'};
 const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Received full · '+(r.pl||''):custName(r.ck);
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.17.1';
+const APP_VERSION=window.CD_VERSION||'3.18.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.18.0','2026-10-21',['Filling register: record cylinders filled at the factory (date, type A/B/C/D, filler, many numbers at once); a filling counts as the cylinder being back','Late DC / MT paper: anything that does not match before a filling waits as “Entry pending” for 45 days instead of a mismatch; reminder every 10 days','Physical inspection: visit a customer, tick ✓ / ✗ each cylinder, add extras and a note; name, time and place saved; findings list for the office','Attendance: In and Out with selfie, time and place; monthly ledger with late marks; office time setting','Login register: every login with its place','Location trail every 15 minutes while the app is open (owner can switch on)']],
  ['3.17.1','2026-10-21',['DC / MT numbers follow the date by themselves: an older-dated entry takes its place and later numbers move up; deleting closes the gap; no more “cannot be earlier” warning']],
  ['3.17.0','2026-10-21',['🔔 Reminder button with count in the top bar (computer and phone) — opens the customers due','Follow-up: change the reminder interval on the page itself','Computer: F2 new DC, F3 new MT, Ctrl+K / F4 search, F6 customers, F7 cylinders, F8 follow-up','Entries: Table view (Excel-like) or Cards','Menu item “Follow-up” renamed “Reminders”','Phone: swipe an entry left for its buttons (or tap ⋯), Bigger text option in the menu, floating ＋ DC button']],
  ['3.16.0','2026-10-21',['Dashboard: every number opens its list — KPI cards, today’s summary, branch rows, DC/MT counts, ageing bars, gas table cells, staff chips','Customer and cylinder details open as a centred window on computers','Phones: 6px side space on every page and popup','No box inside a box: inner groups are plain with thin dividing lines']],
@@ -798,7 +818,7 @@ const TA={
  'Full Excel (all details)':'முழு Excel (எல்லா விவரங்களும்)',
  'Cylinder register (old Excel layout)':'சிலிண்டர் பதிவேடு (பழைய Excel அமைப்பு)',
  'Import old files':'பழைய file இறக்குமதி',
- 'Dashboard':'முகப்பு','New entry':'புதிய பதிவு','Entries':'பதிவுகள்','Registers':'பதிவேடுகள்','Cylinders':'சிலிண்டர்கள்','Customers':'வாடிக்கையாளர்கள்','Follow-up':'பின்தொடர்வு','Reminders':'நினைவூட்டல்','Mismatches':'பொருந்தாதவை','Billing':'பில்லிங்','Purchases & sales':'வாங்கல் & விற்பனை','Analysis':'பகுப்பாய்வு','Reports':'அறிக்கைகள்','Settings':'அமைப்புகள்','Help':'உதவி',
+ 'Dashboard':'முகப்பு','New entry':'புதிய பதிவு','Entries':'பதிவுகள்','Registers':'பதிவேடுகள்','Cylinders':'சிலிண்டர்கள்','Customers':'வாடிக்கையாளர்கள்','Follow-up':'பின்தொடர்வு','Filling register':'நிரப்பல் பதிவேடு','Physical inspection':'நேரடி சரிபார்ப்பு','Attendance & logins':'வருகை & login','Reminders':'நினைவூட்டல்','Mismatches':'பொருந்தாதவை','Billing':'பில்லிங்','Purchases & sales':'வாங்கல் & விற்பனை','Analysis':'பகுப்பாய்வு','Reports':'அறிக்கைகள்','Settings':'அமைப்புகள்','Help':'உதவி',
  'Today at a glance':'இன்றைய நிலை','With customers':'வாடிக்கையாளரிடம்','Godown · full':'குடோன் · நிரம்பியது','Godown · empty':'குடோன் · காலி','At filling':'நிரப்ப சென்றது','Out over 90 days':'90 நாளுக்கு மேல்','Missing':'காணவில்லை','Today':'இன்று','How long with customers':'வாடிக்கையாளரிடம் எத்தனை நாள்','Cylinders by gas':'வாயு வாரியாக சிலிண்டர்கள்','Customers holding the most cylinders':'அதிக சிலிண்டர் வைத்திருப்பவர்கள்',
  'Branch':'கிளை','Customer':'வாடிக்கையாளர்','Holding':'வைத்திருப்பது','Over 90 days':'90 நாளுக்கு மேல்','Last movement':'கடைசி நகர்வு','Gas':'வாயு','Out':'வெளியே','Full':'நிரம்பியது','Empty':'காலி','Filling':'நிரப்புதல்','Total':'மொத்தம்','Status':'நிலை','Since':'முதல்','Days':'நாட்கள்','Date':'தேதி','Remarks':'குறிப்பு','Driver':'ஓட்டுநர்','Vehicle no.':'வாகன எண்','Cylinder numbers':'சிலிண்டர் எண்கள்','Filling plant / supplier':'நிரப்பும் இடம் / சப்ளையர்',
  'Full to customer':'Full அனுப்புதல்','Empty from customer':'காலி திரும்புதல்','Send for filling':'நிரப்ப அனுப்பு','Received full':'நிரம்பி வந்தது','Save entry':'பதிவை சேமி','Save changes':'மாற்றங்களை சேமி','Cancel edit':'திருத்தத்தை ரத்து செய்','Check before saving':'சேமிக்கும் முன் சரிபார்க்கவும்','Your entries today':'இன்றைய உங்கள் பதிவுகள்','Nothing yet today':'இன்று இன்னும் எதுவும் இல்லை',
@@ -824,6 +844,9 @@ function setLang(l){LANG=l;try{localStorage.setItem('cd-lang',l)}catch(e){}docum
 
 const statusPill=s=>`<span class="pill ${STATUS[s][1]}">${STATUS[s][0]}</span>`;
 const ICON={
+  fill:'<path d="M3 21V10l5 3V10l5 3V7l5 3v11z"/><path d="M18 21V4h3v17"/><path d="M7 17h2M12 17h2"/>',
+  insp:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 12l2 2 4-4"/>',
+  att:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><circle cx="18" cy="15" r="4"/><path d="M18 13v2l1.5 1"/>',
   wa:'<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c.3 1.6 1.4 3.2 3 4l1.2-1 1.8.8-.4 1.6c-3 .2-6.2-2.8-6.4-6l1.6-.4.8 1.8z"/>',
   cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   dash:'<path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 4v4h6V4z"/>',
@@ -860,7 +883,7 @@ const S={
   db:null,user:null,dl:null,uid:null,isOwner:false,me:null,profiles:{},
   company:{name:'SRI M.M',addr:'',phone:'',gst:'',branches:['DPI','KGIRI'],branchNames:{DPI:'Dharmapuri',KGIRI:'Krishnagiri'}},
   roles:{},members:{},cust:{},custDoc:false,cyl:{},cylSrc:{},hist:null,logs:{},bill:{},trade:{buy:{},sell:{}},voids:{},
-  loaded:{company:false,roles:false,cust:false,cyl:false,hist:false,logs:false},
+  loaded:{company:false,roles:false,cust:false,cyl:false,hist:false,logs:false},fills:{},insps:{},
   view:'dash',drawer:null,D:null,readOnly:false,
   ui:{dashBr:'all',cylQ:'',cylGas:'all',cylSt:'all',cylBr:'all',cylAge:'all',cylTest:'all',cylPage:0,fuDays:'',fuQ:'',custQ:'',custSort:'hold',entFrom:'',entTo:'',entBr:'all',entType:'all',entQ:'',mmShow:'open'},
   form:null
@@ -869,12 +892,12 @@ function role(){if(S.isOwner)return 'owner';const r=S.roles[S.uid];return r&&r.r
 /* What each person may do. Owner: everything. Others start from their role's defaults;
    the owner can switch each item on or off per person (Settings → People → Permissions). */
 const PERMS=[
- ['Pages','பக்கங்கள்',[['dash','Dashboard','டாஷ்போர்டு'],['entries','Entries list','பதிவுகள் பட்டியல்'],['reg','Registers','பதிவேடுகள்'],['cyl','Cylinders','சிலிண்டர்கள்'],['cust','Customers','வாடிக்கையாளர்கள்'],['fu','Follow-up','பின்தொடர்வு'],['mism','Mismatches','பொருந்தாதவை'],['bill','Billing','பில்'],['trade','Purchases & sales','வாங்கல் / விற்றல்'],['ana','Analysis','பகுப்பாய்வு'],['rep','Reports','அறிக்கைகள்']]],
+ ['Pages','பக்கங்கள்',[['fill','Filling register','நிரப்பல் பதிவேடு'],['insp','Physical inspection','நேரடி சரிபார்ப்பு'],['att','Attendance & logins','வருகை & login'],['dash','Dashboard','டாஷ்போர்டு'],['entries','Entries list','பதிவுகள் பட்டியல்'],['reg','Registers','பதிவேடுகள்'],['cyl','Cylinders','சிலிண்டர்கள்'],['cust','Customers','வாடிக்கையாளர்கள்'],['fu','Follow-up','பின்தொடர்வு'],['mism','Mismatches','பொருந்தாதவை'],['bill','Billing','பில்'],['trade','Purchases & sales','வாங்கல் / விற்றல்'],['ana','Analysis','பகுப்பாய்வு'],['rep','Reports','அறிக்கைகள்']]],
  ['Work','வேலை',[['entry','Make new DC / MT entries','புதிய DC / MT பதிவு போடலாம்'],['editOwn','Edit / delete own entries made today','தான் இன்று போட்ட பதிவைத் திருத்த / நீக்க'],['editAny','Edit / delete anyone’s entries, any day','எல்லோர் பதிவையும் எந்த நாளும் திருத்த / நீக்க'],['otherBr','Enter for other branches','மற்ற கிளைக்கும் பதிவு போட'],['newCust','Add new customers','புதிய வாடிக்கையாளர் சேர்க்க'],['editCust','Edit customer details','வாடிக்கையாளர் விவரம் மாற்ற'],['saveLoc','Save customer place (GPS)','வாடிக்கையாளர் இடம் (GPS) சேமிக்க'],['money','See money (dues, deposit, rent, rates)','பணம் பார்க்க (நிலுவை, டெபாசிட், வாடகை)'],['export','Download Excel / reports','Excel / அறிக்கை download']]]];
 const PERM_KEYS=PERMS.flatMap(g=>g[2].map(x=>x[0]));
 const PAGE_KEYS=PERMS[0][2].map(x=>x[0]);
 const PRESET={manager:Object.fromEntries(PERM_KEYS.map(k=>[k,true])),
-  staff:{entries:true,cyl:true,cust:true,entry:true,editOwn:true,saveLoc:true},
+  staff:{entries:true,cyl:true,cust:true,entry:true,editOwn:true,saveLoc:true,fill:true,insp:true},
   viewer:{dash:true,entries:true,cyl:true,cust:true}};
 function permsFor(uid){const r=S.roles[uid]||{};const base=PRESET[r.role]||{};const o={};PERM_KEYS.forEach(k=>{o[k]=!!(r.perm&&k in r.perm?r.perm[k]:base[k])});return o}
 const WORK_KEYS=['entry','editOwn','editAny','otherBr','newCust','editCust','saveLoc'];
@@ -917,13 +940,26 @@ function derive(){
       r.cy.forEach(c=>moves.push({src:'new',t:r.t,full:!!r.full,d:r.d,at:r.at||'',ck:r.ck||'',cn:r.cn,dc:r.dc,by:r.by,br:r.br,pl:r.pl||'',vh:r.vh||'',dr:r.dr||'',rid,docId,cyl:c,vf:r.vf&&r.vf[c]||null,rm:r.rm||''}));
     }
   }
+  const fills=[];
+  for(const [docId,doc] of Object.entries(S.fills||{})){for(const [rid,r] of Object.entries((doc&&doc.recs)||{})){
+    if(!r||r.del||!Array.isArray(r.cy))continue;fills.push(Object.assign({},r,{rid,docId}));
+    r.cy.forEach(c=>moves.push({src:'fill',t:'FL',d:r.d,at:r.at||'',ck:'',by:r.by,filler:r.filler||'',size:r.size||'',rid,docId,cyl:c}))}}
+  fills.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.at||'').localeCompare(a.at||''));
   moves.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:numCmp(a,b));
   for(const m of moves){if(!tl[m.cyl])tl[m.cyl]=[];tl[m.cyl].push(m)}
   const state={};const mism=[];const holding={};const lastMove={};
-  const ST={DC:'out',MT:'empty',FS:'filling',FR:'full'};
+  const ST={DC:'out',MT:'empty',FS:'filling',FR:'full',FL:'full'};
+  /* A factory filling shows the cylinder is back with us. DC / MT paper from far branches comes late,
+     so anything that does not match before a filling waits as "entry pending" (45 days) instead of a mismatch. */
+  const PEND_DAYS=45;const pend=[];
   for(const [id,evs] of Object.entries(tl)){
     let prev=null,lastCk='',lastPl='';
+    const fillsAfter=d=>evs.filter(x=>x.t==='FL'&&x.d&&d&&x.d>=d).map(x=>x.d);
     for(const ev of evs){
+      if(ev.src==='fill'){
+        if(prev&&prev.t==='DC'){const due=daysSince(ev.d)>PEND_DAYS;const it={id,kind:'nomt',ck:prev.ck,dcD:prev.d,dcNo:prev.dc||'',fillD:ev.d,due};
+          if(due){const m=Object.assign({id},ev,{flag:'MT not entered — filled at factory on '+fmtD(ev.d)+' (over '+PEND_DAYS+' days)',ck:prev.ck});mism.push(m)}else pend.push(it)}
+      }
       if(ev.src==='new'){
         let f=null;const pt=prev?prev.t:null;const pn=prev&&prev.ck?custName(prev.ck):'';
         if(!S.cyl[id])f='Cylinder number not in master list';
@@ -931,8 +967,9 @@ function derive(){
         else if(ev.t==='MT'){if(pt!=='DC')f='Already in godown (DC not entered?)';else if(prev.ck!==ev.ck)f='This cylinder was with '+pn}
         else if(ev.t==='FS'){if(pt==='DC')f='With '+pn+' (MT not entered?)';else if(pt==='FS')f='Already at filling'}
         else if(ev.t==='FR'){if(pt==='DC')f='With '+pn+' (MT not entered?)'}
-        ev.flag=f;
-        if(f)mism.push(Object.assign({id},ev));
+        const fa=f&&!ev.vf?fillsAfter(ev.d):[];
+        if(f&&fa.length&&daysSince(fa[0])<=PEND_DAYS){ev.flag=null;ev.pendFlag=f;pend.push({id,kind:'flag',ck:ev.ck,t:ev.t,d:ev.d,dc:ev.dc||'',flag:f,fillD:fa[0],docId:ev.docId,rid:ev.rid})}
+        else{ev.flag=f&&fa.length?f+' · filled '+fmtD(fa[0]):f;if(f)mism.push(Object.assign({id},ev))}
       }
       if(ev.ck){lastCk=ev.ck;if(ev.d&&(!lastMove[ev.ck]||ev.d>lastMove[ev.ck]))lastMove[ev.ck]=ev.d}
       if(ev.t==='FS')lastPl=ev.pl||'';
@@ -953,7 +990,7 @@ function derive(){
   for(const [id,evs] of Object.entries(tl)){for(const ev of evs){if(!ev.ck)continue;(custMoves[ev.ck]=custMoves[ev.ck]||[]).push(Object.assign({id},ev))}}
   for(const k in holding)holding[k].sort((a,b)=>(b.days??-1)-(a.days??-1));
   recs.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:-numCmp(a,b));
-  S.D={tl,state,mism,holding,custMoves,recs,lastMove,today};
+  S.D={tl,state,mism,holding,custMoves,recs,lastMove,today,pend,fills,PEND_DAYS};
 }
 
 /* ---------------- db wiring ---------------- */
@@ -966,6 +1003,8 @@ function bootData(){
   db.collection('bill').onSnapshot(q=>{const m={};q.docs.forEach(d=>{if(!d.id.startsWith('lock_'))m[d.id]=d.data()});S.bill=m;scheduleDerive()},err);
   db.doc('trade/buy').onSnapshot(s=>{S.trade.buy=(s.exists&&s.data().lots)||{};scheduleDerive()},err);
   db.doc('trade/sell').onSnapshot(s=>{S.trade.sell=(s.exists&&s.data().sales)||{};scheduleDerive()},err);
+  db.collection('fill').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.fills=m;scheduleDerive()},err);
+  db.collection('insp').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.insps=m;scheduleDerive()},err);
   db.doc('reg/void').onSnapshot(s=>{S.voids=(s.exists&&s.data().list)||{};scheduleDerive()},err);
   db.collection('cyl').onSnapshot(q=>{const m={},src={};q.docs.forEach(d=>{const l=(d.data()||{}).list||{};for(const k in l){m[k]=l[k];src[k]=d.id}});S.cyl=m;S.cylSrc=src;S.loaded.cyl=true;scheduleDerive()},err);
   db.collection('hist').get().then(q=>{
@@ -1032,10 +1071,10 @@ function dbErr(e){
 /* Staff see only what they use every day. */
 const STAFF_NAV=['entry','entries','cust','cyl','help'];
 /* colour and group for each menu item (pro look) */
-const NAV_C={dash:'#2563EB',entry:'#16A34A',entries:'#0EA5E9',reg:'#7C3AED',cyl:'#0D9488',cust:'#EA580C',fu:'#DB2777',mism:'#DC2626',bill:'#CA8A04',trade:'#4F46E5',ana:'#9333EA',rep:'#0891B2',settings:'#475569',oldimp:'#65A30D',help:'#64748B'};
+const NAV_C={fill:'#EA580C',insp:'#0891B2',att:'#7C3AED',dash:'#2563EB',entry:'#16A34A',entries:'#0EA5E9',reg:'#7C3AED',cyl:'#0D9488',cust:'#EA580C',fu:'#DB2777',mism:'#DC2626',bill:'#CA8A04',trade:'#4F46E5',ana:'#9333EA',rep:'#0891B2',settings:'#475569',oldimp:'#65A30D',help:'#64748B'};
 const NAV_SEC={dash:['Daily work','தினசரி வேலை'],cyl:['Stock & customers','சிலிண்டர் & வாடிக்கையாளர்'],bill:['Accounts','கணக்கு'],settings:['System','அமைப்பு']};
 const navIc=(k,i)=>`<i class="nic" style="--c:${NAV_C[k]||'#64748B'}">${ic(i)}</i>`;
-const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Reminders','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
+const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['fill','Filling register','fill'],['reg','Registers','book'],['insp','Physical inspection','insp'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Reminders','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['att','Attendance & logins','att'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').innerHTML=`<b style="color:var(--accent);text-transform:none;letter-spacing:0">v${esc(APP_VERSION)}</b> · Cylinder tracking · `+esc((S.company.branches||[]).map(brName).join(' · '))}
 function navOk(k){const r=role();
   if(!r)return false;
@@ -1067,11 +1106,12 @@ function paintShell(){
   const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
   document.body.classList.toggle('no-editcust',!can('editCust'));document.body.classList.toggle('no-money',!can('money'));
   $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>(NAV_SEC[k]?`<div class="navsec">${LANG==='ta'?NAV_SEC[k][1]:NAV_SEC[k][0]}</div>`:'')+`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${navIc(k,i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
-  (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}</div>`:'')+
+  (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}${!navOk('dash')&&navOk('insp')?`<button data-act="nav" data-v="insp" class="${S.view==='insp'?'on':''}">${ic('insp')}<span>${LANG==='ta'?'சரிபார்ப்பு':'Inspect'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
   const dueN=r&&S.D&&navOk('fu')?Object.keys(S.D.holding).filter(remDue).length:0;
-  $('#who').innerHTML=(r&&navOk('fu')&&S.D?`<button class="btn sm bell${dueN?' has':''}" data-act="fudue" title="${LANG==='ta'?'நினைவூட்ட வேண்டியவர்கள்':'Customers due for a reminder'}">🔔${dueN?`<b>${dueN}</b>`:''}</button>`:'')+(r?`<button class="btn sm gs-btn" data-act="gsearch" aria-label="Search">${ic('search')}</button>`:'')+`<button class="btn sm skin-btn" data-act="skin" title="${LANG==='ta'?'மெனு நிறம்: வெளிர் / இருண்ட':'Menu colour: light / dark'}">${SKIN==='light'?'🌙':'☀️'}</button>`+(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
+  const attBtn=needsAtt()&&ATT.checked?(!ATT.today||!ATT.today.in?`<button class="btn sm attbtn in" data-act="attin">🟢 ${LANG==='ta'?'வருகை':'In'}</button>`:!ATT.today.out?`<button class="btn sm attbtn" data-act="attout">🔴 ${LANG==='ta'?'வெளியேறு':'Out'}</button>`:''):'';
+  $('#who').innerHTML=attBtn+(r&&navOk('fu')&&S.D?`<button class="btn sm bell${dueN?' has':''}" data-act="fudue" title="${LANG==='ta'?'நினைவூட்ட வேண்டியவர்கள்':'Customers due for a reminder'}">🔔${dueN?`<b>${dueN}</b>`:''}</button>`:'')+(r?`<button class="btn sm gs-btn" data-act="gsearch" aria-label="Search">${ic('search')}</button>`:'')+`<button class="btn sm skin-btn" data-act="skin" title="${LANG==='ta'?'மெனு நிறம்: வெளிர் / இருண்ட':'Menu colour: light / dark'}">${SKIN==='light'?'🌙':'☀️'}</button>`+(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
   paintSync();
   {const f=$('#fab');if(f)f.hidden=!(r&&canEnter()&&S.view!=='entry')}
   {const w=$('#gs-wrap');if(w){w.hidden=!r;const i=$('#gq');if(!w._b){w._b=1;w.querySelector('.gs-ic').innerHTML=ic('search');gBind(i,$('#gq-dd'))}i.placeholder=LANG==='ta'?'சிலிண்டர் / customer தேடு…':'Find cylinder / customer…'}}
@@ -1420,6 +1460,7 @@ function openSyncPanel(){openDrawer({k:'form',sync:true,render:syncPanel,after()
 
 let mounted=null;
 function refresh(){
+  if(S.D&&role()&&!ATT.started){ATT.started=true;attLoad().then(()=>{if(needsAtt()&&(!ATT.today||!ATT.today.in)&&!S.drawer&&!window.__NOATT)setTimeout(()=>attPanel('in'),900)});loginLog();trailStart()}
   if(!HIST.init){HIST.init=true;try{history.replaceState({v:S.view},'')}catch(e){}}
   paintShell();
   const allLoaded=Object.values(S.loaded).every(Boolean);
@@ -1465,7 +1506,7 @@ const cylGo=(st,extra)=>dgo('cyl',Object.assign({cylQ:'',cylGas:'all',cylSt:st||
 const entGo=(extra)=>dgo('entries',Object.assign({entFrom:S.D.today,entTo:S.D.today,entBr:S.ui.dashBr||'all',entType:'all',entQ:''},extra||{}));
 const fuGo=(mn,mx)=>dgo('fu',{fuMin:String(mn),fuMax:mx==null?'':String(mx),fuDue:false,fuFrom:'',fuTo:'',fuQ:'',fuBr:S.ui.dashBr||'all'});
 VIEWS.dash={
-  mount(){return `<div class="page-head"><div><h2>Today at a glance</h2><p id="dash-sub"></p></div><div class="actions"><div class="seg" id="dash-br"></div>${canEnter()?`<button class="btn primary" data-act="nav" data-v="entry">${ic('plus')}New entry</button>`:''}</div></div><div id="dash-body"></div>`},
+  mount(){return `<div class="page-head"><div><h2>Today at a glance</h2><p id="dash-sub"></p></div><div class="actions">${navOk('insp')?`<button class="btn" data-act="nav" data-v="insp">${ic('insp')}${LANG==='ta'?'நேரடி சரிபார்ப்பு':'Physical inspection'}</button>`:''}${navOk('fill')?`<button class="btn" data-act="nav" data-v="fill">${ic('fill')}${LANG==='ta'?'நிரப்பல்':'Filling'}</button>`:''}<div class="seg" id="dash-br"></div>${canEnter()?`<button class="btn primary" data-act="nav" data-v="entry">${ic('plus')}New entry</button>`:''}</div></div><div id="dash-body"></div>`},
   after(){this.update()},
   update(){
     const D=S.D,br=S.ui.dashBr;
@@ -1502,6 +1543,8 @@ VIEWS.dash={
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
     ${canManage()&&(S.company.lastBackup||'')<t.slice(0,7)?`<div class="notice info">${ic('dl')}<div><b>This month's backup is not downloaded yet.</b> Keep one copy every month. <button class="btn sm" data-act="backupnow" style="margin-left:6px">Download backup</button></div></div>`:''}
     ${(()=>{let hid=false;try{hid=!!localStorage.getItem('cd-inst-hide')}catch(e){}const standalone=window.matchMedia&&matchMedia('(display-mode: standalone)').matches;return INSTALL&&!hid&&!standalone?`<div class="notice info" id="inst-banner">📲<div style="flex:1"><b>${LANG==='ta'?'இதை app-ஆக நிறுவலாம்':'Install this as an app'}</b> — ${LANG==='ta'?'home screen / desktop-இல் icon, browser bar இல்லாமல் திறக்கும்.':'icon on your home screen / desktop, opens without the browser bar.'} <button class="btn sm primary" data-act="installnow">${LANG==='ta'?'நிறுவு':'Install'}</button> <button class="btn sm" data-act="installhide">${LANG==='ta'?'வேண்டாம்':'Not now'}</button></div></div>`:''})()}
+    ${(()=>{const P=S.D.pend||[];if(!P.length||!navOk('mism'))return '';const last=S.company.pendRemAt||'';if(last&&daysSince(last)<10)return '';const ta=LANG==='ta';
+      return `<div class="notice warn">🏭<div style="flex:1"><b>${P.length} ${ta?'சிலிண்டர்கள் factory-இல் நிரப்பப்பட்டன, ஆனால் அவற்றின் DC / MT இன்னும் போடப்படவில்லை.':'cylinders were filled at the factory but their DC / MT is not entered yet.'}</b> ${ta?'Krishnagiri போன்ற கிளைகளிலிருந்து paper வந்தவுடன் போடவும். (10 நாளுக்கு ஒரு முறை நினைவூட்டும்)':'Enter them when the paper arrives from the branches. (Reminds every 10 days)'} <button class="btn sm" data-act="nav" data-v="mism">${ta?'பார்':'Open'}</button>${canManage()?` <button class="btn sm" data-act="pendok">✓ ${ta?'பார்த்தேன்':'Noted'}</button>`:''}</div></div>`})()}
     ${(()=>{const n=Object.keys(S.D.holding).filter(remDue).length;return n&&navOk('fu')?`<div class="notice warn">🔔<div><b>${n} ${LANG==='ta'?'customer-களுக்கு நினைவூட்ட வேண்டும்':'customers are due for a reminder'}</b> (${LANG==='ta'?'ஒவ்வொரு':'every'} ${remEvery()} ${LANG==='ta'?'நாள்':'days'}). <button class="btn sm" data-act="fudue">${LANG==='ta'?'பார்':'Open'}</button></div></div>`:''})()}
     ${(()=>{const g=[];['DC','MT'].forEach(ty=>{const n=gaps(ty,'ALL').length;if(n)g.push(n+' '+ty)});return g.length?`<div class="notice warn">${ic('warn')}<div><b>Missing numbers:</b> ${esc(g.join(', '))}. <button class="btn sm" data-act="nav" data-v="reg" style="margin-left:6px">Open registers</button></div></div>`:''})()}
     <div class="stats">
@@ -2101,6 +2144,185 @@ function fuMessage(ck,list){
   return tpl.replace(/\{customer\}/g,custName(ck)).replace(/\{count\}/g,h.length).replace(/\{days\}/g,d).replace(/\{cylinders\}/g,h.map(s=>s.id+' ('+s.days+' days'+(outDc(s.id)?', DC '+outDc(s.id):'')+', '+fmtD(s.d)+')').join(', ')).replace(/\{company\}/g,S.company.name||'').replace(/\{phone\}/g,S.company.phone||'')}
 async function markReminded(ck){if(!S.isOwner&&(viewOnly()||!['manager','staff'].includes(role())))return;try{await S.db.doc('cust/all').update({list:{[ck]:{rem:{at:new Date().toISOString(),by:S.uid}}}});if(S.cust[ck])S.cust[ck].rem={at:new Date().toISOString(),by:S.uid};if(S.view==='fu')VIEWS.fu.update()}catch(e){toast(dbErr(e))}}
 
+/* ---------------- Physical inspection ---------------- */
+const canInsp=()=>role()&&!S.readOnly&&(S.isOwner||(['manager','staff'].includes(role())&&!viewOnly()&&can('insp')));
+function inspRecs(){const out=[];for(const [docId,doc] of Object.entries(S.insps||{}))for(const [rid,r] of Object.entries((doc&&doc.recs)||{})){if(r&&!r.del)out.push(Object.assign({},r,{rid,docId}))}return out.sort((a,b)=>(b.at||'').localeCompare(a.at||''))}
+function inspFindings(){const out=[];for(const r of inspRecs()){const res=r.res||{};(r.miss||[]).forEach(c=>{if(!res[c])out.push({k:'miss',c,r})});(r.extra||[]).forEach(c=>{if(!res[c])out.push({k:'extra',c,r})})}return out}
+function gpsOnce(ms=9000){return new Promise(res=>{if(!navigator.geolocation)return res(null);let done=false;const t=setTimeout(()=>{if(!done){done=true;res(null)}},ms);
+  navigator.geolocation.getCurrentPosition(p=>{if(done)return;done=true;clearTimeout(t);res({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy)})},()=>{if(done)return;done=true;clearTimeout(t);res({denied:true})},{enableHighAccuracy:true,timeout:ms,maximumAge:60000})})}
+const mapLink=l=>l&&l.lat!=null?`<a href="https://www.google.com/maps?q=${l.lat},${l.lng}" target="_blank" rel="noopener">📍 ${LANG==='ta'?'இடம்':'Map'}${l.acc?` ±${l.acc}m`:''}</a>`:`<span class="muted small">${l&&l.denied?(LANG==='ta'?'📍 அனுமதி இல்லை':'📍 not allowed'):'—'}</span>`;
+VIEWS.insp={
+  mount(){const u=S.ui;const ta=LANG==='ta';if(!u.inTab)u.inTab='cust';if(u.inBr==null)u.inBr=role()==='staff'?myBranch():'all';
+    return `<div class="page-head"><div><h2>Physical inspection</h2><p>${ta?'Customer இடத்துக்குப் போய், app கணக்குப்படி அவரிடம் உள்ள சிலிண்டர்களை நேரில் பார்த்து ✓ / ✗ குறிக்கவும். பட்டியலில் இல்லாததைச் சேர்க்கலாம். Staff பெயர், நேரம், இடம் தானாகச் சேரும்.':'Visit the customer and tick each cylinder you can see. Add any that are not in the list. Your name, time and location are saved.'}</p></div></div>
+    <div class="panel"><div class="seg" id="in-tabs"></div>
+      <div class="row" style="margin-top:10px"><div class="field search"><label for="in-q">${ta?'Customer தேடு':'Search customer'}</label><div class="rel">${ic('search')}<input class="inp" id="in-q" value="${esc(u.inQ||'')}"></div></div>
+      <div class="field" style="flex:0 1 160px"><label for="in-br">${ta?'கிளை':'Branch'}</label><select class="inp" id="in-br"><option value="all">${ta?'எல்லாம்':'All'}</option>${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.inBr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div></div></div>
+    <div id="in-list"></div>`},
+  after(){const u=S.ui;$('#in-q').addEventListener('input',e=>{u.inQ=e.target.value;this.update()});$('#in-br').addEventListener('change',e=>{u.inBr=e.target.value;this.update()});
+    $('#in-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;u.inTab=b.dataset.t;this.update()});this.update()},
+  update(){const u=S.ui;const ta=LANG==='ta';const recs=inspRecs();const finds=inspFindings();
+    $('#in-tabs').innerHTML=[['cust',ta?'Customer-கள்':'Customers'],['find',(ta?'கண்டுபிடிப்புகள்':'Findings')+(finds.length?' · '+finds.length:'')],['hist',ta?'வரலாறு':'History']].map(([k,l])=>`<button data-t="${k}" aria-pressed="${u.inTab===k}">${esc(l)}</button>`).join('');
+    const q=(u.inQ||'').trim().toLowerCase();const brOk=ck=>{if(!u.inBr||u.inBr==='all')return true;const b=custBr(ck).br;return b===u.inBr||b==='BOTH'};
+    const last={};recs.forEach(r=>{if(!last[r.ck])last[r.ck]=r});
+    if(u.inTab==='cust'){
+      const rows=Object.keys(S.cust).filter(ck=>(S.D.holding[ck]||[]).length&&brOk(ck)&&(!q||custName(ck).toLowerCase().includes(q)));
+      const today=todayISO();const done=ck=>last[ck]&&last[ck].d===today;
+      rows.sort((a,b)=>(done(a)?1:0)-(done(b)?1:0)||((last[a]||{}).d||'').localeCompare((last[b]||{}).d||'')||(S.D.holding[b].length-S.D.holding[a].length));
+      const todo=rows.filter(ck=>!done(ck)),fin=rows.filter(done);
+      const row=ck=>{const l=last[ck];return `<button type="button" class="inrow" data-act="inspopen" data-v="${esc(ck)}"><span style="flex:1;min-width:0"><b>${esc(custName(ck))}</b> ${brTag(ck)}<span class="small muted" style="display:block">${l?`${ta?'கடைசி சரிபார்ப்பு':'Last checked'} ${fmtD(l.d)} · ${esc(shortName(l.by))} · ✓${(l.ok||[]).length} ✗${(l.miss||[]).length}${(l.extra||[]).length?' +'+l.extra.length:''}`:(ta?'இதுவரை சரிபார்க்கவில்லை':'Never checked')}</span></span><span class="pill ${done(ck)?'ok':'info'}">${done(ck)?'✓ '+(ta?'இன்று':'today'):(S.D.holding[ck]||[]).length+' '+(ta?'சிலிண்டர்':'cyl')}</span></button>`};
+      $('#in-list').innerHTML=`<div class="panel"><div class="panel-head"><h3>${ta?'சரிபார்க்க வேண்டியவை':'To check'} · ${todo.length}</h3><span class="muted small">${ta?'நீண்ட நாள் பார்க்காதவர்கள் முதலில்':'Longest unchecked first'}</span></div>${todo.slice(0,200).map(row).join('')||`<div class="empty"><b>${ta?'எல்லாம் முடிந்தது':'All done'}</b></div>`}</div>
+        ${fin.length?`<div class="panel"><div class="panel-head"><h3>✓ ${ta?'இன்று முடிந்தது':'Done today'} · ${fin.length}</h3></div>${fin.map(row).join('')}</div>`:''}`;return}
+    if(u.inTab==='find'){
+      $('#in-list').innerHTML=`<div class="panel">${finds.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'சிலிண்டர்':'Cylinder'}</th><th>${ta?'கண்டது':'Finding'}</th><th>Customer</th><th>${ta?'தேதி':'Date'}</th><th>${ta?'யார்':'By'}</th><th>${ta?'இப்போது app-இல்':'Now in app'}</th><th></th></tr></thead><tbody>${finds.filter(x=>brOk(x.r.ck)&&(!q||custName(x.r.ck).toLowerCase().includes(q)||String(x.c).toLowerCase().includes(q))).map(x=>{const st=S.D.state[x.c];return `<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(x.c)}">${esc(x.c)}</button></td><td>${x.k==='miss'?`<span class="pill crit">✗ ${ta?'அங்கே இல்லை':'not there'}</span>`:`<span class="pill warn">+ ${ta?'பட்டியலில் இல்லாமல் அங்கே இருந்தது':'there, not in list'}</span>`}</td><td><a href="#" data-act="opencust" data-v="${esc(x.r.ck)}">${esc(custName(x.r.ck))}</a></td><td class="num">${fmtD(x.r.d)}</td><td>${esc(shortName(x.r.by))}</td><td class="small">${st?(st.st==='out'?esc(custName(st.ck)):esc((STATUS[st.st]||[st.st])[0])):'—'}</td><td>${canManage()?`<button class="btn sm" data-act="inspres" data-doc="${esc(x.r.docId)}" data-rid="${esc(x.r.rid)}" data-c="${esc(x.c)}">✓ ${ta?'சரி செய்தது':'Sorted'}</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'கண்டுபிடிப்பு எதுவும் இல்லை':'Nothing found'}</b>${ta?'சரிபார்ப்பில் “இல்லை” / “கூடுதல்” குறித்தவை இங்கே வரும்.':'Cylinders marked “not there” or added as extra appear here.'}</div>`}</div>`;return}
+    $('#in-list').innerHTML=`<div class="panel">${recs.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'தேதி':'Date'}</th><th>Customer</th><th>${ta?'யார்':'By'}</th><th class="r">✓</th><th class="r">✗</th><th class="r">+</th><th>${ta?'குறிப்பு':'Note'}</th><th>${ta?'இடம்':'Place'}</th></tr></thead><tbody>${recs.filter(r=>brOk(r.ck)&&(!q||custName(r.ck).toLowerCase().includes(q))).slice(0,300).map(r=>`<tr><td class="num">${fmtD(r.d)} <span class="small muted">${fmtDT(r.at).slice(6)}</span></td><td><a href="#" data-act="opencust" data-v="${esc(r.ck)}">${esc(custName(r.ck))}</a></td><td>${esc(shortName(r.by))}</td><td class="r num">${(r.ok||[]).length}</td><td class="r num">${(r.miss||[]).length?`<b style="color:var(--crit)">${r.miss.length}</b>`:0}</td><td class="r num">${(r.extra||[]).length}</td><td class="small">${esc(r.note||'')}</td><td class="small">${mapLink(r.loc)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'இன்னும் சரிபார்ப்பு இல்லை':'No inspections yet'}</b></div>`}</div>`}
+};
+function inspPanel(ck){
+  const ta=LANG==='ta';const list=(S.D.holding[ck]||[]).slice();const mark={};const extra=[];
+  openDrawer({k:'form',render:()=>[`<h3>🔍 ${esc(custName(ck))}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?`App கணக்குப்படி ${list.length} சிலிண்டர்கள். ஒவ்வொன்றையும் பார்த்து ✓ அல்லது ✗ அழுத்தவும்.`:`${list.length} cylinders by the app. Tick each one you can see.`}</p>
+     <div class="row" style="margin-bottom:8px"><button type="button" class="btn sm" id="ip-all">✓ ${ta?'எல்லாம் உள்ளன':'All here'}</button><span class="small muted" id="ip-cnt" style="align-self:center"></span></div>
+     <div id="ip-list">${list.map(x=>`<div class="iprow" data-c="${esc(x.id)}"><span class="mono" style="font-weight:700;min-width:70px">${esc(x.id)}</span><span class="small muted" style="flex:1">${esc(x.g||'')} · ${fmtD(x.d)} · ${x.days??''}${ta?' நாள்':'d'}</span><button type="button" class="ipb ok" data-m="ok">✓</button><button type="button" class="ipb no" data-m="miss">✗</button></div>`).join('')||`<div class="muted">${ta?'App-இல் இவரிடம் சிலிண்டர் இல்லை':'No cylinders with them in the app'}</div>`}</div>
+     <div class="field" style="margin-top:12px"><label for="ip-x">+ ${ta?'பட்டியலில் இல்லாத, அங்கே இருக்கும் சிலிண்டர்':'Cylinder seen there but not in the list'}</label><div class="cylbox"><span id="ip-xchips" class="chips"></span><input id="ip-x" placeholder="505, C1008" inputmode="${isTouch()?'numeric':'text'}" autocomplete="off"></div></div>
+     <div class="field" style="margin-top:10px"><label for="ip-note">${ta?'குறிப்பு':'Note'}</label><textarea class="inp" id="ip-note" rows="2" placeholder="${ta?'எ.கா. 2 சிலிண்டர் godown-இல் பூட்டியிருந்தது':'eg. 2 cylinders locked in their store'}"></textarea></div>
+     <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="ip-save">${ic('check')}${ta?'சேமி':'Save inspection'}</button><button class="btn" type="button" data-act="closedrawer">${ta?'ரத்து':'Cancel'}</button></div>`],
+    after(){const cnt=()=>{const ok=Object.values(mark).filter(v=>v==='ok').length,no=Object.values(mark).filter(v=>v==='miss').length;$('#ip-cnt').textContent=`✓ ${ok} · ✗ ${no} · ${ta?'மீதி':'left'} ${list.length-ok-no}${extra.length?' · + '+extra.length:''}`};
+      const paint=()=>{$$('#ip-list .iprow').forEach(r=>{const m=mark[r.dataset.c];r.classList.toggle('isok',m==='ok');r.classList.toggle('isno',m==='miss')});
+        $('#ip-xchips').innerHTML=extra.map((c,i)=>`<span class="chip warn">${esc(c)}<button type="button" data-xr="${i}">×</button></span>`).join('');cnt()};
+      $('#ip-list').addEventListener('click',e=>{const b=e.target.closest('.ipb');if(!b)return;const c=b.closest('.iprow').dataset.c;mark[c]=mark[c]===b.dataset.m?undefined:b.dataset.m;paint()});
+      $('#ip-all').onclick=()=>{list.forEach(x=>{mark[x.id]='ok'});paint()};
+      const xi=$('#ip-x');const addX=v=>{String(v).split(/[\s,;]+/).map(normCyl).filter(Boolean).forEach(c=>{if(!extra.includes(c)&&!list.some(x=>x.id===c))extra.push(c);else if(list.some(x=>x.id===c))mark[c]='ok'});paint()};
+      xi.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===','||e.key===' '||(e.key==='Tab'&&xi.value.trim())){e.preventDefault();addX(xi.value);xi.value=''}});
+      $('#ip-xchips').addEventListener('click',e=>{const b=e.target.closest('[data-xr]');if(!b)return;extra.splice(+b.dataset.xr,1);paint()});
+      $('#ip-save').onclick=async()=>{if(xi.value.trim()){addX(xi.value);xi.value=''}const b=$('#ip-save');b.disabled=true;b.textContent=ta?'இடம் எடுக்கிறது…':'Getting location…';
+        const loc=await gpsOnce();const d=todayISO();const rid=uidGen();
+        const rec={ck,cn:custName(ck),d,at:new Date().toISOString(),by:S.uid,ok:list.filter(x=>mark[x.id]==='ok').map(x=>x.id),miss:list.filter(x=>mark[x.id]==='miss').map(x=>x.id),skip:list.filter(x=>!mark[x.id]).map(x=>x.id),extra:extra.slice(),note:$('#ip-note').value.trim(),loc:loc||null};
+        try{await S.db.doc('insp/'+d+'_'+S.uid).update({d,by:S.uid,recs:{[rid]:rec}});toast((ta?'சரிபார்ப்பு சேமிக்கப்பட்டது: ':'Inspection saved: ')+custName(ck));closeDrawer()}catch(err){toast(dbErr(err));b.disabled=false;b.textContent=ta?'சேமி':'Save inspection'}};
+      paint()}});
+}
+/* ---------------- Attendance (photo + time + place), login register, location trail ---------------- */
+const needsAtt=()=>!S.isOwner&&['manager','staff'].includes(role());
+const ATT={today:null,checked:false,trailT:null};
+async function attLoad(){if(!needsAtt())return;try{const s=await S.db.doc('att/'+todayISO()+'_'+S.uid).get();ATT.today=s.exists?s.data():null}catch(e){ATT.today=null}ATT.checked=true;paintShell()}
+async function loginLog(){try{if(sessionStorage.getItem('cd-loginlog'))return;sessionStorage.setItem('cd-loginlog','1')}catch(e){}
+  if(!role())return;const loc=await gpsOnce(12000);const at=new Date().toISOString();
+  try{await S.db.doc('logins/'+at.replace(/[^0-9]/g,'').slice(0,14)+'_'+S.uid).set({uid:S.uid,name:personName(S.uid),at,d:todayISO(),loc:loc||null,dev:/Android|iPhone|iPad/i.test(navigator.userAgent)?'phone':'computer',app:window.matchMedia&&matchMedia('(display-mode: standalone)').matches?'app':'browser'})}catch(e){}}
+function trailStart(){if(ATT.trailT||!needsAtt()||!S.company.trail)return;const tick=async()=>{if(document.visibilityState!=='visible')return;const l=await gpsOnce(15000);if(!l||l.lat==null)return;const n=new Date();const k=pad(n.getHours())+pad(n.getMinutes());
+    try{await S.db.doc('loc/'+todayISO()+'_'+S.uid).update({d:todayISO(),uid:S.uid,pts:{[k]:Object.assign({at:n.toISOString()},l)}})}catch(e){}};
+  tick();ATT.trailT=setInterval(tick,15*60e3)}
+function attPanel(kind){
+  const ta=LANG==='ta';let stream=null,photo='';
+  openDrawer({k:'form',render:()=>[`<h3>${kind==='in'?'🟢 '+(ta?'வருகை (In)':'Attendance — In'):'🔴 '+(ta?'வெளியேறல் (Out)':'Attendance — Out')}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?'ஒரு selfie எடுக்கவும். நேரமும் இடமும் தானாகப் பதிவாகும்.':'Take a selfie. The time and your location are saved with it.'}</p>
+     <div class="camwrap"><video id="at-v" playsinline autoplay muted></video><img id="at-img" alt="" hidden></div>
+     <input type="file" id="at-file" accept="image/*" capture="user" hidden>
+     <div class="row" style="margin-top:10px"><button class="btn" type="button" id="at-snap">📷 ${ta?'படம் எடு':'Take photo'}</button><button class="btn primary" type="button" id="at-save" disabled>${ic('check')}${ta?'பதிவு செய்':'Save'}</button></div>
+     <p class="small muted" style="margin-top:10px">${ta?'இந்த app உங்கள் வருகை photo, நேரம், இடத்தை owner பார்ப்பதற்காகப் பதிவு செய்கிறது.':'This app records your attendance photo, time and location for the owner.'} · ${new Date().toLocaleString('en-IN')}</p>`],
+    after(){const v=$('#at-v'),img=$('#at-img'),snap=$('#at-snap'),save=$('#at-save'),file=$('#at-file');
+      const shrink=src=>new Promise(res=>{const im=new Image();im.onload=()=>{const W=240,H=Math.round(im.height*W/im.width);const c=document.createElement('canvas');c.width=W;c.height=Math.min(H,320);c.getContext('2d').drawImage(im,0,0,W,H);res(c.toDataURL('image/jpeg',0.6))};im.src=src});
+      const useFile=()=>file.click();
+      file.addEventListener('change',async()=>{const f=file.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{photo=await shrink(r.result);img.src=photo;img.hidden=false;v.hidden=true;save.disabled=false};r.readAsDataURL(f)});
+      (async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:480,height:640},audio:false});v.srcObject=stream}catch(e){v.hidden=true;snap.textContent='📷 '+(ta?'Camera திற':'Open camera');snap.onclick=useFile}})();
+      snap.onclick=snap.onclick||(()=>{if(!stream){useFile();return}const c=document.createElement('canvas');c.width=v.videoWidth||480;c.height=v.videoHeight||640;c.getContext('2d').drawImage(v,0,0,c.width,c.height);shrink(c.toDataURL('image/jpeg',0.9)).then(p=>{photo=p;img.src=p;img.hidden=false;v.hidden=true;save.disabled=false;snap.textContent='📷 '+(ta?'மீண்டும்':'Retake');snap.onclick=()=>{img.hidden=true;v.hidden=false;save.disabled=true;photo='';snap.textContent='📷 '+(ta?'படம் எடு':'Take photo');snap.onclick=null;attPanel(kind)}})});
+      save.onclick=async()=>{save.disabled=true;save.textContent=ta?'இடம் எடுக்கிறது…':'Getting location…';const loc=await gpsOnce();
+        const rec={at:new Date().toISOString(),ph:photo,loc:loc||null};
+        try{await S.db.doc('att/'+todayISO()+'_'+S.uid).update({d:todayISO(),uid:S.uid,name:personName(S.uid),[kind]:rec});ATT.today=Object.assign({},ATT.today||{},{[kind]:rec});
+          if(stream)stream.getTracks().forEach(t=>t.stop());closeDrawer();paintShell();toast(kind==='in'?(ta?'வருகை பதிவானது ':'In recorded ')+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):(ta?'வெளியேறல் பதிவானது':'Out recorded'))}
+        catch(e){toast(dbErr(e));save.disabled=false}};
+      const stop=()=>{if(stream)stream.getTracks().forEach(t=>t.stop())};const obs=new MutationObserver(()=>{if(!document.getElementById('at-v')){stop();obs.disconnect()}});obs.observe(document.getElementById('drawer-root'),{childList:true})}});
+}
+const officeIn=()=>S.company.officeIn||'09:30';
+const hm=iso=>{const d=new Date(iso);return pad(d.getHours())+':'+pad(d.getMinutes())};
+VIEWS.att={
+  mount(){const u=S.ui;const ta=LANG==='ta';if(!u.atM)u.atM=todayISO().slice(0,7);if(!u.atTab)u.atTab='att';
+    return `<div class="page-head"><div><h2>Attendance & logins</h2><p>${ta?'Staff வருகை (photo, நேரம், இடம்), ஒவ்வொரு login-உம் அதன் இடமும்.':'Staff attendance with photo, time and place, and every login with its place.'}</p></div></div>
+    <div class="panel"><div class="row" style="align-items:flex-end"><div class="seg" id="at-tabs"></div>
+      <div class="field" style="flex:0 1 170px"><label for="at-m">${ta?'மாதம்':'Month'}</label><input type="month" class="inp" id="at-m" value="${esc(u.atM)}"></div>
+      ${canManage()?`<div class="field" style="flex:0 1 190px"><label for="at-off">${ta?'Office நேரம் (தாமதக் குறி)':'Office time (late mark)'}</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input type="time" class="inp" id="at-off" value="${esc(officeIn())}"><button class="btn sm" type="button" id="at-offsave">${ta?'சேமி':'Save'}</button></div></div>
+      <label class="check" style="align-self:center"><input type="checkbox" id="at-trail" ${S.company.trail?'checked':''}> ${ta?'App திறந்திருக்கும்போது 15 நிமிடத்துக்கு ஒருமுறை இடம் பதிவு':'Record location every 15 min while the app is open'}</label>`:''}</div></div>
+    <div id="at-body"><div class="panel"><div class="loading"><div><div class="spin"></div></div></div></div></div>`},
+  after(){const u=S.ui;$('#at-m').addEventListener('change',e=>{u.atM=e.target.value;this.load()});
+    $('#at-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;u.atTab=b.dataset.t;this.load()});
+    const os=$('#at-offsave');if(os)os.onclick=async()=>{try{await S.db.doc('settings/company').update({officeIn:$('#at-off').value||'09:30'});S.company.officeIn=$('#at-off').value;toast('Saved');this.paint()}catch(e){toast(dbErr(e))}};
+    const tr=$('#at-trail');if(tr)tr.onchange=async()=>{try{await S.db.doc('settings/company').update({trail:tr.checked});S.company.trail=tr.checked;toast(tr.checked?(LANG==='ta'?'இடப் பதிவு on':'Location trail on'):(LANG==='ta'?'இடப் பதிவு off':'Location trail off'))}catch(e){toast(dbErr(e))}};
+    this.load()},
+  update(){},
+  async load(){const u=S.ui;const ta=LANG==='ta';$('#at-tabs').innerHTML=[['att',ta?'வருகைப் பேரேடு':'Attendance'],['log',ta?'Login பதிவேடு':'Login register'],['trail',ta?'இடப் பாதை':'Location trail']].map(([k,l])=>`<button data-t="${k}" aria-pressed="${u.atTab===k}">${l}</button>`).join('');
+    const m=u.atM;const from=m+'-01',to=m+'-31';
+    try{if(u.atTab==='att'){const q=await S.db.collection('att').where('d','>=',from).where('d','<=',to).get();this.rows=q.docs.map(d=>d.data())}
+      else if(u.atTab==='log'){const q=await S.db.collection('logins').where('d','>=',from).where('d','<=',to).get();this.rows=q.docs.map(d=>d.data()).sort((a,b)=>(b.at||'').localeCompare(a.at||''))}
+      else{const q=await S.db.collection('loc').where('d','>=',from).where('d','<=',to).get();this.rows=q.docs.map(d=>d.data())}}catch(e){this.rows=[];toast(dbErr(e))}
+    this.paint()},
+  paint(){const u=S.ui;const ta=LANG==='ta';const rows=this.rows||[];const el=$('#at-body');if(!el)return;
+    const people=[...new Set(Object.entries(S.roles).filter(([id,r])=>['staff','manager'].includes(r.role)).map(([id])=>id).concat(rows.map(r=>r.uid)))];
+    if(u.atTab==='att'){const [y,mo]=u.atM.split('-').map(Number);const nd=new Date(y,mo,0).getDate();const days=[...Array(nd)].map((_,i)=>u.atM+'-'+pad(i+1));const by={};rows.forEach(r=>{by[r.d+'_'+r.uid]=r});const off=officeIn();
+      el.innerHTML=`<div class="panel"><div class="tbl-wrap"><table class="attgrid"><thead><tr><th>${ta?'பெயர்':'Name'}</th><th class="r">${ta?'நாட்கள்':'Days'}</th><th class="r">${ta?'தாமதம்':'Late'}</th>${days.map(d=>`<th class="r">${+d.slice(8)}</th>`).join('')}</tr></thead><tbody>${people.map(id=>{let n=0,late=0;const cells=days.map(d=>{const r=by[d+'_'+id];if(!r||!r.in)return `<td class="r ${d<=todayISO()&&new Date(d).getDay()!==0?'abs':''}">${d<=todayISO()?'·':''}</td>`;n++;const t=hm(r.in.at);const lt=t>off;if(lt)late++;return `<td class="r click" data-act="attday" data-k="${esc(d+'_'+id)}"><b class="${lt?'late':'ontime'}">${t}</b>${r.out?`<br><span class="small muted">${hm(r.out.at)}</span>`:''}</td>`}).join('');return `<tr><td><b>${esc(personName(id))}</b></td><td class="r num">${n}</td><td class="r num">${late?`<span style="color:var(--crit)">${late}</span>`:0}</td>${cells}</tr>`}).join('')||`<tr><td colspan="${nd+3}" class="muted">${ta?'Staff இல்லை':'No staff yet'}</td></tr>`}</tbody></table></div>
+        <div class="small muted" style="margin-top:8px">${ta?`பச்சை = நேரத்துக்கு, சிவப்பு = ${off}-க்குப் பிறகு. நேரத்தைத் தொட்டால் photo, இடம் தெரியும்.`:`Green = on time, red = after ${off}. Tap a time to see the photos and places.`}</div></div>`;this.by=by;return}
+    if(u.atTab==='log'){el.innerHTML=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${ta?'நேரம்':'Time'}</th><th>${ta?'பெயர்':'Name'}</th><th>${ta?'கருவி':'Device'}</th><th>${ta?'இடம்':'Place'}</th></tr></thead><tbody>${rows.slice(0,500).map(r=>`<tr><td class="num">${fmtD(r.d)} ${hm(r.at)}</td><td>${esc(personName(r.uid))}</td><td class="small">${esc(r.dev||'')} · ${esc(r.app||'')}</td><td>${mapLink(r.loc)}</td></tr>`).join('')||`<tr><td colspan="4" class="muted">${ta?'இந்த மாதம் login இல்லை':'No logins this month'}</td></tr>`}</tbody></table></div></div>`;return}
+    el.innerHTML=`<div class="panel">${S.company.trail?'':`<div class="notice info">${ic('info')}<div>${ta?'இடப் பதிவு off-இல் உள்ளது. மேலே tick செய்தால் தொடங்கும்.':'The location trail is off. Tick the box above to start it.'}</div></div>`}${rows.length?rows.sort((a,b)=>a.d<b.d?1:-1).map(r=>{const pts=Object.entries(r.pts||{}).sort(([a],[b])=>a<b?-1:1);const route=pts.length>1?`https://www.google.com/maps/dir/${pts.slice(-10).map(([k,p])=>p.lat+','+p.lng).join('/')}`:'';return `<div class="trailrow"><b>${esc(personName(r.uid))}</b> · ${fmtD(r.d)} · ${pts.length} ${ta?'இடங்கள்':'points'} ${route?`<a href="${route}" target="_blank" rel="noopener">🧭 ${ta?'பாதை':'Route'}</a>`:''}<div class="small">${pts.map(([k,p])=>`<a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" rel="noopener">${k.slice(0,2)}:${k.slice(2)}</a>`).join(' · ')}</div></div>`}).join(''):`<div class="empty"><b>${ta?'இந்த மாதம் இடப் பதிவு இல்லை':'No trail this month'}</b></div>`}</div>`}
+};
+/* ---------------- Filling register (factory) ---------------- */
+const SIZES=()=>Object.assign({A:'7 m³',B:'1.5 m³',C:'',D:''},S.company.sizes||{});
+const canFill=()=>role()&&!S.readOnly&&(S.isOwner||(['manager','staff'].includes(role())&&!viewOnly()&&can('fill')));
+VIEWS.fill={
+  mount(){const u=S.ui;const ta=LANG==='ta';if(!u.fl)u.fl={cy:[],d:todayISO(),size:'A',filler:personName(S.uid),note:''};if(!u.flFrom){const d=new Date();d.setDate(d.getDate()-6);u.flFrom=d.toISOString().slice(0,10);u.flTo=todayISO()}
+    const f=u.fl;const sz=SIZES();
+    return `<div class="page-head"><div><h2>Filling register</h2><p>${ta?'Factory-இல் தினமும் நிரப்பும் சிலிண்டர் எண்களைப் பதிவு செய்யவும். நிரப்பப்பட்ட சிலிண்டர் நம்மிடம் திரும்பி வந்ததாகக் கணக்கு — அதன் DC/MT தாமதமாக வந்தாலும் mismatch ஆகாது.':'Record the cylinders filled at the factory each day. A filled cylinder counts as back with us — late DC / MT paper will not show as a mismatch.'}</p></div></div>
+    ${canFill()?`<div class="panel"><div class="panel-head"><h3>${ta?'புதிய நிரப்பல்':'New filling'}</h3><span class="muted small" id="fl-cnt"></span></div>
+      <div class="row">
+        <div class="field" style="flex:0 1 170px"><label for="fl-d">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="fl-d" value="${esc(f.d)}" max="${todayISO()}"></div>
+        <div class="field" style="flex:0 1 200px"><label for="fl-size">${ta?'சிலிண்டர் வகை':'Cylinder type'}</label><select class="inp" id="fl-size">${Object.entries(sz).filter(([k,v])=>v||k==='A'||k==='B').map(([k,v])=>`<option value="${k}" ${f.size===k?'selected':''}>${k}${v?' · '+esc(v):''}</option>`).join('')}</select></div>
+        <div class="field" style="flex:1 1 200px"><label for="fl-filler">${ta?'Filler பெயர்':'Filler name'}</label><input class="inp" id="fl-filler" value="${esc(f.filler)}"></div>
+      </div>
+      <div class="field" style="margin-top:10px"><label for="fl-in" class="cyl-lbl"><span class="lbl-t">${ta?'சிலிண்டர் எண்கள்':'Cylinder numbers'} <span class="muted" style="font-weight:400">· ${ta?'Enter / Tab / இடைவெளி ஒவ்வொன்றுக்கும் · பலவற்றை ஒரே நேரத்தில் paste செய்யலாம்':'Enter / Tab / space after each · paste many at once'}</span></span><span id="fl-gas" class="gascount"></span></label>
+        <div class="cylbox" id="fl-box"><span id="fl-chips" class="chips"></span><input id="fl-in" placeholder="505, C1008, D101" inputmode="${isTouch()?'numeric':'text'}" autocomplete="off"></div>
+        <div class="small muted" id="fl-help"></div></div>
+      <div class="field" style="margin-top:10px"><label for="fl-note">${ta?'குறிப்பு (விருப்பம்)':'Note (optional)'}</label><input class="inp" id="fl-note" value="${esc(f.note)}"></div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="fl-save">${ic('check')}${ta?'சேமி':'Save filling'}</button><button class="btn" type="button" id="fl-clear">${ta?'அழி':'Clear'}</button></div>
+      ${canManage()?`<details style="margin-top:12px"><summary class="small muted">${ta?'சிலிண்டர் வகைகள் (A, B, C, D) மாற்ற':'Change cylinder types (A, B, C, D)'}</summary><div class="row" style="margin-top:8px">${['A','B','C','D'].map(k=>`<div class="field" style="flex:0 1 130px"><label>${k}</label><input class="inp" data-sz="${k}" value="${esc(sz[k]||'')}" placeholder="eg. 7 m³"></div>`).join('')}<button class="btn sm" type="button" id="fl-szsave" style="align-self:flex-end">${ta?'சேமி':'Save'}</button></div></details>`:''}
+    </div>`:''}
+    <div class="panel"><div class="panel-head"><h3>${ta?'நிரப்பல் பதிவுகள்':'Fillings'}</h3><span class="muted small" id="fl-sum"></span></div>
+      <div class="row"><div class="field" style="flex:0 1 160px"><label for="fl-from">${ta?'முதல்':'From'}</label><input type="date" class="inp" id="fl-from" value="${esc(u.flFrom)}"></div><div class="field" style="flex:0 1 160px"><label for="fl-to">${ta?'வரை':'To'}</label><input type="date" class="inp" id="fl-to" value="${esc(u.flTo)}"></div>
+      <div class="field search"><label for="fl-q">${ta?'சிலிண்டர் / filler தேடு':'Search cylinder / filler'}</label><div class="rel">${ic('search')}<input class="inp" id="fl-q" value="${esc(u.flQ||'')}"></div></div></div>
+      <div id="fl-list" style="margin-top:10px"></div></div>`},
+  after(){const u=S.ui,f=u.fl;const ta=LANG==='ta';
+    const fl=$('#fl-from'),tt=$('#fl-to'),q=$('#fl-q');
+    fl.addEventListener('change',()=>{u.flFrom=fl.value;this.update()});tt.addEventListener('change',()=>{u.flTo=tt.value;this.update()});q.addEventListener('input',()=>{u.flQ=q.value;this.update()});
+    if(!canFill()){this.update();return}
+    const inp=$('#fl-in');
+    const add=v=>{String(v||'').split(/[\s,;]+/).map(x=>normCyl(x)).filter(Boolean).forEach(id=>{if(!f.cy.includes(id))f.cy.push(id)});this.chips()};
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===','||e.key===' '||(e.key==='Tab'&&!e.shiftKey&&inp.value.trim())){e.preventDefault();add(inp.value);inp.value=''}
+      else if(e.key==='Backspace'&&!inp.value&&f.cy.length){f.cy.pop();this.chips()}});
+    inp.addEventListener('paste',e=>{const t=(e.clipboardData||window.clipboardData).getData('text');if(/[\s,;]/.test(t.trim())){e.preventDefault();add(t)}});
+    $('#fl-chips').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;f.cy.splice(+b.dataset.rm,1);this.chips()});
+    $('#fl-d').addEventListener('change',e=>{f.d=e.target.value});$('#fl-size').addEventListener('change',e=>{f.size=e.target.value});
+    $('#fl-filler').addEventListener('input',e=>{f.filler=e.target.value});$('#fl-note').addEventListener('input',e=>{f.note=e.target.value});
+    $('#fl-clear').onclick=()=>{f.cy=[];f.note='';$('#fl-note').value='';this.chips();inp.focus()};
+    $('#fl-save').onclick=async()=>{if(inp.value.trim()){add(inp.value);inp.value=''}
+      if(!f.cy.length){toast(ta?'சிலிண்டர் எண் போடவும்':'Add cylinder numbers');inp.focus();return}
+      if(!f.d||f.d>todayISO()){toast(ta?'தேதி சரியில்லை':'Check the date');return}
+      const b=$('#fl-save');b.disabled=true;
+      try{const rid=uidGen();const at=new Date().toISOString();const docId=f.d+'_'+S.uid;
+        await S.db.doc('fill/'+docId).update({d:f.d,by:S.uid,recs:{[rid]:{d:f.d,cy:f.cy.slice(),size:f.size,filler:(f.filler||'').trim()||personName(S.uid),note:(f.note||'').trim(),by:S.uid,at}}});
+        toast((ta?'சேமிக்கப்பட்டது: ':'Saved: ')+f.cy.length+(ta?' சிலிண்டர் நிரப்பல்':' cylinders filled'));f.cy=[];f.note='';$('#fl-note').value='';this.chips();inp.focus()}
+      catch(e){toast(dbErr(e))}finally{b.disabled=false}};
+    const sz=$('#fl-szsave');if(sz)sz.onclick=async()=>{const o={};$$('[data-sz]').forEach(i=>{o[i.dataset.sz]=i.value.trim()});try{await S.db.doc('settings/company').update({sizes:o});S.company.sizes=o;toast(ta?'சேமிக்கப்பட்டது':'Saved');mounted=null;refresh()}catch(e){toast(dbErr(e))}};
+    this.chips();this.update()},
+  chips(){const f=S.ui.fl;const ta=LANG==='ta';const el=$('#fl-chips');if(!el)return;
+    el.innerHTML=f.cy.map((id,i)=>{const known=!!S.cyl[id];const g=(S.cyl[id]||{}).g||'';return `<span class="chip ${known?'ok':'crit'}" title="${known?'':(ta?'பட்டியலில் இல்லை':'Not in cylinder list')}">${esc(id)}${g?`<span class="chip-note">${esc(g)}</span>`:''}<button type="button" data-rm="${i}" aria-label="Remove">×</button></span>`}).join('');
+    const cnt={};f.cy.forEach(id=>{const g=((S.cyl[id]||{}).g||'?').replace(/\s*kg$/i,'');cnt[g]=(cnt[g]||0)+1});
+    const GC={O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'};
+    $('#fl-gas').innerHTML=f.cy.length?Object.entries(cnt).map(([g,n])=>`<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`).join('')+`<span class="gc tot">${ta?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:'';
+    const unk=f.cy.filter(id=>!S.cyl[id]).length;
+    $('#fl-help').innerHTML=f.cy.length?`${f.cy.length} ${ta?'சிலிண்டர்':'cylinders'}${unk?` · <span style="color:var(--crit)">${unk} ${ta?'பட்டியலில் இல்லை (இருந்தாலும் சேமிக்கலாம்)':'not in the cylinder list (can still be saved)'}</span>`:''}`:''},
+  update(){const u=S.ui;const ta=LANG==='ta';const q=(u.flQ||'').trim().toLowerCase();
+    const rs=(S.D.fills||[]).filter(r=>(!u.flFrom||r.d>=u.flFrom)&&(!u.flTo||r.d<=u.flTo)&&(!q||r.cy.some(c=>String(c).toLowerCase().includes(q))||String(r.filler||'').toLowerCase().includes(q)));
+    const tot=rs.reduce((a,r)=>a+r.cy.length,0);const sz=SIZES();
+    $('#fl-sum').textContent=`${rs.length} ${ta?'பதிவு':'entries'} · ${tot} ${ta?'சிலிண்டர்':'cylinders'}`;
+    {const c=$('#fl-cnt');if(c){const td=(S.D.fills||[]).filter(r=>r.d===todayISO());c.textContent=(ta?'இன்று: ':'Today: ')+td.reduce((a,r)=>a+r.cy.length,0)+(ta?' சிலிண்டர்':' cylinders')}}
+    $('#fl-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'தேதி':'Date'}</th><th>${ta?'வகை':'Type'}</th><th class="r">${ta?'எண்ணிக்கை':'Count'}</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>Filler</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.map(r=>`<tr><td class="num">${fmtD(r.d)}</td><td><b>${esc(r.size||'')}</b> <span class="small muted">${esc(sz[r.size]||'')}</span></td><td class="r num"><b>${r.cy.length}</b></td><td class="mono small" style="max-width:420px">${r.cy.map(c=>`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`).join(', ')}${r.note?`<div class="muted" style="font-family:var(--f-body)">📝 ${esc(r.note)}</div>`:''}</td><td>${esc(r.filler||'')}</td><td class="small muted">${fmtDT(r.at)}${r.by!==S.uid?' · '+esc(shortName(r.by)):''}</td><td>${(canManage()||(r.by===S.uid&&madeToday(r)&&canFill()))?`<button class="btn sm ghost" data-act="fldel" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete" style="color:var(--crit)">${ic('x')}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`
+      :`<div class="empty"><b>${ta?'இந்தத் தேதிகளில் நிரப்பல் இல்லை':'No fillings in these dates'}</b></div>`}
+};
+
 /* Mismatches */
 VIEWS.mism={
   mount(){return `<div class="page-head"><div><h2>Mismatches</h2><p>Entries that do not match where the cylinder should be. Fix the entry if it was typed wrong, or verify it after checking with the customer.</p></div><div class="actions">${S.isOwner&&datelessList().length?`<button class="btn" data-act="dlopen">${ic('cal')}${LANG==='ta'?'தேதி இல்லாத பழைய பதிவுகள்':'Old entries without date'} · ${datelessList().length}</button>`:''}<div class="seg" id="m-seg"></div></div></div>
@@ -2108,9 +2330,13 @@ VIEWS.mism={
       <div class="panel"><div class="eyebrow">Wrong number on DC</div><p style="margin:6px 0 0">The driver gave 1108 but wrote 1100. Edit the DC entry and change the number. Everything recalculates.</p></div>
       <div class="panel"><div class="eyebrow">Customer swapped cylinders</div><p style="margin:6px 0 0">The customer really returned another cylinder. Call them, then press Verify and write what you found.</p></div>
       <div class="panel"><div class="eyebrow">Entry missed</div><p style="margin:6px 0 0">A DC or MT was never entered. Add the missing entry with its real date.</p></div>
-    </div><div class="panel" id="m-list"></div>`},
+    </div><div class="panel" id="m-pend"></div><div class="panel" id="m-list"></div>`},
   after(){this.update()},
-  update(){const u=S.ui;const all=S.D.mism.slice().sort((a,b)=>a.d<b.d?1:-1);const open=all.filter(m=>!m.vf);
+  update(){const u=S.ui;
+    {const P=S.D.pend.slice().sort((a,b)=>a.fillD<b.fillD?-1:1);const ta=LANG==='ta';const el=$('#m-pend');
+      if(el){el.hidden=!P.length;el.innerHTML=P.length?`<div class="panel-head"><h3>🟡 ${ta?'Entry நிலுவை — factory-இல் நிரப்பப்பட்டவை':'Entry pending — filled at the factory'} · ${P.length}</h3><span class="muted small">${ta?`DC/MT paper வரும் வரை காத்திருக்கும்; ${S.D.PEND_DAYS} நாளுக்குள் வராவிட்டால் mismatch ஆகும்`:`Waiting for late DC / MT paper; becomes a mismatch after ${S.D.PEND_DAYS} days`}</span></div>
+        <div class="tbl-wrap"><table><thead><tr><th>${ta?'சிலிண்டர்':'Cylinder'}</th><th>${ta?'என்ன நிலுவை':'Waiting for'}</th><th>Customer</th><th>${ta?'நிரப்பிய தேதி':'Filled on'}</th><th class="r">${ta?'மீதி நாள்':'Days left'}</th></tr></thead><tbody>${P.map(x=>{const left=S.D.PEND_DAYS-daysSince(x.fillD);return `<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(x.id)}">${esc(x.id)}</button></td><td>${x.kind==='nomt'?(ta?`MT வரவில்லை (DC ${esc(x.dcNo)} · ${fmtD(x.dcD)})`:`MT not entered (DC ${esc(x.dcNo)} · ${fmtD(x.dcD)})`):`<span class="small">${esc(TSHORT[x.t]||x.t)} ${x.dc?'#'+esc(x.dc):''} · ${fmtD(x.d)} — ${esc(x.flag)}</span>`}</td><td>${x.ck?`<a href="#" data-act="opencust" data-v="${esc(x.ck)}">${esc(custName(x.ck))}</a>`:'—'}</td><td class="num">${fmtD(x.fillD)}</td><td class="r"><span class="pill ${left<=10?'crit':'warn'} num">${left}</span></td></tr>`}).join('')}</tbody></table></div>`:''}}
+    const all=S.D.mism.slice().sort((a,b)=>a.d<b.d?1:-1);const open=all.filter(m=>!m.vf);
     $('#m-seg').innerHTML=[['open','To check · '+open.length],['all','All · '+all.length]].map(([k,l])=>`<button data-act="mmseg" data-v="${k}" aria-pressed="${u.mmShow===k}">${l}</button>`).join('');
     const rs=u.mmShow==='open'?open:all;
     $('#m-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Cylinder</th><th>Entry</th><th>Problem</th><th>${LANG==='ta'?'இப்போது எங்கே':'Where now'}</th><th></th></tr></thead><tbody>${rs.map(m=>`<tr>
@@ -2118,7 +2344,7 @@ VIEWS.mism={
       <td><span class="${m.t==='DC'?'t-dc':'t-mt'}">${TSHORT[m.t]}</span> ${esc(m.ck?custName(m.ck):m.pl||'')} ${m.dc?`<span class="muted mono small">#${esc(m.dc)}</span>`:''}</td>
       <td>${m.vf?`<span class="pill ok">Verified</span> <span class="small muted">${esc(m.vf.note||'')}</span>`:`<span class="pill warn">${esc(m.flag)}</span>`}</td>
       <td class="small">${(()=>{const st=S.D.state[m.id];if(!st)return '—';return st.st==='out'?`${esc(custName(st.ck))} <span class="muted">· ${fmtD(st.d)}</span>`:esc(STATUS[st.st]?STATUS[st.st][0]:st.st)})()}</td>
-      <td style="white-space:nowrap">${!m.vf&&canEnter()?`<button class="btn sm" data-act="editrec" data-doc="${esc(m.docId)}" data-rid="${esc(m.rid)}">${ic('edit')}Fix entry</button> ${canManage()?`<button class="btn sm" data-act="verify" data-doc="${esc(m.docId)}" data-rid="${esc(m.rid)}" data-cyl="${esc(m.id)}">${ic('check')}Verify</button>`:''}`:''}</td></tr>`).join('')}</tbody></table></div>`
+      <td style="white-space:nowrap">${!m.vf&&canEnter()&&m.src!=='fill'?`<button class="btn sm" data-act="editrec" data-doc="${esc(m.docId)}" data-rid="${esc(m.rid)}">${ic('edit')}Fix entry</button> ${canManage()?`<button class="btn sm" data-act="verify" data-doc="${esc(m.docId)}" data-rid="${esc(m.rid)}" data-cyl="${esc(m.id)}">${ic('check')}Verify</button>`:''}`:''}</td></tr>`).join('')}</tbody></table></div>`
       :`<div class="empty"><b>Nothing to check</b>Every DC and MT matches where the cylinder was.</div>`},
   names(){$$('[data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
 };
@@ -2458,8 +2684,8 @@ function cylDrawer(id){
   if(!evs.length)body+=`<div class="empty"><b>Never sent out</b>No DC or MT has been recorded for this cylinder.</div>`;
   else{
     const list=evs.slice().reverse();
-    const lbl={DC:'DC · sent to',MT:'MT · back from',FS:'Sent for filling',FR:'Received full'};
-    const col={DC:'var(--info)',MT:'var(--mt)',FS:'var(--warn)',FR:'var(--ok)'};
+    const lbl={DC:'DC · sent to',MT:'MT · back from',FS:'Sent for filling',FR:'Received full',FL:'🏭 Filled at factory'};
+    const col={DC:'var(--info)',MT:'var(--mt)',FS:'var(--warn)',FR:'var(--ok)',FL:'#EA580C'};
     body+=list.map((e,i)=>`<div class="trip"><div style="display:flex;flex-direction:column;align-items:center"><div class="dot" style="background:${e.flag&&!e.vf?'var(--crit)':col[e.t]}"></div>${i<list.length-1?'<div class="line" style="flex:1"></div>':''}</div>
       <div class="body"><div><span style="color:${col[e.t]};font-weight:700">${lbl[e.t]}</span> <b>${e.ck?`<a href="#" data-act="opencust" data-v="${esc(e.ck)}">${esc(custName(e.ck))}</a>`:esc(e.pl||'')}</b></div>
       <div class="small muted">${fmtD(e.d)}${e.src==='old'?' · old Excel':''}${e.dc?' · #'+esc(e.dc):''}${e.vh?' · '+esc(e.vh):''}${e.dr?' · '+esc(e.dr):''}${e.rm?' · '+esc(e.rm):''}</div>
@@ -2479,6 +2705,8 @@ function custDrawer(ck){
     <div><span>Phone</span><b class="mono" style="user-select:all">${c.ph?`<a href="tel:${esc(telOf(c.ph))}">${esc(c.ph)}</a>`:'—'}</b></div><div class="money"><span>${LANG==='ta'?'பில் நிலுவை':'Bill outstanding'}</span><b class="num" style="color:${custDue(ck)?'var(--crit)':'inherit'}">${custDue(ck)?rupee(custDue(ck)):'—'}</b></div><div class="money"><span>Deposit held</span><b class="num">${c.dep?rupee(+c.dep):'—'}</b></div><div class="money"><span>Rent so far (open)</span><b class="num">${rent?rupee(rent):'—'}</b></div>
     <div><span>Type</span><b>${esc(c.t||'—')}</b></div><div><span>Total DC / MT</span><b class="num">${dc} / ${mt}</b></div><div class="money"><span>Free days · rate</span><b class="num">${rc.free} · ${c.rate!=null&&c.rate!==''?rupee(+c.rate)+'/day':'default'}</b></div></div>
     ${c.ad?`<div class="small muted">${esc(c.ad)}</div>`:''}
+    ${(()=>{const l=inspRecs().find(r=>r.ck===ck);return l?`<div class="small">🔍 ${LANG==='ta'?'கடைசி நேரடி சரிபார்ப்பு':'Last inspection'}: <b>${fmtD(l.d)}</b> · ${esc(shortName(l.by))} · ✓${(l.ok||[]).length} ✗${(l.miss||[]).length}${(l.extra||[]).length?' +'+l.extra.length:''}${l.note?' · '+esc(l.note):''}</div>`:''})()}
+    ${canInsp()&&(S.D.holding[ck]||[]).length?`<div><button class="btn sm" data-act="inspopen" data-v="${esc(ck)}">${ic('insp')}${LANG==='ta'?'இப்போது சரிபார்':'Inspect now'}</button></div>`:''}
     ${c.fu?`<div class="notice info">${ic('info')}<div>Last follow-up ${fmtDT(c.fu.at)} by <span data-name="${esc(c.fu.by)}">${esc(personName(c.fu.by))}</span>: ${esc(c.fu.note||'')}</div></div>`:''}
     <div class="row loc-row">${c.ph?`<a class="btn sm" href="tel:${esc(telOf(c.ph))}">📞 ${LANG==='ta'?'அழை':'Call'}</a>`:''}${mapUrl(c)?`<a class="btn sm" href="${esc(mapUrl(c))}" target="_blank" rel="noopener">🧭 ${c.loc?(LANG==='ta'?'வழி காட்டு':'Directions'):(LANG==='ta'?'Map-இல் தேடு':'Search map')}</a>`:''}${can('saveLoc')&&role()!=='viewer'?`<button class="btn sm" data-act="saveloc" data-v="${esc(ck)}">📍 ${c.loc?(LANG==='ta'?'இடத்தை மாற்று':'Update place'):(LANG==='ta'?'இந்த இடத்தைச் சேமி':'Save this place')}</button>`:''}${c.loc?`<span class="small muted">📍 ±${c.loc.acc||'?'} m · ${fmtDT(c.loc.at)} · <span data-name="${esc(c.loc.by)}">${esc(personName(c.loc.by))}</span></span>`:''}</div>
     <div class="row">${canEnter()?`${can('editCust')?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button>`:''}<button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm wa" data-act="wamsg" data-v="${esc(ck)}">${ic('wa')}${LANG==='ta'?'WhatsApp நினைவூட்டல்':'WhatsApp reminder'}</button><button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button>${S.isOwner?`<button class="btn sm" data-act="mergeinto" data-v="${esc(ck)}">🔀 ${LANG==='ta'?'வேறு பெயருடன் இணை':'Merge into another'}</button>`:''}</div>
@@ -2744,6 +2972,13 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
+  inspopen:el=>{if(!canInsp()){openDrawer({k:'cust',v:el.dataset.v});return}inspPanel(el.dataset.v)},
+  inspres:async el=>{try{await S.db.doc('insp/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{res:{[el.dataset.c]:{by:S.uid,at:new Date().toISOString()}}}}});toast(LANG==='ta'?'சரி செய்ததாகக் குறிக்கப்பட்டது':'Marked as sorted')}catch(e){toast(dbErr(e))}},
+  attin:()=>attPanel('in'),attout:()=>attPanel('out'),
+  attday:el=>{const r=VIEWS.att.by&&VIEWS.att.by[el.dataset.k];if(!r)return;const ta=LANG==='ta';
+    openDrawer({k:'form',render:()=>[`<h3>${esc(personName(r.uid))} · ${fmtD(r.d)}</h3>`,`<div class="attday">${['in','out'].map(k=>r[k]?`<div><div class="eyebrow">${k==='in'?(ta?'வருகை':'In'):(ta?'வெளியேறல்':'Out')} · <b>${hm(r[k].at)}</b></div>${r[k].ph?`<img src="${r[k].ph}" alt="">`:`<div class="muted small">${ta?'படம் இல்லை':'No photo'}</div>`}<div class="small">${mapLink(r[k].loc)}</div></div>`:`<div class="muted">${k==='out'?(ta?'Out பதிவில்லை':'No out'):''}</div>`).join('')}</div>`]})},
+  fldel:async el=>{if(!confirm(LANG==='ta'?'இந்த நிரப்பல் பதிவை நீக்கவா?':'Delete this filling entry?'))return;try{await S.db.doc('fill/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{del:{by:S.uid,at:new Date().toISOString()}}}});toast(LANG==='ta'?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}},
+  pendok:async()=>{try{await S.db.doc('settings/company').update({pendRemAt:todayISO()});S.company.pendRemAt=todayISO();VIEWS.dash.update()}catch(e){toast(dbErr(e))}},
   bigtext:()=>{BIG=!BIG;try{localStorage.setItem('cd-big',BIG?'1':'0')}catch(e){}document.body.classList.toggle('bigtext',BIG);closeDrawer();toast(BIG?(LANG==='ta'?'பெரிய எழுத்து':'Bigger text'):(LANG==='ta'?'சாதாரண எழுத்து':'Normal text'))},
   entview:el=>{S.ui.entView=el.dataset.v;try{localStorage.setItem('cd-entview',el.dataset.v)}catch(e){}VIEWS.entries.update()},
   remset:async()=>{const v=+($('#fu-every')||{}).value||30;try{await S.db.doc('settings/company').update({fuDays:v});S.company.fuDays=v;toast((LANG==='ta'?'நினைவூட்டல்: ஒவ்வொரு ':'Reminder: every ')+v+(LANG==='ta'?' நாள்':' days'));mounted=null;refresh()}catch(e){toast(dbErr(e))}},
@@ -2754,7 +2989,7 @@ const A={
   installhide:()=>{try{localStorage.setItem('cd-inst-hide','1')}catch(e){}const b=$('#inst-banner');if(b)b.remove()},
   fudue:()=>{S.ui.fuDue=true;go('fu')},
   histed:el=>histEditPanel(+el.dataset.ci,+el.dataset.pos),
-  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k));const iconOf=(k,i)=>navIc(k,i);
+  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k)&&!(k==='insp'&&!navOk('dash')));const iconOf=(k,i)=>navIc(k,i);
     openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${iconOf(k,i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>
       <div class="small muted" style="margin:16px 0 8px">${esc(personName(S.uid))} · ${esc(role()==='owner'?'Owner':role()||'')} · v${esc(APP_VERSION)}</div>
       ${INSTALL?`<button type="button" class="btn primary" data-act="installnow" style="width:100%;margin-bottom:10px;justify-content:center">⬇ ${ta?'App-ஆக நிறுவு (Install)':'Install as app'}</button>`:''}

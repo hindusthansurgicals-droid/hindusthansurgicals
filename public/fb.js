@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='3.17.1';window.CD_BUILD='2026-10-20';
+window.CD_VERSION='3.18.0';window.CD_BUILD='2026-10-20';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -116,7 +116,7 @@ function signInScreen(msg){
     document.body.appendChild(el);
   }
   el.innerHTML=`<div class="panel" style="max-width:420px;width:100%;text-align:center;padding:28px 22px">
-    <div class="brand-mark" style="margin:0 auto 14px;width:64px;height:64px;border-radius:14px;background:#fff;border:1px solid #ddd;overflow:hidden"><img src="icon.svg?v=3.17.1" alt="" style="width:100%;height:100%"></div>
+    <div class="brand-mark" style="margin:0 auto 14px;width:64px;height:64px;border-radius:14px;background:#fff;border:1px solid #ddd;overflow:hidden"><img src="icon.svg?v=3.18.0" alt="" style="width:100%;height:100%"></div>
     <h2 style="font:800 22px var(--f-display,sans-serif);margin:0 0 6px">HSAP Cylinder Desk</h2>
     <p class="muted" style="margin:0 0 18px">Sign in with your Google account to continue.<br>தொடர உங்கள் Google கணக்கில் உள்நுழையவும்.</p>
     <button class="btn primary" id="fb-go" style="width:100%;padding:11px">Sign in with Google</button>
@@ -183,7 +183,7 @@ const dl={save:async({filename,data})=>{
 /* ---------- full backup (same format import.html restores) ---------- */
 /* The security rules allow the two settings documents to be read one by one, not the whole folder,
    so settings are read by name; every other folder is read whole. members/profiles are optional. */
-const BACKUP_COLS=['settings','cust','cyl','hist','log','bill','trade','reg','members','profiles'];
+const BACKUP_COLS=['settings','cust','cyl','hist','log','bill','trade','reg','fill','insp','att','logins','loc','members','profiles'];
 const SETTINGS_DOCS=['company','roles'];
 async function backupAll(source,opts){
   const o=source?{source}:undefined;const out={};const missing=[];
