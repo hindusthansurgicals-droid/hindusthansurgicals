@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.12.0"><link rel="icon" href="icon.svg?v=3.12.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.12.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.13.0"><link rel="icon" href="icon.svg?v=3.13.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.13.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -379,12 +379,145 @@ details.more summary::-webkit-details-marker{display:none}
 .check{display:flex;gap:8px;align-items:flex-start;font-size:13px}
 .check input{margin-top:3px}
 hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
+
+/* ===================== PRO LOOK: desktop software style, colourful icons ===================== */
+:root{--appbar1:#0B3D35;--appbar2:#0E6B5A;--side:#10231F;--side-2:#183530;--side-ink:#C9D8D3;--side-mute:#7F9A93;--pagebg:#EDF1F4}
+body.pro{background:var(--pagebg)}
+body.pro .top{background:linear-gradient(90deg,var(--appbar1),var(--appbar2));color:#fff;border-bottom:0;box-shadow:0 2px 8px rgba(0,0,0,.18);padding-block:8px}
+body.pro .brand h1{color:#fff;font-size:17px}
+body.pro .brand small{color:#BFE3D9}
+body.pro .brand small b{color:#FFE08A!important}
+body.pro .brand-mark{border:0;box-shadow:0 0 0 2px rgba(255,255,255,.35);width:38px;height:38px}
+body.pro .top-right .btn{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff}
+body.pro .top-right .btn:hover{background:rgba(255,255,255,.22)}
+body.pro .top-right .btn.primary{background:#FFC83D;border-color:#FFC83D;color:#3A2A00}
+body.pro .who{color:#fff}
+body.pro .role-pill{background:rgba(255,255,255,.18);color:#fff}
+body.pro .sync-chip{background:rgba(255,255,255,.95)}
+body.pro::before{background:var(--appbar1)}
+/* side menu */
+body.pro .rail{background:var(--side);border-right:0;padding:12px 10px;gap:1px;overflow-y:auto}
+body.pro .rail .navsec{font:700 10.5px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--side-mute);padding:14px 10px 6px}
+body.pro .rail .navsec:first-child{padding-top:4px}
+body.pro .rail>button{color:var(--side-ink);padding:7px 10px;border-radius:9px;font-weight:600}
+body.pro .rail>button:hover{background:var(--side-2);color:#fff}
+body.pro .rail>button[aria-current="page"]{background:#fff;color:#10231F;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+body.pro .rail-foot{color:var(--side-mute)}
+.nic{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--c,#64748B);color:#fff;flex:none;box-shadow:inset 0 -2px 0 rgba(0,0,0,.15)}
+.nic svg{width:16px!important;height:16px!important;stroke:#fff}
+body.pro .rail .badge{background:#EF4444;color:#fff}
+/* work area */
+body.pro main{padding-block:18px 70px}
+body.pro .wrap{max-width:1640px}
+body.pro .page-head{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:0 1px 2px rgba(0,0,0,.04);align-items:center}
+body.pro .page-head h2{display:flex;align-items:center;gap:12px;font-size:22px}
+.pic{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--c,#0E6B5A);color:#fff;flex:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
+.pic svg{width:22px;height:22px;stroke:#fff}
+body.pro .page-head p{margin-left:52px;font-size:13px}
+body.pro .panel{border-radius:12px;box-shadow:0 1px 2px rgba(16,35,31,.05),0 4px 14px rgba(16,35,31,.05);border-color:#DCE3E8}
+body.pro .panel-head{border-bottom:1px solid #E6ECEF;margin:-16px -16px 12px;padding:11px 16px;background:linear-gradient(#FAFCFD,#F3F6F8);border-radius:12px 12px 0 0}
+body.pro .panel-head h3{font-size:14.5px;display:flex;align-items:center;gap:8px}
+body.pro .panel-head h3::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--accent)}
+/* KPI cards */
+body.pro .stats{background:none;border:0;gap:12px}
+body.pro .stat{background:#fff;border:1px solid #DCE3E8!important;border-radius:12px;border-top:4px solid var(--k,#0E6B5A)!important;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+body.pro .stat:nth-child(1){--k:#2563EB}body.pro .stat:nth-child(2){--k:#16A34A}body.pro .stat:nth-child(3){--k:#64748B}body.pro .stat:nth-child(4){--k:#D97706}body.pro .stat:nth-child(5){--k:#DC2626}body.pro .stat:nth-child(6){--k:#9333EA}
+body.pro .stat b{font-size:30px;color:var(--k)}
+/* tables like a desktop grid */
+body.pro table{font-size:13.5px}
+body.pro th{background:#EEF3F6;color:#41525A;border-bottom:1px solid #D5DEE4;position:sticky;top:0;z-index:1}
+body.pro tbody tr:nth-child(even) td{background:#FAFCFD}
+body.pro tbody tr:hover td{background:#EAF4FF}
+body.pro td{border-bottom:1px solid #EDF1F4}
+/* buttons */
+body.pro .btn{border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.04)}
+body.pro .btn.primary{background:linear-gradient(#13836E,#0E6B5A);border-color:#0B5A4B}
+body.pro .btn.wa{color:#fff;background:#25D366;border-color:#1DB954}
+body.pro .entry-card .btn.ghost{width:34px;height:34px;padding:0;border-radius:9px;background:#F1F5F9;border:1px solid #E2E8F0}
+body.pro .entry-card .btn.ghost.wa{background:#DCFCE7;border-color:#BBF7D0;color:#15803D}
+body.pro .entry-card [data-act=dcpdf]{background:#E0F2FE!important;color:#0369A1}
+body.pro .entry-card [data-act=editrec]{background:#EEF2FF!important;color:#4338CA}
+body.pro .entry-card [data-act=delrec]{background:#FEE2E2!important;color:#B91C1C}
+body.pro .entry-card [data-act=sign]{background:#FEF3C7!important}
+body.pro .entry-card .tcol{width:42px;padding:8px 0;border-radius:9px;font-size:14px}
+body.pro .entry-card .tcol.dc{background:#2563EB;color:#fff}
+body.pro .entry-card .tcol.mt{background:#DB2777;color:#fff}
+body.pro .typepick button[aria-pressed="true"].dc{background:#2563EB;border-color:#2563EB}
+body.pro .typepick button[aria-pressed="true"].dc b,body.pro .typepick button[aria-pressed="true"].dc span{color:#fff}
+body.pro .typepick button[aria-pressed="true"].mt{background:#DB2777;border-color:#DB2777}
+body.pro .typepick button[aria-pressed="true"].mt b,body.pro .typepick button[aria-pressed="true"].mt span{color:#fff}
+body.pro .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+body.pro .tchips button[aria-pressed=true]{background:#2563EB;border-color:#2563EB}
+body.pro .inp{border-radius:8px;border-color:#CBD5DC;background:#fff}
+body.pro .inp:focus{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+/* popups: side panel with a coloured title bar; small forms as a centred dialog */
+body.pro .drawer{background:var(--pagebg)}
+body.pro .drawer-head{background:linear-gradient(90deg,var(--appbar1),var(--appbar2));color:#fff;border-bottom:0}
+body.pro .drawer-head h3{color:#fff}
+body.pro .drawer-head h3 a{color:#fff}
+body.pro .drawer-head .btn{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff}
+body.pro .drawer-head .pill{background:rgba(255,255,255,.9)}
+@media (min-width:901px){
+  body.pro .drawer.dlg{top:50%;left:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);width:min(680px,94vw);max-height:88vh;border-radius:14px;overflow:hidden;animation:none}
+}
+/* computers: larger, easier to read text and no wasted side space */
+@media (min-width:1200px){
+  body.pro{font-size:15.5px}
+  body.pro .wrap{max-width:none}
+  body.pro .small{font-size:13px}
+  body.pro table{font-size:14.5px}
+  body.pro th{font-size:12.5px;padding:10px 12px}
+  body.pro td{padding:10px 12px}
+  body.pro .btn{font-size:14.5px;padding:9px 15px}
+  body.pro .btn.sm{font-size:13.5px}
+  body.pro .inp{font-size:15.5px;padding:10px 12px}
+  body.pro .rel svg~.inp{padding-left:38px}
+  body.pro label,body.pro .field>label{font-size:13.5px}
+  body.pro .entry-card b{font-size:16px}
+  body.pro .entry-card .meta{font-size:13.5px;gap:14px}
+  body.pro .cyl{font-size:14.5px}
+  body.pro .page-head h2{font-size:25px}
+  body.pro .panel-head h3{font-size:16px}
+  body.pro .rail>button{font-size:15px}
+  body.pro .split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  body.pro .layout{grid-template-columns:236px minmax(0,1fr)}
+}
+.entry-card .meta a{color:inherit;text-decoration:none}
+.entry-card .meta a b{color:var(--accent)}
+/* status bar at the bottom like desktop software */
+.statusbar{display:none}
+@media (min-width:901px){
+  body.pro .statusbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:35;height:28px;align-items:center;gap:18px;padding:0 14px;background:#10231F;color:#C9D8D3;font-size:12px;border-top:1px solid #000}
+  body.pro .statusbar b{color:#fff;font-weight:600}
+  body.pro .statusbar .sb-r{margin-left:auto;display:flex;gap:18px}
+  body.pro .statusbar .ok{color:#6EE7B7}body.pro .statusbar .bad{color:#FCA5A5}
+  body.pro .layout{min-height:calc(100vh - 82px)}
+  body.pro .rail{height:calc(100vh - 54px - 28px)}
+  body.pro .rail-foot{display:none}
+}
+/* phone */
+@media (max-width:900px){
+  body.pro .rail .navsec{display:none}
+  body.pro.compact .rail{background:var(--surface);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+  body.pro.compact .tabbar button{border-radius:12px}
+  body.pro.compact .tabbar button[data-v=dash] svg{color:#2563EB}body.pro.compact .tabbar button[data-v=cust] svg{color:#EA580C}body.pro.compact .tabbar button[data-v=cyl] svg{color:#0D9488}
+  body.pro.compact .tabbar button svg{color:var(--c)}
+  body.pro.compact .tabbar button.on{background:#ECFDF5;border-color:#10B981}
+  body.pro .page-head p{margin-left:0}
+  body.pro .morelist button svg{color:#fff}
+}
+.morelist .nic{width:34px;height:34px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body.pro{--pagebg:#0B1110}
+  :root:not([data-theme="light"]) body.pro .page-head,:root:not([data-theme="light"]) body.pro .stat{background:var(--surface)}
+  :root:not([data-theme="light"]) body.pro th{background:#1C2622;color:var(--muted)}
+  :root:not([data-theme="light"]) body.pro tbody tr:nth-child(even) td{background:transparent}
+  :root:not([data-theme="light"]) body.pro .panel-head{background:var(--surface-2)}}
 </style>
 
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.12.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.13.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="top-right" id="who"></div>
@@ -394,6 +527,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
     <main><div class="wrap" id="view"><div class="loading"><div><div class="spin"></div>Loading cylinders, customers and history…</div></div></div></main>
   </div>
 </div>
+<footer class="statusbar" id="statusbar"></footer>
 <div id="drawer-root"></div>
 <div id="upd-bar" class="upd-bar" hidden><span>⬆ New version · புதிய version <b></b></span><button class="btn sm primary" type="button" onclick="location.reload()">Update</button></div>
 <div id="toast-root" aria-live="polite"></div>
@@ -401,8 +535,9 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.12.0"></script>
+<script src="fb.js?v=3.13.0"></script>
 <script>
+document.body.classList.add('pro');
 (function(){
 'use strict';
 /* ---------------- utilities ---------------- */
@@ -430,9 +565,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.12.0';
+const APP_VERSION=window.CD_VERSION||'3.13.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.13.0','2026-10-21',['New look: desktop-software style — coloured title bar, dark side menu in 4 groups with colourful icons, page icons, coloured KPI cards, Excel-like tables, dialogs for small forms, status bar','Computers: larger text and the full screen width used','Entry cards: email line removed; shows came back / still out, how many the customer holds now, entered time, and who entered it (only when it was someone else)']],
  ['3.12.0','2026-10-21',['App version shown under the company name on phone and computer','People: type each person’s real name and mobile (owner too); the typed name shows everywhere instead of the email','People: “View only” switch for staff and managers — they can look but not add, edit or delete','Phone: Dashboard in the bottom bar; the other pages under ☰ Menu at the top']],
  ['3.11.0','2026-10-21',['Follow-up page rebuilt: days out from any range (1–30, 31–60 … or your own), DC-date range (type 1-9, 9 for a month, 30-9-26), branch, search, by customer or by cylinder','Reminders every 30 days (Settings): customers due are marked and counted on the Dashboard; WhatsApp sends their cylinders with days and DC no. and marks them reminded','Cylinder page: edit any app entry, and (owner) edit or delete an old Excel line — type, full date, customer']],
  ['3.10.2','2026-10-21',['DC / MT numbers as 0001, 0002 …; existing entries renumbered once by themselves in date order (old number kept on each entry)','Registers: “Entered by” replaced — DC shows how many cylinders came back / still out; MT shows which DC they went out on','Mismatches: “By” replaced with where the cylinder is now','Typing only day-month (21-10) works only in New entry; if it would be a future date it takes last year (e.g. in Jan 2027 → 21-10-2026)','Window / taskbar title “HSAP Cylinder Desk” and PNG favicon for desktop shortcuts']],
@@ -600,7 +736,10 @@ const canView=()=>!!role();
 const myBranch=()=>{const r=S.roles[S.uid];return (r&&r.br)||S.company.branches[0]||'DPI'};
 const brName=b=>(S.company.branchNames||{})[b]||b;
 const custName=ck=>(S.cust[ck]&&S.cust[ck].n)||ck||'—';
-const personName=id=>{const r=S.roles&&S.roles[id];if(r&&r.name)return r.name;const p=S.profiles[id];return (p&&p.name)||(id===S.uid?'You':'Staff')};
+/* a person's name without the email part ("ravi ravi (ravi@gmail.com)" → "ravi") */
+const cleanName=n=>String(n||'').replace(/\s*\([^)]*@[^)]*\)\s*$/,'').replace(/^(\S+)\s+\1$/,'$1').trim();
+const personName=id=>{const r=S.roles&&S.roles[id];if(r&&r.name)return r.name;const p=S.profiles[id];return cleanName(p&&p.name)||(id===S.uid?'You':'Staff')};
+const shortName=personName;
 
 /* ---------------- derive ---------------- */
 let deriveTimer=null;
@@ -741,6 +880,10 @@ function dbErr(e){
 /* ---------------- shell ---------------- */
 /* Staff see only what they use every day. */
 const STAFF_NAV=['entry','entries','cust','cyl','help'];
+/* colour and group for each menu item (pro look) */
+const NAV_C={dash:'#2563EB',entry:'#16A34A',entries:'#0EA5E9',reg:'#7C3AED',cyl:'#0D9488',cust:'#EA580C',fu:'#DB2777',mism:'#DC2626',bill:'#CA8A04',trade:'#4F46E5',ana:'#9333EA',rep:'#0891B2',settings:'#475569',oldimp:'#65A30D',help:'#64748B'};
+const NAV_SEC={dash:['Daily work','தினசரி வேலை'],cyl:['Stock & customers','சிலிண்டர் & வாடிக்கையாளர்'],bill:['Accounts','கணக்கு'],settings:['System','அமைப்பு']};
+const navIc=(k,i)=>`<i class="nic" style="--c:${NAV_C[k]||'#64748B'}">${ic(i)}</i>`;
 const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').innerHTML=`<b style="color:var(--accent);text-transform:none;letter-spacing:0">v${esc(APP_VERSION)}</b> · Cylinder tracking · `+esc((S.company.branches||[]).map(brName).join(' · '))}
 function navOk(k){const r=role();
@@ -755,7 +898,7 @@ function paintShell(){
   const r=role();
   const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
   document.body.classList.toggle('no-editcust',!can('editCust'));document.body.classList.toggle('no-money',!can('money'));
-  $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
+  $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>(NAV_SEC[k]?`<div class="navsec">${LANG==='ta'?NAV_SEC[k][1]:NAV_SEC[k][0]}</div>`:'')+`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${navIc(k,i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
   (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
@@ -802,7 +945,7 @@ function recFollow(r){
     const days=daysSince(r.d);
     return `${back.length?`<span class="pill ok">${back.length} ${ta?'திரும்பியது':'back'}</span> `:''}<span class="pill ${days>90?'crit':'warn'}">${out.length} ${ta?'இன்னும் அவரிடம்':'still out'} · ${days}d</span>`}
   const e=Object.entries(from);if(!e.length)return '<span class="muted">—</span>';
-  return e.map(([k,n])=>k==='?'?`<span class="pill warn">${n} ${ta?'DC இல்லை':'no DC'}</span>`:`<span class="mono">${esc(k)}</span>${n>1?` <span class="muted">×${n}</span>`:''}`).join(', ')}
+  return (ta?'↩ போனது: ':'↩ went out: ')+e.map(([k,n])=>k==='?'?`<span class="pill warn">${n} ${ta?'DC இல்லை':'no DC'}</span>`:`<span class="mono">${esc(/^DC /.test(k)?k:'DC '+k)}</span>${n>1?` <span class="muted">×${n}</span>`:''}`).join(', ')}
 /* Owner, one time: give every DC and every MT a fresh number 1, 2, 3 … in date order (both branches together).
    A backup file is downloaded first. Bills that list DC numbers are updated too; cancelled numbers are cleared. */
 async function renumberAll(silent){
@@ -1030,7 +1173,11 @@ function syncState(){const s=window.FBC?FBC.sync():{pending:0,online:navigator.o
   if(!s.online)return ['warn',s.pending?T2(`Offline · ${s.pending} waiting`,`இணையம் இல்லை · ${s.pending} காத்திருக்கிறது`):T2('Offline','இணையம் இல்லை'),T2('Entries are kept on this device and go to the cloud when the internet is back. Do not clear the browser data.','பதிவுகள் இந்த device-இல் உள்ளன; இணையம் வந்ததும் cloud-க்குப் போகும். Browser data-வை அழிக்க வேண்டாம்.')];
   if(s.pending)return ['warn',T2(`Saving… ${s.pending}`,`சேமிக்கிறது… ${s.pending}`),T2('Uploading to the cloud.','Cloud-க்கு அனுப்புகிறது.')];
   return ['ok',T2('Saved to cloud','Cloud-இல் உள்ளது'),s.lastOk?T2('Last change confirmed by the server ','கடைசி மாற்றம் server உறுதி செய்தது ')+ago(Date.now()-s.lastOk):T2('All data is on the Firebase server.','எல்லா தரவும் Firebase server-இல் உள்ளது.')]}
+function paintStatus(){const el=$('#statusbar');if(!el||!S.D)return;const [k,label]=syncState();const ta=LANG==='ta';
+  el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
+    <span class="sb-r"><span>${ta?'சிலிண்டர் வெளியே':'Out'}: <b>${Object.values(S.D.state).filter(x=>x.st==='out').length}</b></span><span>${ta?'வாடிக்கையாளர்':'Customers'}: <b>${Object.keys(S.cust).length}</b></span><span>${ta?'இன்று':'Today'}: <b>${fmtD(todayISO())}</b></span></span>`}
 function paintSync(){
+  paintStatus();
   const el=$('#sync-slot');if(!el)return;
   const [k,label,tip]=syncState();
   let html=`<button class="sync-chip ${k}" data-act="syncpanel" title="${esc(tip)}"><i></i><span>${esc(label)}</span></button>`;
@@ -1101,6 +1248,7 @@ function refresh(){
   const V=VIEWS[S.view];
   if(mounted!==S.view){v.innerHTML=V.mount();mounted=S.view;V.after&&V.after()}
   else V.update&&V.update();
+  {const h=$('#view .page-head h2');const n=NAV.find(x=>x[0]===S.view);if(h&&n&&!h.querySelector('.pic'))h.insertAdjacentHTML('afterbegin',`<i class="pic" style="--c:${NAV_C[S.view]}">${ic(n[2])}</i>`)}
   if(S.drawer)paintDrawer();
   resolveProfiles(profileIdsInView()).then(()=>{if(VIEWS[S.view]&&VIEWS[S.view].names)VIEWS[S.view].names()});
 }
@@ -1576,7 +1724,7 @@ function entryCard(r){
   return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
   <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div><b>${esc(recTitle(r))}</b> ${isCust(r.t)&&r.ck?brTag(r.ck):''} ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}</div>
   <div class="chips">${ownN(r)?`<span class="pill info">${esc(ownTxt(r))}</span>`:''}${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
-  <div class="meta"><span>${fmtD(r.d)} · ${esc(brName(r.br))}</span><span data-name="${esc(r.by)}">${esc(personName(r.by))}</span><span>${fmtDT(r.at)}</span>${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.sig?`<span class="pill ok">✍ ${LANG==='ta'?'கையெழுத்து உள்ளது':'signed'}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
+  <div class="meta"><span>📅 ${fmtD(r.d)} · ${esc(brName(r.br))}</span>${isCust(r.t)&&!r.del&&r.cy.length?`<span>${recFollow(r)}</span>`:''}${isCust(r.t)&&r.ck&&!r.del?`<a href="#" data-act="opencust" data-v="${esc(r.ck)}">👥 ${LANG==='ta'?'இப்போது அவரிடம்':'holding now'} <b>${(S.D.holding[r.ck]||[]).length}</b></a>`:''}<span title="${LANG==='ta'?'பதிவு செய்த நேரம்':'Entered at'}">🕐 ${fmtDT(r.at)}</span>${r.by&&r.by!==S.uid?`<span>👤 <span data-name="${esc(r.by)}">${esc(shortName(r.by))}</span></span>`:''}${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.sig?`<span class="pill ok">✍ ${LANG==='ta'?'கையெழுத்து உள்ளது':'signed'}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
   <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'&&canEditRec(r)&&!r.sig?`<button class="btn sm ghost" data-act="sign" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="${LANG==='ta'?'கையெழுத்து':'Signature'}">✍</button>`:''}${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
 }
 
@@ -2058,7 +2206,7 @@ function paintDrawer(){
   else if(d.k==='cust'){[head,body]=custDrawer(d.v)}
   else if(d.k==='lot'){[head,body]=lotDrawer(d.v)}
   else if(d.k==='form'){[head,body]=d.render()}
-  $('#drawer-root').innerHTML=`<div class="scrim" data-act="closedrawer"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Details"><div class="drawer-head">${head}<button class="btn ghost sm" data-act="closedrawer" style="margin-left:auto" aria-label="Close">${ic('x')}</button></div><div class="drawer-body">${body}</div></aside>`;
+  $('#drawer-root').innerHTML=`<div class="scrim" data-act="closedrawer"></div><aside class="drawer${d.k==='form'?' dlg':''}" role="dialog" aria-modal="true" aria-label="Details"><div class="drawer-head">${head}<button class="btn ghost sm" data-act="closedrawer" style="margin-left:auto" aria-label="Close">${ic('x')}</button></div><div class="drawer-body">${body}</div></aside>`;
   $('.drawer-body').scrollTop=keepScroll;
   if(d.k==='form'&&d.after)d.after();
   if(d.k==='cust'&&S.ui.cd){const u=S.ui.cd;
@@ -2379,8 +2527,8 @@ const A={
   permedit:el=>permPanel(el.dataset.v),
   fudue:()=>{S.ui.fuDue=true;go('fu')},
   histed:el=>histEditPanel(+el.dataset.ci,+el.dataset.pos),
-  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k));
-    openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>
+  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k));const iconOf=(k,i)=>navIc(k,i);
+    openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${iconOf(k,i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>
       <div class="small muted" style="margin:16px 0 8px">${esc(personName(S.uid))} · ${esc(role()==='owner'?'Owner':role()||'')} · v${esc(APP_VERSION)}</div>
       <div class="morelist"><button type="button" data-act="lang">🌐 <span>${ta?'English':'தமிழ்'}</span></button>${window.FBC?`<button type="button" onclick="FBC.signOut()">⎋ <span>Sign out</span></button>`:''}</div>`]})},
   mgo:el=>{closeDrawer();go(el.dataset.v)},
