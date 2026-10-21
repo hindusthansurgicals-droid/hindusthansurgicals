@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.11.0"><link rel="icon" href="icon.svg?v=3.11.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.11.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.12.0"><link rel="icon" href="icon.svg?v=3.12.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.12.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -238,6 +238,14 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.switch{position:relative;display:inline-block;width:42px;height:24px}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.15s;cursor:pointer}
+.switch span::before{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked+span{background:var(--warn)}
+.switch input:checked+span::before{transform:translateX(18px)}
+.verpill{font:600 10px var(--f-body);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:2px;white-space:nowrap}
+.menu-btn{display:none}
 .upd-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(60px + env(safe-area-inset-top,0px));z-index:60;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:6px 8px 6px 14px;box-shadow:0 8px 24px rgba(0,0,0,.12);font-size:13px}
 .upd-bar[hidden]{display:none}
 .morelist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -293,6 +301,8 @@ body.no-money .money{display:none}
   body.compact .tabbar button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent)}
   body.compact main{padding-bottom:100px}
   body.compact .rail .rail-foot{display:none}
+  body.compact .menu-btn{display:inline-flex;align-items:center;gap:4px;order:-1}
+  body.compact #who .signout,body.compact #who [data-act=lang],body.compact #who .who{display:none}
 }
 .mtlist{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface)}
 .mt-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
@@ -374,8 +384,8 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.11.0" alt=""></div>
-      <div><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.12.0" alt=""></div>
+      <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="top-right" id="who"></div>
   </header>
@@ -391,7 +401,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.11.0"></script>
+<script src="fb.js?v=3.12.0"></script>
 <script>
 (function(){
 'use strict';
@@ -420,9 +430,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.11.0';
+const APP_VERSION=window.CD_VERSION||'3.12.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.12.0','2026-10-21',['App version shown under the company name on phone and computer','People: type each person’s real name and mobile (owner too); the typed name shows everywhere instead of the email','People: “View only” switch for staff and managers — they can look but not add, edit or delete','Phone: Dashboard in the bottom bar; the other pages under ☰ Menu at the top']],
  ['3.11.0','2026-10-21',['Follow-up page rebuilt: days out from any range (1–30, 31–60 … or your own), DC-date range (type 1-9, 9 for a month, 30-9-26), branch, search, by customer or by cylinder','Reminders every 30 days (Settings): customers due are marked and counted on the Dashboard; WhatsApp sends their cylinders with days and DC no. and marks them reminded','Cylinder page: edit any app entry, and (owner) edit or delete an old Excel line — type, full date, customer']],
  ['3.10.2','2026-10-21',['DC / MT numbers as 0001, 0002 …; existing entries renumbered once by themselves in date order (old number kept on each entry)','Registers: “Entered by” replaced — DC shows how many cylinders came back / still out; MT shows which DC they went out on','Mismatches: “By” replaced with where the cylinder is now','Typing only day-month (21-10) works only in New entry; if it would be a future date it takes last year (e.g. in Jan 2027 → 21-10-2026)','Window / taskbar title “HSAP Cylinder Desk” and PNG favicon for desktop shortcuts']],
  ['3.10.1','2026-10-21',['New HSAP logo (app icon, header, sign-in)','App checks for a new version every 3 minutes and reloads itself when nothing is being typed or saved; otherwise an “Update” button shows','Files load with the version number so old copies are never used']],
@@ -579,15 +590,17 @@ const PRESET={manager:Object.fromEntries(PERM_KEYS.map(k=>[k,true])),
   staff:{entries:true,cyl:true,cust:true,entry:true,editOwn:true,saveLoc:true},
   viewer:{dash:true,entries:true,cyl:true,cust:true}};
 function permsFor(uid){const r=S.roles[uid]||{};const base=PRESET[r.role]||{};const o={};PERM_KEYS.forEach(k=>{o[k]=!!(r.perm&&k in r.perm?r.perm[k]:base[k])});return o}
-function can(k){if(S.isOwner)return true;if(!role())return false;return permsFor(S.uid)[k]}
-const canManage=()=>['owner','manager'].includes(role());
-const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly&&can('entry');
+const WORK_KEYS=['entry','editOwn','editAny','otherBr','newCust','editCust','saveLoc'];
+const viewOnly=uid=>{const r=S.roles[uid||S.uid];return !!(r&&r.viewOnly)};
+function can(k){if(S.isOwner)return true;if(!role())return false;if(viewOnly()&&WORK_KEYS.includes(k))return false;return permsFor(S.uid)[k]}
+const canManage=()=>role()==='owner'||(role()==='manager'&&!viewOnly());
+const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly&&!(!S.isOwner&&viewOnly())&&can('entry');
 const madeToday=r=>!!r.at&&new Date(r.at).toDateString()===new Date().toDateString();
 const canView=()=>!!role();
 const myBranch=()=>{const r=S.roles[S.uid];return (r&&r.br)||S.company.branches[0]||'DPI'};
 const brName=b=>(S.company.branchNames||{})[b]||b;
 const custName=ck=>(S.cust[ck]&&S.cust[ck].n)||ck||'—';
-const personName=id=>{const p=S.profiles[id];return (p&&p.name)||(id===S.uid?'You':'Staff')};
+const personName=id=>{const r=S.roles&&S.roles[id];if(r&&r.name)return r.name;const p=S.profiles[id];return (p&&p.name)||(id===S.uid?'You':'Staff')};
 
 /* ---------------- derive ---------------- */
 let deriveTimer=null;
@@ -729,7 +742,7 @@ function dbErr(e){
 /* Staff see only what they use every day. */
 const STAFF_NAV=['entry','entries','cust','cyl','help'];
 const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['reg','Registers','book'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Follow-up','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
-function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').textContent='Cylinder tracking · '+(S.company.branches||[]).map(brName).join(' · ')}
+function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').innerHTML=`<b style="color:var(--accent);text-transform:none;letter-spacing:0">v${esc(APP_VERSION)}</b> · Cylinder tracking · `+esc((S.company.branches||[]).map(brName).join(' · '))}
 function navOk(k){const r=role();
   if(!r)return false;
   if(k==='entry')return canEnter();
@@ -743,10 +756,10 @@ function paintShell(){
   const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
   document.body.classList.toggle('no-editcust',!can('editCust'));document.body.classList.toggle('no-money',!can('money'));
   $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
-  (r?`<div class="tabbar">${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}${NAV.filter(([k])=>navOk(k)&&!['entry','cust','cyl'].includes(k)).length?`<button data-act="morenav" class="${['entry','cust','cyl'].includes(S.view)?'':'on'}">${ic('list')}<span>${LANG==='ta'?'மேலும்':'More'}</span></button>`:''}</div>`:'')+
+  (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
-  $('#who').innerHTML='<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+myBranch():'Viewer')}</span>`:''}</div>`:'');
+  $('#who').innerHTML=(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
   paintSync();
 }
 /* Owner: merge this customer into any other one (picked by name). */
@@ -809,7 +822,7 @@ async function renumberAll(silent){
     if(Object.keys(S.voids||{}).length)await S.db.doc('reg/void').set({list:{}});
     if(S.form&&!S.form.edit){S.form.dcAuto=true}
     await S.db.doc('settings/company').update({numV:'pad4'});
-    toast(ta?`DC / MT எண்கள் புதுப்பிக்கப்பட்டன — DC 0001–${fmtNo(nDC)}, MT 0001–${fmtNo(nMT)}`:`DC / MT numbers updated — DC 0001–${fmtNo(nDC)}, MT 0001–${fmtNo(nMT)}`);
+    {const parts=[nDC?`DC 0001–${fmtNo(nDC)}`:'',nMT?`MT 0001–${fmtNo(nMT)}`:''].filter(Boolean).join(', ');if(parts)toast((ta?'DC / MT எண்கள் புதுப்பிக்கப்பட்டன — ':'DC / MT numbers updated — ')+parts)}
   }catch(e){toast(dbErr(e))}
 }
 /* Owner: switch each permission on/off for one person. */
@@ -1557,7 +1570,7 @@ async function saveEntry(){
     mounted=null;refresh();setTimeout(()=>{const c=$('#f-date');c&&c.focus()},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
-function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readOnly)return false;if(can('editAny'))return true;return can('editOwn')&&r.by===S.uid&&madeToday(r)}
+function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readOnly||(!S.isOwner&&viewOnly()))return false;if(can('editAny'))return true;return can('editOwn')&&r.by===S.uid&&madeToday(r)}
 function entryCard(r){
   const flags=r.cy.filter(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf});
   return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
@@ -1987,7 +2000,7 @@ VIEWS.settings={
       <div><button class="btn primary" type="submit">${ic('check')}Save billing</button></div></form>
     </div>
     ${S.isOwner?`<div class="panel"><div class="panel-head"><h3>People and roles</h3><span class="muted">${LANG==='ta'?'Staff-க்கு app link அனுப்புங்கள். அவர்கள் sign in செய்தவுடன் இங்கே வருவார்கள் — பிறகு role, கிளை, அனுமதிகளைத் தேர்வு செய்யவும்.':'Send staff the app link. Once they sign in they appear here — then set their role, branch and permissions.'}</span></div><div id="s-people"></div>
-      <div class="small muted" style="margin-top:12px"><b>Manager</b>: everything except people &amp; import. <b>Staff</b>: new DC/MT, Entries, Customers, Cylinders; edit own entries made today; own branch only; no new customers, no money, no downloads. <b>Viewer</b>: look only. ${LANG==='ta'?'ஒவ்வொருவருக்கும் “அனுமதிகள்” பொத்தானில் ஒவ்வொன்றையும் on/off செய்யலாம்.':'Use “Permissions” to switch each item on or off for one person.'} Anyone without a role waits on an access screen.</div></div>`:''}`},
+      <div class="small muted" style="margin-top:12px">${LANG==='ta'?'<b>பார்வை மட்டும்</b> on செய்தால் அந்த staff / manager எதையும் பார்க்கலாம், ஆனால் புதிய பதிவு, திருத்தம், நீக்கம் எதுவும் முடியாது. ':'<b>View only</b>: they can see everything allowed but cannot add, edit or delete anything. '}<b>Manager</b>: everything except people &amp; import. <b>Staff</b>: new DC/MT, Entries, Customers, Cylinders; edit own entries made today; own branch only; no new customers, no money, no downloads. <b>Viewer</b>: look only. ${LANG==='ta'?'ஒவ்வொருவருக்கும் “அனுமதிகள்” பொத்தானில் ஒவ்வொன்றையும் on/off செய்யலாம்.':'Use “Permissions” to switch each item on or off for one person.'} Anyone without a role waits on an access screen.</div></div>`:''}`},
   after(){
     const saveCo=async patch=>{try{await S.db.doc('settings/company').set(Object.assign({},S.company,patch));toast('Saved')}catch(err){toast(dbErr(err))}};
     $('#s-co').addEventListener('submit',e=>{e.preventDefault();const bn=Object.assign({},S.company.branchNames);$$('[data-br]').forEach(i=>bn[i.dataset.br]=i.value.trim()||i.dataset.br);
@@ -2003,14 +2016,25 @@ VIEWS.settings={
         $('#s-test-res').textContent=`Saved ${res.ok.length}.`+(res.bad.length?` Not saved (left in the box): ${res.bad.length}`:'');toast('Saved '+res.ok.length+' test dates')}catch(err){toast(dbErr(err))}});
     this.update()},
   update(){if(!S.isOwner||!$('#s-people'))return;
-    const ids=[...new Set([...Object.keys(S.members),...Object.keys(S.roles)])].filter(i=>i!==S.uid);
-    $('#s-people').innerHTML=ids.length?`<div class="tbl-wrap"><table><thead><tr><th>Person</th><th>Last opened</th><th>Role</th><th>Branch</th><th>${LANG==='ta'?'அனுமதிகள்':'Permissions'}</th></tr></thead><tbody>${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td><b data-name="${esc(id)}">${esc(p.name||'New person')}</b></td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
-      <td><select class="inp" data-role="${esc(id)}" style="min-width:120px"><option value="">No access</option>${['staff','manager','viewer'].map(x=>`<option value="${x}" ${r.role===x?'selected':''}>${x[0].toUpperCase()+x.slice(1)}</option>`).join('')}</select></td>
-      <td><select class="inp" data-rbr="${esc(id)}">${S.company.branches.map(b=>`<option value="${esc(b)}" ${r.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></td><td>${r.role?(()=>{const pm=permsFor(id);const n=PERM_KEYS.filter(k=>pm[k]).length;return `<button class="btn sm" data-act="permedit" data-v="${esc(id)}">${ic('set')}${n}/${PERM_KEYS.length}${r.perm?` · <span class="small">${LANG==='ta'?'மாற்றப்பட்டது':'custom'}</span>`:''}</button>`})():'<span class="muted small">—</span>'}</td></tr>`}).join('')}</tbody></table></div>`
-      :`<div class="empty"><b>No one else yet</b>When staff open the shared link, they appear here so you can give them a role.</div>`;
+    const ids=[...new Set([...Object.keys(S.members),...Object.keys(S.roles)])].filter(i=>i!==S.uid&&(S.members[i]||(S.roles[i]&&S.roles[i].role)));
+    const ta=LANG==='ta';
+    const nameCell=(id,r,p)=>`<input class="inp" data-pn="${esc(id)}" value="${esc(r.name||'')}" placeholder="${esc(p.name||(ta?'பெயர்':'Name'))}" style="min-width:150px"><div class="small muted" style="margin-top:3px">${esc(p.email||'')}</div>`;
+    const phCell=(id,r)=>`<input class="inp mono" data-pp="${esc(id)}" value="${esc(r.ph||'')}" placeholder="98xxxxxxxx" inputmode="tel" style="min-width:120px">${r.ph?` <a class="small" href="tel:${esc(telOf(r.ph))}">📞</a>`:''}`;
+    const me=S.roles[S.uid]||{};const mp=S.profiles[S.uid]||{};
+    const ownerRow=`<tr><td>${nameCell(S.uid,me,mp)}</td><td>${phCell(S.uid,me)}</td><td class="muted small">—</td><td><b>Owner</b></td><td class="muted small">—</td><td class="muted small">—</td><td class="muted small">${ta?'எல்லாம்':'Everything'}</td></tr>`;
+    $('#s-people').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>${ta?'Mobile':'Mobile'}</th><th>${ta?'கடைசியாகத் திறந்தது':'Last opened'}</th><th>Role</th><th>${ta?'கிளை':'Branch'}</th><th>${ta?'பார்வை மட்டும்':'View only'}</th><th>${ta?'அனுமதிகள்':'Permissions'}</th></tr></thead><tbody>${ownerRow}${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td>${nameCell(id,r,p)}</td><td>${phCell(id,r)}</td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
+      <td><select class="inp" data-role="${esc(id)}" style="min-width:110px"><option value="">No access</option>${['staff','manager','viewer'].map(x=>`<option value="${x}" ${r.role===x?'selected':''}>${x[0].toUpperCase()+x.slice(1)}</option>`).join('')}</select></td>
+      <td><select class="inp" data-rbr="${esc(id)}">${S.company.branches.map(b=>`<option value="${esc(b)}" ${r.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></td>
+      <td>${r.role==='staff'||r.role==='manager'?`<label class="switch"><input type="checkbox" data-vo="${esc(id)}" ${r.viewOnly?'checked':''}><span></span></label>`:'<span class="muted small">—</span>'}</td>
+      <td>${r.role?(()=>{const pm=permsFor(id);const n=PERM_KEYS.filter(k=>pm[k]&&!(r.viewOnly&&WORK_KEYS.includes(k))).length;return `<button class="btn sm" data-act="permedit" data-v="${esc(id)}">${ic('set')}${n}/${PERM_KEYS.length}${r.perm?` · <span class="small">${ta?'மாற்றப்பட்டது':'custom'}</span>`:''}</button>`})():'<span class="muted small">—</span>'}</td></tr>`}).join('')}</tbody></table></div>
+      ${ids.length?'':`<div class="empty"><b>${ta?'வேறு யாரும் இல்லை':'No one else yet'}</b>${ta?'Staff app link-ஐத் திறந்து sign in செய்தவுடன் இங்கே வருவார்கள்.':'When staff open the app link and sign in, they appear here.'}</div>`}`;
+    const saveUser=async(id,v,msg)=>{try{const ref=S.db.doc('settings/roles');const s=await ref.get();if(s.exists)await ref.update({users:{[id]:v}});else await ref.set({users:{[id]:v}});toast(msg)}catch(e){toast(dbErr(e))}};
     $$('[data-role],[data-rbr]').forEach(sel=>sel.addEventListener('change',async()=>{const id=sel.dataset.role||sel.dataset.rbr;const role=$(`[data-role="${CSS.escape(id)}"]`).value;const br=$(`[data-rbr="${CSS.escape(id)}"]`).value;
-      try{const ref=S.db.doc('settings/roles');const s=await ref.get();const v={role,br};if(sel.dataset.role&&window.FBC&&FBC.DEL)v.perm=FBC.DEL;if(s.exists)await ref.update({users:{[id]:v}});else await ref.set({users:{[id]:v}});toast('Role saved')}catch(e){toast(dbErr(e))}}))},
-  names(){$$('[data-name]').forEach(el=>{const p=S.profiles[el.dataset.name];if(p&&p.name)el.textContent=p.name})}
+      const v={role,br};if(sel.dataset.role&&window.FBC&&FBC.DEL)v.perm=FBC.DEL;saveUser(id,v,ta?'Role சேமிக்கப்பட்டது':'Role saved')}));
+    $$('[data-vo]').forEach(cb=>cb.addEventListener('change',()=>saveUser(cb.dataset.vo,{viewOnly:cb.checked},cb.checked?(ta?'பார்வை மட்டும் — மாற்ற முடியாது':'View only — cannot change anything'):(ta?'மாற்றம் செய்ய அனுமதி':'Can make changes again'))));
+    $$('[data-pn]').forEach(inp=>inp.addEventListener('change',()=>saveUser(inp.dataset.pn,{name:inp.value.replace(/\s+/g,' ').trim()},ta?'பெயர் சேமிக்கப்பட்டது':'Name saved')));
+    $$('[data-pp]').forEach(inp=>inp.addEventListener('change',()=>saveUser(inp.dataset.pp,{ph:inp.value.trim()},ta?'Mobile சேமிக்கப்பட்டது':'Mobile saved')))},
+  names(){$$('[data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
 };
 function parseTests(txt){const ok=[],bad=[];
   txt.split('\n').map(l=>l.trim()).filter(Boolean).forEach(line=>{const m=line.match(/^(\S+)[\s,;:\t]+(.+)$/);if(!m){bad.push(line);return}
@@ -2355,8 +2379,10 @@ const A={
   permedit:el=>permPanel(el.dataset.v),
   fudue:()=>{S.ui.fuDue=true;go('fu')},
   histed:el=>histEditPanel(+el.dataset.ci,+el.dataset.pos),
-  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['entry','cust','cyl'].includes(k));
-    openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>`]})},
+  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k));
+    openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>
+      <div class="small muted" style="margin:16px 0 8px">${esc(personName(S.uid))} · ${esc(role()==='owner'?'Owner':role()||'')} · v${esc(APP_VERSION)}</div>
+      <div class="morelist"><button type="button" data-act="lang">🌐 <span>${ta?'English':'தமிழ்'}</span></button>${window.FBC?`<button type="button" onclick="FBC.signOut()">⎋ <span>Sign out</span></button>`:''}</div>`]})},
   mgo:el=>{closeDrawer();go(el.dataset.v)},
   renumber:()=>renumberAll(),
   brfix:()=>brPanel(),
