@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.18.0"><link rel="icon" href="icon.svg?v=3.18.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.18.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.19.0"><link rel="icon" href="icon.svg?v=3.19.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.19.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,23 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.notice.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.fl-mode{margin-top:10px}
+.fl-read{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1fr) 110px;gap:6px 10px;align-items:center;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.fl-read .frh{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.fl-read>label{font-weight:600;font-size:13px}
+.fl-used{font-family:var(--f-mono);color:var(--accent);font-size:13px}
+table.ledger tr.own td{background:color-mix(in srgb,#F59E0B 8%,var(--surface))}
+table.ledger td.trk{color:var(--info);font-weight:700}
+table.ledger tfoot td{border-top:2px solid var(--line)}
+.pill.trkp{background:var(--info-bg);color:var(--info)}
+@media (max-width:600px){.fl-read{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr);padding:8px;gap:6px}.fl-read .frh:nth-child(4){display:none}.fl-read .fl-used{grid-column:2/4;justify-self:end;margin-top:-4px}.fl-read .fl-used:empty{display:none}.fl-read>label{font-size:12px}.fl-read .inp{padding-left:8px;padding-right:6px}}
+.ph-clock{text-align:right;line-height:1.15;padding:4px 2px 0}
+.ph-clock b{display:block;font-family:var(--f-mono);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.ph-clock span{font-size:12.5px;color:var(--muted)}
+@media (max-width:600px){.ph-clock b{font-size:19px}}
+.att-nophoto{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;padding:26px 10px;border:1px dashed var(--line);border-radius:12px;background:var(--surface-2)}
+.att-nophoto b{font-family:var(--f-mono);font-size:30px}
 @media (max-width:900px){
   main{padding-left:6px!important;padding-right:6px!important}
   .top{padding-left:6px!important;padding-right:6px!important}
@@ -636,6 +653,43 @@ body.bigtext .tabbar{zoom:1.08}
 .attday{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .attday img{width:100%;border-radius:10px;margin:6px 0}
 .trailrow{padding:10px 0;border-bottom:1px solid var(--line)}
+/* every phone: stop the browser from enlarging text on its own, and fit small / zoomed screens */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{max-width:100%;overflow-x:hidden}
+img,video,canvas{max-width:100%}
+.drawer,.drawer-body,.panel,.page-head{min-width:0;max-width:100%}
+.btn{max-width:100%}
+.btn>span{overflow:hidden;text-overflow:ellipsis}
+@media (max-width:400px){
+  #who{gap:4px!important}
+  #who .btn.sm{padding-left:7px;padding-right:7px;min-width:0}
+  #who .menu-btn span{display:none}
+  .brand{gap:6px}
+  body.pro .brand-mark{width:32px;height:32px}
+  .page-head h2{font-size:20px}
+  .page-head p{font-size:13px}
+  .page-head .actions{width:100%}
+  .ph-clock{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:0}
+  .ph-clock b{display:inline;font-size:17px}
+  body.compact .tabbar{gap:4px}
+  body.compact .tabbar button{padding:6px 2px;min-height:52px;font-size:11px;min-width:0}
+  body.compact .tabbar button span{font-size:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  body.compact .rail{padding-left:4px;padding-right:4px}
+  .kv{grid-template-columns:1fr 1fr}
+  .kv>div{min-width:0;overflow-wrap:anywhere}
+  .seg{flex-wrap:wrap}
+  .drawer-head h3{font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  table{font-size:13px}
+  th,td{padding-left:6px!important;padding-right:6px!important}
+}
+@media (max-width:340px){
+  #who .skin-btn,#who .sync-slot{display:none!important}
+  #who .bell b{font-size:11px;padding:0 5px}
+  body.compact .tabbar button svg{width:18px;height:18px}
+  body.compact .tabbar button b{font-size:15px}
+  .row>.field{flex-basis:100%!important}
+  .fl-read{grid-template-columns:50px minmax(0,1fr) minmax(0,1fr)}
+}
 /* status bar at the bottom like desktop software */
 .statusbar{display:none}
 @media (min-width:901px){
@@ -671,7 +725,7 @@ body.bigtext .tabbar{zoom:1.08}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.18.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.19.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -691,7 +745,7 @@ body.bigtext .tabbar{zoom:1.08}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.18.0"></script>
+<script src="fb.js?v=3.19.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -726,9 +780,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.18.0';
+const APP_VERSION=window.CD_VERSION||'3.19.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.19.0','2026-10-21',['New entry: live time and date on the right of the title box','Attendance photo: owner switches it on or off for each person in Settings → People; without it only time and place are saved','Filling register: opening / closing time, Cum (m³) and Kg with the used amount; next filling starts from the last closing','Filling register: “Dealer name” instead of filler — Hindusthan Surgicals (ours) or a dealer; dealers list with mobile, GSTIN, address','Only our own C and D fillings go to the cylinder list; A, B and every dealer filling stay in the ledger only (owner can change which types)','Ledger by party and type with totals, Cum and Kg','Phones: fits small and zoomed screens (big system font) — header, bottom bar, popups and tables shrink to fit']],
  ['3.18.0','2026-10-21',['Filling register: record cylinders filled at the factory (date, type A/B/C/D, filler, many numbers at once); a filling counts as the cylinder being back','Late DC / MT paper: anything that does not match before a filling waits as “Entry pending” for 45 days instead of a mismatch; reminder every 10 days','Physical inspection: visit a customer, tick ✓ / ✗ each cylinder, add extras and a note; name, time and place saved; findings list for the office','Attendance: In and Out with selfie, time and place; monthly ledger with late marks; office time setting','Login register: every login with its place','Location trail every 15 minutes while the app is open (owner can switch on)']],
  ['3.17.1','2026-10-21',['DC / MT numbers follow the date by themselves: an older-dated entry takes its place and later numbers move up; deleting closes the gap; no more “cannot be earlier” warning']],
  ['3.17.0','2026-10-21',['🔔 Reminder button with count in the top bar (computer and phone) — opens the customers due','Follow-up: change the reminder interval on the page itself','Computer: F2 new DC, F3 new MT, Ctrl+K / F4 search, F6 customers, F7 cylinders, F8 follow-up','Entries: Table view (Excel-like) or Cards','Menu item “Follow-up” renamed “Reminders”','Phone: swipe an entry left for its buttons (or tap ⋯), Bigger text option in the menu, floating ＋ DC button']],
@@ -883,7 +938,7 @@ const S={
   db:null,user:null,dl:null,uid:null,isOwner:false,me:null,profiles:{},
   company:{name:'SRI M.M',addr:'',phone:'',gst:'',branches:['DPI','KGIRI'],branchNames:{DPI:'Dharmapuri',KGIRI:'Krishnagiri'}},
   roles:{},members:{},cust:{},custDoc:false,cyl:{},cylSrc:{},hist:null,logs:{},bill:{},trade:{buy:{},sell:{}},voids:{},
-  loaded:{company:false,roles:false,cust:false,cyl:false,hist:false,logs:false},fills:{},insps:{},
+  loaded:{company:false,roles:false,cust:false,cyl:false,hist:false,logs:false},fills:{},insps:{},dealers:{},
   view:'dash',drawer:null,D:null,readOnly:false,
   ui:{dashBr:'all',cylQ:'',cylGas:'all',cylSt:'all',cylBr:'all',cylAge:'all',cylTest:'all',cylPage:0,fuDays:'',fuQ:'',custQ:'',custSort:'hold',entFrom:'',entTo:'',entBr:'all',entType:'all',entQ:'',mmShow:'open'},
   form:null
@@ -942,7 +997,8 @@ function derive(){
   }
   const fills=[];
   for(const [docId,doc] of Object.entries(S.fills||{})){for(const [rid,r] of Object.entries((doc&&doc.recs)||{})){
-    if(!r||r.del||!Array.isArray(r.cy))continue;fills.push(Object.assign({},r,{rid,docId}));
+    if(!r||r.del)continue;if(!Array.isArray(r.cy))r.cy=[];fills.push(Object.assign({},r,{rid,docId}));
+    if(!fillTracked(r))continue;
     r.cy.forEach(c=>moves.push({src:'fill',t:'FL',d:r.d,at:r.at||'',ck:'',by:r.by,filler:r.filler||'',size:r.size||'',rid,docId,cyl:c}))}}
   fills.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.at||'').localeCompare(a.at||''));
   moves.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:numCmp(a,b));
@@ -1003,6 +1059,7 @@ function bootData(){
   db.collection('bill').onSnapshot(q=>{const m={};q.docs.forEach(d=>{if(!d.id.startsWith('lock_'))m[d.id]=d.data()});S.bill=m;scheduleDerive()},err);
   db.doc('trade/buy').onSnapshot(s=>{S.trade.buy=(s.exists&&s.data().lots)||{};scheduleDerive()},err);
   db.doc('trade/sell').onSnapshot(s=>{S.trade.sell=(s.exists&&s.data().sales)||{};scheduleDerive()},err);
+  db.doc('dealers/list').onSnapshot(d=>{S.dealers=(d.exists&&d.data().list)||{};if(S.view==='fill'&&!S.drawer)scheduleDerive()},err);
   db.collection('fill').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.fills=m;scheduleDerive()},err);
   db.collection('insp').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.insps=m;scheduleDerive()},err);
   db.doc('reg/void').onSnapshot(s=>{S.voids=(s.exists&&s.data().list)||{};scheduleDerive()},err);
@@ -1400,6 +1457,8 @@ function syncState(){const s=window.FBC?FBC.sync():{pending:0,online:navigator.o
   if(!s.online)return ['warn',s.pending?T2(`Offline · ${s.pending} waiting`,`இணையம் இல்லை · ${s.pending} காத்திருக்கிறது`):T2('Offline','இணையம் இல்லை'),T2('Entries are kept on this device and go to the cloud when the internet is back. Do not clear the browser data.','பதிவுகள் இந்த device-இல் உள்ளன; இணையம் வந்ததும் cloud-க்குப் போகும். Browser data-வை அழிக்க வேண்டாம்.')];
   if(s.pending)return ['warn',T2(`Saving… ${s.pending}`,`சேமிக்கிறது… ${s.pending}`),T2('Uploading to the cloud.','Cloud-க்கு அனுப்புகிறது.')];
   return ['ok',T2('Saved to cloud','Cloud-இல் உள்ளது'),s.lastOk?T2('Last change confirmed by the server ','கடைசி மாற்றம் server உறுதி செய்தது ')+ago(Date.now()-s.lastOk):T2('All data is on the Firebase server.','எல்லா தரவும் Firebase server-இல் உள்ளது.')]}
+function phClock(){const n=new Date();return `<b>${n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})}</b><span>${n.toLocaleDateString('en-IN',{weekday:'long'})} · ${fmtD(todayISO())}</span>`}
+setInterval(()=>{$$('.ph-clock').forEach(el=>{el.innerHTML=phClock()})},1000);
 setInterval(()=>{const c=document.getElementById('sb-clock');if(c)c.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
 function paintStatus(){const el=$('#statusbar');if(!el||!S.D)return;const [k,label]=syncState();const ta=LANG==='ta';
   el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span class="kb">⌨ F2 DC · F3 MT · Ctrl+K ${ta?'தேடல்':'Search'}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
@@ -1668,7 +1727,7 @@ VIEWS.entry={
     if(!S.form)S.form=newForm();const f=S.form;
     if(!f.dc&&isCust(f.t)&&!f.edit){f.dc=nextNo(f.t,f.br);f.dcAuto=!!f.dc}
     const T=[['DC','dc','Full to customer'],['MT','mt','Empty from customer'],['FS','fs','Send for filling'],['FR','fr','Received full']].filter(([k])=>S.company.useFill||k==='DC'||k==='MT'||f.t===k);
-    return `<div class="page-head"><div><h2>${f.edit?'Edit entry':'New entry'}</h2><p>One entry per DC or trip. Type the customer once, then add or scan every cylinder number.</p></div>${f.edit?`<div class="actions"><button class="btn" data-act="cancelEdit">Cancel edit</button></div>`:''}</div>
+    return `<div class="page-head"><div><h2>${f.edit?'Edit entry':'New entry'}</h2><p>One entry per DC or trip. Type the customer once, then add or scan every cylinder number.</p></div><div class="actions">${f.edit?`<button class="btn" data-act="cancelEdit">Cancel edit</button>`:''}<div class="ph-clock">${phClock()}</div></div></div>
     <div class="split">
       <form class="panel" id="entry-form" autocomplete="off" style="display:flex;flex-direction:column;gap:14px">
         <div class="mine" id="f-mine"></div>
@@ -2201,6 +2260,7 @@ function inspPanel(ck){
 }
 /* ---------------- Attendance (photo + time + place), login register, location trail ---------------- */
 const needsAtt=()=>!S.isOwner&&['manager','staff'].includes(role());
+const attPhoto=uid=>{const r=S.roles[uid||S.uid];return !(r&&r.noPhoto)};
 const ATT={today:null,checked:false,trailT:null};
 async function attLoad(){if(!needsAtt())return;try{const s=await S.db.doc('att/'+todayISO()+'_'+S.uid).get();ATT.today=s.exists?s.data():null}catch(e){ATT.today=null}ATT.checked=true;paintShell()}
 async function loginLog(){try{if(sessionStorage.getItem('cd-loginlog'))return;sessionStorage.setItem('cd-loginlog','1')}catch(e){}
@@ -2210,6 +2270,7 @@ function trailStart(){if(ATT.trailT||!needsAtt()||!S.company.trail)return;const 
     try{await S.db.doc('loc/'+todayISO()+'_'+S.uid).update({d:todayISO(),uid:S.uid,pts:{[k]:Object.assign({at:n.toISOString()},l)}})}catch(e){}};
   tick();ATT.trailT=setInterval(tick,15*60e3)}
 function attPanel(kind){
+  if(!attPhoto())return attPanelNoPhoto(kind);
   const ta=LANG==='ta';let stream=null,photo='';
   openDrawer({k:'form',render:()=>[`<h3>${kind==='in'?'🟢 '+(ta?'வருகை (In)':'Attendance — In'):'🔴 '+(ta?'வெளியேறல் (Out)':'Attendance — Out')}</h3>`,
     `<p class="muted" style="margin-top:0">${ta?'ஒரு selfie எடுக்கவும். நேரமும் இடமும் தானாகப் பதிவாகும்.':'Take a selfie. The time and your location are saved with it.'}</p>
@@ -2229,6 +2290,18 @@ function attPanel(kind){
           if(stream)stream.getTracks().forEach(t=>t.stop());closeDrawer();paintShell();toast(kind==='in'?(ta?'வருகை பதிவானது ':'In recorded ')+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):(ta?'வெளியேறல் பதிவானது':'Out recorded'))}
         catch(e){toast(dbErr(e));save.disabled=false}};
       const stop=()=>{if(stream)stream.getTracks().forEach(t=>t.stop())};const obs=new MutationObserver(()=>{if(!document.getElementById('at-v')){stop();obs.disconnect()}});obs.observe(document.getElementById('drawer-root'),{childList:true})}});
+}
+function attPanelNoPhoto(kind){
+  const ta=LANG==='ta';
+  openDrawer({k:'form',render:()=>[`<h3>${kind==='in'?'🟢 '+(ta?'வருகை (In)':'Attendance — In'):'🔴 '+(ta?'வெளியேறல் (Out)':'Attendance — Out')}</h3>`,
+    `<div class="att-nophoto"><b id="at-now">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}</b><span class="muted">${fmtD(todayISO())} · ${ta?'photo தேவையில்லை':'no photo needed'}</span></div>
+     <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="at-save">${ic('check')}${kind==='in'?(ta?'வருகை பதிவு செய்':'Record In'):(ta?'வெளியேறல் பதிவு செய்':'Record Out')}</button></div>
+     <p class="small muted" style="margin-top:10px">${ta?'நேரமும் இடமும் owner பார்ப்பதற்காகப் பதிவாகும்.':'The time and your location are recorded for the owner.'}</p>`],
+    after(){const save=$('#at-save');save.onclick=async()=>{save.disabled=true;save.textContent=ta?'இடம் எடுக்கிறது…':'Getting location…';const loc=await gpsOnce();
+      const rec={at:new Date().toISOString(),ph:'',loc:loc||null};
+      try{await S.db.doc('att/'+todayISO()+'_'+S.uid).update({d:todayISO(),uid:S.uid,name:personName(S.uid),[kind]:rec});ATT.today=Object.assign({},ATT.today||{},{[kind]:rec});
+        closeDrawer();paintShell();toast(kind==='in'?(ta?'வருகை பதிவானது ':'In recorded ')+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):(ta?'வெளியேறல் பதிவானது':'Out recorded'))}
+      catch(e){toast(dbErr(e));save.disabled=false}}}});
 }
 const officeIn=()=>S.company.officeIn||'09:30';
 const hm=iso=>{const d=new Date(iso);return pad(d.getHours())+':'+pad(d.getMinutes())};
@@ -2261,32 +2334,88 @@ VIEWS.att={
     el.innerHTML=`<div class="panel">${S.company.trail?'':`<div class="notice info">${ic('info')}<div>${ta?'இடப் பதிவு off-இல் உள்ளது. மேலே tick செய்தால் தொடங்கும்.':'The location trail is off. Tick the box above to start it.'}</div></div>`}${rows.length?rows.sort((a,b)=>a.d<b.d?1:-1).map(r=>{const pts=Object.entries(r.pts||{}).sort(([a],[b])=>a<b?-1:1);const route=pts.length>1?`https://www.google.com/maps/dir/${pts.slice(-10).map(([k,p])=>p.lat+','+p.lng).join('/')}`:'';return `<div class="trailrow"><b>${esc(personName(r.uid))}</b> · ${fmtD(r.d)} · ${pts.length} ${ta?'இடங்கள்':'points'} ${route?`<a href="${route}" target="_blank" rel="noopener">🧭 ${ta?'பாதை':'Route'}</a>`:''}<div class="small">${pts.map(([k,p])=>`<a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" rel="noopener">${k.slice(0,2)}:${k.slice(2)}</a>`).join(' · ')}</div></div>`}).join(''):`<div class="empty"><b>${ta?'இந்த மாதம் இடப் பதிவு இல்லை':'No trail this month'}</b></div>`}</div>`}
 };
 /* ---------------- Filling register (factory) ---------------- */
+/* Party: 'own' = Hindusthan Surgicals (our cylinders) or a dealer id (filled for another party).
+   Only OUR fillings of the tracked types (default C and D) touch the cylinder list.
+   Everything else is ledger only: count, readings, party. */
 const SIZES=()=>Object.assign({A:'7 m³',B:'1.5 m³',C:'',D:''},S.company.sizes||{});
+const fillTrack=()=>Array.isArray(S.company.fillTrack)?S.company.fillTrack:['C','D'];
+const ourName=()=>S.company.name||'Hindusthan Surgicals';
+function fillOurs(r){return !r.party||r.party==='own'}
+function fillTracked(r){return fillOurs(r)&&fillTrack().includes(r.size||'A')}
+const dealerName=id=>id==='own'||!id?ourName():((S.dealers||{})[id]||{}).n||'(deleted dealer)';
+const fillCount=r=>(r.cy&&r.cy.length)||+r.n||0;
+const numOrNull=v=>{const x=parseFloat(String(v==null?'':v).replace(/,/g,''));return isFinite(x)?x:null};
+const diffTxt=(a,b,u)=>a!=null&&b!=null?`${+Math.abs(b-a).toFixed(2)} ${u}`:'';
+const durTxt=(a,b)=>{if(!a||!b)return '';let m=(+b.slice(0,2)*60+ +b.slice(3))-(+a.slice(0,2)*60+ +a.slice(3));if(m<0)m+=1440;return Math.floor(m/60)+'h '+pad(m%60)+'m'};
 const canFill=()=>role()&&!S.readOnly&&(S.isOwner||(['manager','staff'].includes(role())&&!viewOnly()&&can('fill')));
+function dealerPanel(pickAfter){
+  const ta=LANG==='ta';let edit=null;
+  openDrawer({k:'form',render:()=>[`<h3>🏢 ${ta?'Dealers / மற்ற party':'Dealers / other parties'}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?'நாம் நிரப்பிக் கொடுக்கும் மற்ற party. இவர்களின் சிலிண்டர்கள் நம் சிலிண்டர் பட்டியலில் சேராது — ledger மட்டும்.':'Parties we fill cylinders for. Their cylinders never mix with our cylinder list — ledger only.'}</p>
+     <form id="dl-form" class="dl-form" autocomplete="off"><div class="row">
+       <div class="field" style="flex:1 1 220px"><label for="dl-n">${ta?'Dealer பெயர்':'Dealer name'} *</label><input class="inp" id="dl-n" required></div>
+       <div class="field" style="flex:0 1 160px"><label for="dl-ph">Mobile</label><input class="inp mono" id="dl-ph" inputmode="tel"></div>
+       <div class="field" style="flex:0 1 180px"><label for="dl-gst">GSTIN</label><input class="inp mono" id="dl-gst"></div></div>
+       <div class="row" style="margin-top:8px"><div class="field" style="flex:1 1 260px"><label for="dl-ad">${ta?'முகவரி / ஊர்':'Address / town'}</label><input class="inp" id="dl-ad"></div>
+       <div class="field" style="flex:1 1 200px"><label for="dl-no">${ta?'குறிப்பு':'Note'}</label><input class="inp" id="dl-no"></div></div>
+       <div class="row" style="margin-top:10px"><button class="btn primary" id="dl-save">${ic('check')}<span id="dl-sv">${ta?'Dealer சேர்':'Add dealer'}</span></button><button class="btn" type="button" id="dl-new" hidden>${ta?'புதியது':'New'}</button></div></form>
+     <div id="dl-list" style="margin-top:14px"></div>`],
+    after(){const F=['n','ph','gst','ad','no'];
+      const draw=()=>{const ds=Object.entries(S.dealers||{}).filter(([k,v])=>!v.del).sort((a,b)=>a[1].n.localeCompare(b[1].n));
+        $('#dl-list').innerHTML=ds.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>Mobile</th><th>GSTIN</th><th>${ta?'முகவரி':'Address'}</th><th class="r">${ta?'நிரப்பல்':'Filled'}</th><th></th></tr></thead><tbody>${ds.map(([k,v])=>{const n=(S.D.fills||[]).filter(r=>r.party===k).reduce((a,r)=>a+fillCount(r),0);return `<tr><td><b>${esc(v.n)}</b>${v.no?`<div class="small muted">${esc(v.no)}</div>`:''}</td><td>${v.ph?`<a href="tel:${esc(telOf(v.ph))}">${esc(v.ph)}</a>`:''}</td><td class="mono small">${esc(v.gst||'')}</td><td class="small">${esc(v.ad||'')}</td><td class="r num">${n}</td><td><button class="btn sm" type="button" data-dle="${esc(k)}">${ta?'மாற்று':'Edit'}</button></td></tr>`}).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'இன்னும் dealer இல்லை':'No dealers yet'}</b>${ta?'மேலே பெயர் போட்டு சேர்க்கவும்.':'Type a name above to add one.'}</div>`};
+      const fill=(k)=>{edit=k;const v=k?S.dealers[k]:{};F.forEach(f=>{$('#dl-'+f).value=v[f]||''});$('#dl-sv').textContent=k?(ta?'மாற்றம் சேமி':'Save changes'):(ta?'Dealer சேர்':'Add dealer');$('#dl-new').hidden=!k;$('#dl-n').focus()};
+      $('#dl-list').addEventListener('click',e=>{const b=e.target.closest('[data-dle]');if(b)fill(b.dataset.dle)});
+      $('#dl-new').onclick=()=>fill(null);
+      $('#dl-form').addEventListener('submit',async e=>{e.preventDefault();const v={};F.forEach(f=>{v[f]=$('#dl-'+f).value.replace(/\s+/g,' ').trim()});if(!v.n)return;
+        const dup=Object.entries(S.dealers||{}).find(([k,d])=>k!==edit&&!d.del&&d.n.toLowerCase()===v.n.toLowerCase());if(dup){toast(ta?'இந்தப் பெயர் ஏற்கனவே உள்ளது':'This name is already there');return}
+        const k=edit||('d'+uidGen());if(!edit){v.at=new Date().toISOString();v.by=S.uid}
+        try{await S.db.doc('dealers/list').update({list:{[k]:v}});S.dealers=Object.assign({},S.dealers,{[k]:Object.assign({},S.dealers[k]||{},v)});toast(ta?'சேமிக்கப்பட்டது':'Saved');
+          if(pickAfter&&!edit){S.ui.fl.party=k;closeDrawer();mounted=null;refresh();return}fill(null);draw()}catch(err){toast(dbErr(err))}});
+      draw();$('#dl-n').focus()}});
+}
 VIEWS.fill={
-  mount(){const u=S.ui;const ta=LANG==='ta';if(!u.fl)u.fl={cy:[],d:todayISO(),size:'A',filler:personName(S.uid),note:''};if(!u.flFrom){const d=new Date();d.setDate(d.getDate()-6);u.flFrom=d.toISOString().slice(0,10);u.flTo=todayISO()}
+  mount(){const u=S.ui;const ta=LANG==='ta';
+    if(!u.fl||u.fl.party===undefined)u.fl={cy:[],d:todayISO(),size:'C',party:'own',n:'',note:'',tO:'',tC:'',cO:'',cC:'',kO:'',kC:''};
+    if(!u.flFrom){const d=new Date();d.setDate(d.getDate()-6);u.flFrom=d.toISOString().slice(0,10);u.flTo=todayISO()}if(!u.flParty)u.flParty='all';
     const f=u.fl;const sz=SIZES();
-    return `<div class="page-head"><div><h2>Filling register</h2><p>${ta?'Factory-இல் தினமும் நிரப்பும் சிலிண்டர் எண்களைப் பதிவு செய்யவும். நிரப்பப்பட்ட சிலிண்டர் நம்மிடம் திரும்பி வந்ததாகக் கணக்கு — அதன் DC/MT தாமதமாக வந்தாலும் mismatch ஆகாது.':'Record the cylinders filled at the factory each day. A filled cylinder counts as back with us — late DC / MT paper will not show as a mismatch.'}</p></div></div>
+    /* opening = last closing reading of the day */
+    if(f.cO===''&&f.kO===''&&f.tO===''){const last=(S.D.fills||[]).filter(r=>r.d===f.d&&(r.cC!=null||r.kC!=null||r.tC)).sort((a,b)=>(b.at||'').localeCompare(a.at||''))[0];if(last){f.cO=last.cC!=null?String(last.cC):'';f.kO=last.kC!=null?String(last.kC):'';f.tO=last.tC||''}}
+    const ds=Object.entries(S.dealers||{}).filter(([k,v])=>!v.del).sort((a,b)=>a[1].n.localeCompare(b[1].n));
+    return `<div class="page-head"><div><h2>Filling register</h2><p>${ta?'Factory-இல் நிரப்பியதைப் பதிவு செய்யவும். நம் (Hindusthan) C, D சிலிண்டர்கள் மட்டும் சிலிண்டர் பட்டியலில் கணக்கு — dealer சிலிண்டர்களும் A, B-யும் ledger-இல் மட்டும்.':'Record what was filled at the factory. Only our own (Hindusthan) tracked types count in the cylinder list — dealer cylinders, and our other types, stay in the ledger only.'}</p></div>
+      <div class="actions"><button class="btn" data-act="dealers">🏢 ${ta?'Dealers':'Dealers'} · ${ds.length}</button></div></div>
     ${canFill()?`<div class="panel"><div class="panel-head"><h3>${ta?'புதிய நிரப்பல்':'New filling'}</h3><span class="muted small" id="fl-cnt"></span></div>
       <div class="row">
         <div class="field" style="flex:0 1 170px"><label for="fl-d">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="fl-d" value="${esc(f.d)}" max="${todayISO()}"></div>
-        <div class="field" style="flex:0 1 200px"><label for="fl-size">${ta?'சிலிண்டர் வகை':'Cylinder type'}</label><select class="inp" id="fl-size">${Object.entries(sz).filter(([k,v])=>v||k==='A'||k==='B').map(([k,v])=>`<option value="${k}" ${f.size===k?'selected':''}>${k}${v?' · '+esc(v):''}</option>`).join('')}</select></div>
-        <div class="field" style="flex:1 1 200px"><label for="fl-filler">${ta?'Filler பெயர்':'Filler name'}</label><input class="inp" id="fl-filler" value="${esc(f.filler)}"></div>
+        <div class="field" style="flex:1 1 260px"><label for="fl-party">${ta?'Dealer பெயர்':'Dealer name'}</label><select class="inp" id="fl-party"><option value="own" ${f.party==='own'?'selected':''}>⭐ ${esc(ourName())} (${ta?'நம்முடையது':'ours'})</option>${ds.map(([k,v])=>`<option value="${esc(k)}" ${f.party===k?'selected':''}>${esc(v.n)}</option>`).join('')}<option value="__new">＋ ${ta?'புதிய dealer சேர்…':'Add new dealer…'}</option></select></div>
+        <div class="field" style="flex:0 1 190px"><label for="fl-size">${ta?'சிலிண்டர் வகை':'Cylinder type'}</label><select class="inp" id="fl-size">${['A','B','C','D'].map(k=>`<option value="${k}" ${f.size===k?'selected':''}>${k}${sz[k]?' · '+esc(sz[k]):''}</option>`).join('')}</select></div>
       </div>
-      <div class="field" style="margin-top:10px"><label for="fl-in" class="cyl-lbl"><span class="lbl-t">${ta?'சிலிண்டர் எண்கள்':'Cylinder numbers'} <span class="muted" style="font-weight:400">· ${ta?'Enter / Tab / இடைவெளி ஒவ்வொன்றுக்கும் · பலவற்றை ஒரே நேரத்தில் paste செய்யலாம்':'Enter / Tab / space after each · paste many at once'}</span></span><span id="fl-gas" class="gascount"></span></label>
-        <div class="cylbox" id="fl-box"><span id="fl-chips" class="chips"></span><input id="fl-in" placeholder="505, C1008, D101" inputmode="${isTouch()?'numeric':'text'}" autocomplete="off"></div>
-        <div class="small muted" id="fl-help"></div></div>
+      <div id="fl-mode" class="fl-mode"></div>
+      <div class="fl-read">
+        <div class="frh"></div><div class="frh">${ta?'தொடக்கம் (Opening)':'Opening'}</div><div class="frh">${ta?'முடிவு (Closing)':'Closing'}</div><div class="frh">${ta?'பயன்பாடு':'Used'}</div>
+        <label for="fl-tO">🕐 ${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="fl-tO" value="${esc(f.tO)}"><input type="time" class="inp" id="fl-tC" value="${esc(f.tC)}"><b id="fl-ut" class="fl-used"></b>
+        <label for="fl-cO">💨 Cum (m³)</label><input class="inp mono" id="fl-cO" inputmode="decimal" value="${esc(f.cO)}" placeholder="0.00"><input class="inp mono" id="fl-cC" inputmode="decimal" value="${esc(f.cC)}" placeholder="0.00"><b id="fl-uc" class="fl-used"></b>
+        <label for="fl-kO">⚖️ Kg</label><input class="inp mono" id="fl-kO" inputmode="decimal" value="${esc(f.kO)}" placeholder="0.00"><input class="inp mono" id="fl-kC" inputmode="decimal" value="${esc(f.kC)}" placeholder="0.00"><b id="fl-uk" class="fl-used"></b>
+      </div>
+      <div class="row" style="margin-top:10px;align-items:flex-end">
+        <div class="field" style="flex:1 1 380px"><label for="fl-in" class="cyl-lbl"><span class="lbl-t">${ta?'சிலிண்டர் எண்கள்':'Cylinder numbers'} <span class="muted" style="font-weight:400" id="fl-req"></span></span><span id="fl-gas" class="gascount"></span></label>
+          <div class="cylbox" id="fl-box"><span id="fl-chips" class="chips"></span><input id="fl-in" placeholder="505, C1008, D101" inputmode="${isTouch()?'numeric':'text'}" autocomplete="off"></div></div>
+        <div class="field" style="flex:0 1 130px" id="fl-nwrap"><label for="fl-n">${ta?'எண்ணிக்கை':'Count'}</label><input class="inp num" id="fl-n" inputmode="numeric" value="${esc(f.n)}" placeholder="0"></div>
+      </div>
+      <div class="small muted" id="fl-help"></div>
       <div class="field" style="margin-top:10px"><label for="fl-note">${ta?'குறிப்பு (விருப்பம்)':'Note (optional)'}</label><input class="inp" id="fl-note" value="${esc(f.note)}"></div>
       <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="fl-save">${ic('check')}${ta?'சேமி':'Save filling'}</button><button class="btn" type="button" id="fl-clear">${ta?'அழி':'Clear'}</button></div>
-      ${canManage()?`<details style="margin-top:12px"><summary class="small muted">${ta?'சிலிண்டர் வகைகள் (A, B, C, D) மாற்ற':'Change cylinder types (A, B, C, D)'}</summary><div class="row" style="margin-top:8px">${['A','B','C','D'].map(k=>`<div class="field" style="flex:0 1 130px"><label>${k}</label><input class="inp" data-sz="${k}" value="${esc(sz[k]||'')}" placeholder="eg. 7 m³"></div>`).join('')}<button class="btn sm" type="button" id="fl-szsave" style="align-self:flex-end">${ta?'சேமி':'Save'}</button></div></details>`:''}
+      ${canManage()?`<details style="margin-top:12px"><summary class="small muted">${ta?'சிலிண்டர் வகைகள் (A, B, C, D) & எது நம் சிலிண்டர் பட்டியலில்':'Cylinder types (A, B, C, D) & which go to our cylinder list'}</summary><div class="row" style="margin-top:8px">${['A','B','C','D'].map(k=>`<div class="field" style="flex:0 1 150px"><label>${k}</label><input class="inp" data-sz="${k}" value="${esc(sz[k]||'')}" placeholder="eg. 7 m³"><label class="check small" style="margin-top:4px"><input type="checkbox" data-tr="${k}" ${fillTrack().includes(k)?'checked':''}> ${ta?'பட்டியலில் கணக்கு':'Track in list'}</label></div>`).join('')}<button class="btn sm" type="button" id="fl-szsave" style="align-self:flex-end">${ta?'சேமி':'Save'}</button></div></details>`:''}
     </div>`:''}
+    <div class="panel"><div class="panel-head"><h3>${ta?'Ledger — party வாரியாக':'Ledger — by party'}</h3><span class="muted small" id="fl-lsum"></span></div><div id="fl-ledger"></div></div>
     <div class="panel"><div class="panel-head"><h3>${ta?'நிரப்பல் பதிவுகள்':'Fillings'}</h3><span class="muted small" id="fl-sum"></span></div>
-      <div class="row"><div class="field" style="flex:0 1 160px"><label for="fl-from">${ta?'முதல்':'From'}</label><input type="date" class="inp" id="fl-from" value="${esc(u.flFrom)}"></div><div class="field" style="flex:0 1 160px"><label for="fl-to">${ta?'வரை':'To'}</label><input type="date" class="inp" id="fl-to" value="${esc(u.flTo)}"></div>
-      <div class="field search"><label for="fl-q">${ta?'சிலிண்டர் / filler தேடு':'Search cylinder / filler'}</label><div class="rel">${ic('search')}<input class="inp" id="fl-q" value="${esc(u.flQ||'')}"></div></div></div>
+      <div class="row" style="align-items:flex-end"><div class="field" style="flex:0 1 160px"><label for="fl-from">${ta?'முதல்':'From'}</label><input type="date" class="inp" id="fl-from" value="${esc(u.flFrom)}"></div><div class="field" style="flex:0 1 160px"><label for="fl-to">${ta?'வரை':'To'}</label><input type="date" class="inp" id="fl-to" value="${esc(u.flTo)}"></div>
+      <div class="field" style="flex:0 1 220px"><label for="fl-pf">${ta?'Party':'Party'}</label><select class="inp" id="fl-pf"><option value="all">${ta?'எல்லாம்':'All'}</option><option value="own">⭐ ${esc(ourName())}</option><option value="dealers">${ta?'எல்லா dealers':'All dealers'}</option>${ds.map(([k,v])=>`<option value="${esc(k)}">${esc(v.n)}</option>`).join('')}</select></div>
+      <div class="field search"><label for="fl-q">${ta?'சிலிண்டர் / party தேடு':'Search cylinder / party'}</label><div class="rel">${ic('search')}<input class="inp" id="fl-q" value="${esc(u.flQ||'')}"></div></div></div>
       <div id="fl-list" style="margin-top:10px"></div></div>`},
   after(){const u=S.ui,f=u.fl;const ta=LANG==='ta';
-    const fl=$('#fl-from'),tt=$('#fl-to'),q=$('#fl-q');
-    fl.addEventListener('change',()=>{u.flFrom=fl.value;this.update()});tt.addEventListener('change',()=>{u.flTo=tt.value;this.update()});q.addEventListener('input',()=>{u.flQ=q.value;this.update()});
+    const fl=$('#fl-from'),tt=$('#fl-to'),q=$('#fl-q'),pf=$('#fl-pf');pf.value=u.flParty;
+    fl.addEventListener('change',()=>{u.flFrom=fl.value;this.update()});tt.addEventListener('change',()=>{u.flTo=tt.value;this.update()});q.addEventListener('input',()=>{u.flQ=q.value;this.update()});pf.addEventListener('change',()=>{u.flParty=pf.value;this.update()});
+    $('#fl-ledger').addEventListener('click',e=>{const r=e.target.closest('[data-lp]');if(!r)return;u.flParty=r.dataset.lp;pf.value=u.flParty;this.update();$('#fl-list').scrollIntoView({behavior:'smooth',block:'start'})});
     if(!canFill()){this.update();return}
     const inp=$('#fl-in');
     const add=v=>{String(v||'').split(/[\s,;]+/).map(x=>normCyl(x)).filter(Boolean).forEach(id=>{if(!f.cy.includes(id))f.cy.push(id)});this.chips()};
@@ -2294,33 +2423,63 @@ VIEWS.fill={
       else if(e.key==='Backspace'&&!inp.value&&f.cy.length){f.cy.pop();this.chips()}});
     inp.addEventListener('paste',e=>{const t=(e.clipboardData||window.clipboardData).getData('text');if(/[\s,;]/.test(t.trim())){e.preventDefault();add(t)}});
     $('#fl-chips').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;f.cy.splice(+b.dataset.rm,1);this.chips()});
-    $('#fl-d').addEventListener('change',e=>{f.d=e.target.value});$('#fl-size').addEventListener('change',e=>{f.size=e.target.value});
-    $('#fl-filler').addEventListener('input',e=>{f.filler=e.target.value});$('#fl-note').addEventListener('input',e=>{f.note=e.target.value});
-    $('#fl-clear').onclick=()=>{f.cy=[];f.note='';$('#fl-note').value='';this.chips();inp.focus()};
+    $('#fl-d').addEventListener('change',e=>{f.d=e.target.value});
+    $('#fl-size').addEventListener('change',e=>{f.size=e.target.value;this.chips()});
+    $('#fl-party').addEventListener('change',e=>{if(e.target.value==='__new'){e.target.value=f.party;dealerPanel(true);return}f.party=e.target.value;this.chips()});
+    ['tO','tC','cO','cC','kO','kC','n','note'].forEach(k=>{const el=$('#fl-'+k);el.addEventListener('input',()=>{f[k]=el.value;this.used()});el.addEventListener('change',()=>{f[k]=el.value;this.used()})});
+    $('#fl-clear').onclick=()=>{f.cy=[];f.note='';f.n='';$('#fl-note').value='';$('#fl-n').value='';this.chips();inp.focus()};
     $('#fl-save').onclick=async()=>{if(inp.value.trim()){add(inp.value);inp.value=''}
-      if(!f.cy.length){toast(ta?'சிலிண்டர் எண் போடவும்':'Add cylinder numbers');inp.focus();return}
+      const tracked=fillTracked(f);const n=f.cy.length||parseInt(f.n,10)||0;
+      if(tracked&&!f.cy.length){toast(ta?'நம் '+f.size+' சிலிண்டர் — எண்கள் போடவும்':'Our '+f.size+' cylinders — add the numbers');inp.focus();return}
+      if(!n){toast(ta?'எண்ணிக்கை அல்லது சிலிண்டர் எண் போடவும்':'Add the count or cylinder numbers');$('#fl-n').focus();return}
       if(!f.d||f.d>todayISO()){toast(ta?'தேதி சரியில்லை':'Check the date');return}
+      const R={cO:numOrNull(f.cO),cC:numOrNull(f.cC),kO:numOrNull(f.kO),kC:numOrNull(f.kC)};
+      if(R.cO!=null&&R.cC!=null&&R.cC<R.cO){toast(ta?'Closing Cum, Opening-ஐ விடக் குறைவு':'Closing Cum is less than opening');return}
       const b=$('#fl-save');b.disabled=true;
       try{const rid=uidGen();const at=new Date().toISOString();const docId=f.d+'_'+S.uid;
-        await S.db.doc('fill/'+docId).update({d:f.d,by:S.uid,recs:{[rid]:{d:f.d,cy:f.cy.slice(),size:f.size,filler:(f.filler||'').trim()||personName(S.uid),note:(f.note||'').trim(),by:S.uid,at}}});
-        toast((ta?'சேமிக்கப்பட்டது: ':'Saved: ')+f.cy.length+(ta?' சிலிண்டர் நிரப்பல்':' cylinders filled'));f.cy=[];f.note='';$('#fl-note').value='';this.chips();inp.focus()}
+        const rec=Object.assign({d:f.d,party:f.party,pn:dealerName(f.party),cy:f.cy.slice(),n,size:f.size,tO:f.tO||'',tC:f.tC||'',note:(f.note||'').trim(),by:S.uid,at},R);
+        await S.db.doc('fill/'+docId).update({d:f.d,by:S.uid,recs:{[rid]:rec}});
+        toast((ta?'சேமிக்கப்பட்டது: ':'Saved: ')+n+' · '+dealerName(f.party));
+        /* next filling starts where this one closed */
+        f.cy=[];f.note='';f.n='';if(f.tC)f.tO=f.tC;if(R.cC!=null)f.cO=String(R.cC);if(R.kC!=null)f.kO=String(R.kC);f.tC='';f.cC='';f.kC='';
+        ['tO','tC','cO','cC','kO','kC','n','note'].forEach(k=>{$('#fl-'+k).value=f[k]||''});this.chips();inp.focus()}
       catch(e){toast(dbErr(e))}finally{b.disabled=false}};
-    const sz=$('#fl-szsave');if(sz)sz.onclick=async()=>{const o={};$$('[data-sz]').forEach(i=>{o[i.dataset.sz]=i.value.trim()});try{await S.db.doc('settings/company').update({sizes:o});S.company.sizes=o;toast(ta?'சேமிக்கப்பட்டது':'Saved');mounted=null;refresh()}catch(e){toast(dbErr(e))}};
-    this.chips();this.update()},
-  chips(){const f=S.ui.fl;const ta=LANG==='ta';const el=$('#fl-chips');if(!el)return;
-    el.innerHTML=f.cy.map((id,i)=>{const known=!!S.cyl[id];const g=(S.cyl[id]||{}).g||'';return `<span class="chip ${known?'ok':'crit'}" title="${known?'':(ta?'பட்டியலில் இல்லை':'Not in cylinder list')}">${esc(id)}${g?`<span class="chip-note">${esc(g)}</span>`:''}<button type="button" data-rm="${i}" aria-label="Remove">×</button></span>`}).join('');
-    const cnt={};f.cy.forEach(id=>{const g=((S.cyl[id]||{}).g||'?').replace(/\s*kg$/i,'');cnt[g]=(cnt[g]||0)+1});
+    const sz=$('#fl-szsave');if(sz)sz.onclick=async()=>{const o={};$$('[data-sz]').forEach(i=>{o[i.dataset.sz]=i.value.trim()});const tr=$$('[data-tr]').filter(i=>i.checked).map(i=>i.dataset.tr);
+      try{await S.db.doc('settings/company').update({sizes:o,fillTrack:tr});S.company.sizes=o;S.company.fillTrack=tr;scheduleDerive();toast(ta?'சேமிக்கப்பட்டது':'Saved');mounted=null;refresh()}catch(e){toast(dbErr(e))}};
+    this.chips();this.used();this.update()},
+  used(){const f=S.ui.fl;const ut=$('#fl-ut');if(!ut)return;ut.textContent=durTxt(f.tO,f.tC);
+    $('#fl-uc').textContent=diffTxt(numOrNull(f.cO),numOrNull(f.cC),'m³');$('#fl-uk').textContent=diffTxt(numOrNull(f.kO),numOrNull(f.kC),'kg')},
+  chips(){const f=S.ui.fl;const ta=LANG==='ta';const el=$('#fl-chips');if(!el)return;const tracked=fillTracked(f);const ours=fillOurs(f);
+    $('#fl-mode').innerHTML=tracked?`<div class="notice ok">${ic('check')}<div><b>${ta?'நம் சிலிண்டர் · '+f.size:'Our cylinders · type '+f.size}</b> — ${ta?'எண்கள் கட்டாயம். நிரப்பியவை “நம்மிடம் full” என்று சிலிண்டர் பட்டியலில் மாறும்.':'numbers needed. Filled cylinders become “full with us” in the cylinder list.'}</div></div>`
+      :`<div class="notice info">${ic('info')}<div><b>${ta?'Ledger மட்டும்':'Ledger only'}</b> — ${ours?(ta?`நம் ${f.size} வகை சிலிண்டர் பட்டியலில் கணக்கில் இல்லை. எண்ணிக்கை போதும்.`:`our type ${f.size} is not tracked in the cylinder list. The count is enough.`):(ta?`${esc(dealerName(f.party))} சிலிண்டர்கள் — நம் சிலிண்டர் பட்டியலில் சேராது. எண்ணிக்கை போதும், எண்கள் விருப்பம்.`:`${esc(dealerName(f.party))}'s cylinders — never added to our cylinder list. The count is enough; numbers are optional.`)}</div></div>`;
+    $('#fl-req').textContent=tracked?(ta?'· கட்டாயம் · Enter / Tab / இடைவெளி':'· required · Enter / Tab / space after each'):(ta?'· விருப்பம்':'· optional');
+    $('#fl-nwrap').hidden=tracked;const nI=$('#fl-n');if(f.cy.length){nI.value=f.cy.length;nI.readOnly=true}else{nI.readOnly=false;nI.value=f.n||''}
+    el.innerHTML=f.cy.map((id,i)=>{const known=!!S.cyl[id];const g=tracked?(S.cyl[id]||{}).g||'':'';const bad=tracked&&!known;return `<span class="chip ${bad?'crit':'ok'}" title="${bad?(ta?'பட்டியலில் இல்லை':'Not in cylinder list'):''}">${esc(id)}${g?`<span class="chip-note">${esc(g)}</span>`:''}<button type="button" data-rm="${i}" aria-label="Remove">×</button></span>`}).join('');
     const GC={O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'};
-    $('#fl-gas').innerHTML=f.cy.length?Object.entries(cnt).map(([g,n])=>`<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`).join('')+`<span class="gc tot">${ta?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:'';
-    const unk=f.cy.filter(id=>!S.cyl[id]).length;
-    $('#fl-help').innerHTML=f.cy.length?`${f.cy.length} ${ta?'சிலிண்டர்':'cylinders'}${unk?` · <span style="color:var(--crit)">${unk} ${ta?'பட்டியலில் இல்லை (இருந்தாலும் சேமிக்கலாம்)':'not in the cylinder list (can still be saved)'}</span>`:''}`:''},
-  update(){const u=S.ui;const ta=LANG==='ta';const q=(u.flQ||'').trim().toLowerCase();
-    const rs=(S.D.fills||[]).filter(r=>(!u.flFrom||r.d>=u.flFrom)&&(!u.flTo||r.d<=u.flTo)&&(!q||r.cy.some(c=>String(c).toLowerCase().includes(q))||String(r.filler||'').toLowerCase().includes(q)));
-    const tot=rs.reduce((a,r)=>a+r.cy.length,0);const sz=SIZES();
+    if(tracked){const cnt={};f.cy.forEach(id=>{const g=((S.cyl[id]||{}).g||'?').replace(/\s*kg$/i,'');cnt[g]=(cnt[g]||0)+1});
+      $('#fl-gas').innerHTML=f.cy.length?Object.entries(cnt).map(([g,n])=>`<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`).join('')+`<span class="gc tot">${ta?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:''}
+    else $('#fl-gas').innerHTML=f.cy.length?`<span class="gc tot">${ta?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:'';
+    const unk=tracked?f.cy.filter(id=>!S.cyl[id]).length:0;
+    $('#fl-help').innerHTML=unk?`<span style="color:var(--crit)">${unk} ${ta?'பட்டியலில் இல்லை (இருந்தாலும் சேமிக்கலாம்)':'not in the cylinder list (can still be saved)'}</span>`:''},
+  update(){const u=S.ui;const ta=LANG==='ta';const q=(u.flQ||'').trim().toLowerCase();const P=u.flParty||'all';
+    const inDates=(S.D.fills||[]).filter(r=>(!u.flFrom||r.d>=u.flFrom)&&(!u.flTo||r.d<=u.flTo));
+    const pOk=r=>P==='all'||(P==='own'?fillOurs(r):P==='dealers'?!fillOurs(r):r.party===P);
+    const rs=inDates.filter(r=>pOk(r)&&(!q||(r.cy||[]).some(c=>String(c).toLowerCase().includes(q))||dealerName(r.party).toLowerCase().includes(q)||String(r.note||'').toLowerCase().includes(q)));
+    const tot=rs.reduce((a,r)=>a+fillCount(r),0);const sz=SIZES();
     $('#fl-sum').textContent=`${rs.length} ${ta?'பதிவு':'entries'} · ${tot} ${ta?'சிலிண்டர்':'cylinders'}`;
-    {const c=$('#fl-cnt');if(c){const td=(S.D.fills||[]).filter(r=>r.d===todayISO());c.textContent=(ta?'இன்று: ':'Today: ')+td.reduce((a,r)=>a+r.cy.length,0)+(ta?' சிலிண்டர்':' cylinders')}}
-    $('#fl-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'தேதி':'Date'}</th><th>${ta?'வகை':'Type'}</th><th class="r">${ta?'எண்ணிக்கை':'Count'}</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>Filler</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.map(r=>`<tr><td class="num">${fmtD(r.d)}</td><td><b>${esc(r.size||'')}</b> <span class="small muted">${esc(sz[r.size]||'')}</span></td><td class="r num"><b>${r.cy.length}</b></td><td class="mono small" style="max-width:420px">${r.cy.map(c=>`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`).join(', ')}${r.note?`<div class="muted" style="font-family:var(--f-body)">📝 ${esc(r.note)}</div>`:''}</td><td>${esc(r.filler||'')}</td><td class="small muted">${fmtDT(r.at)}${r.by!==S.uid?' · '+esc(shortName(r.by)):''}</td><td>${(canManage()||(r.by===S.uid&&madeToday(r)&&canFill()))?`<button class="btn sm ghost" data-act="fldel" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete" style="color:var(--crit)">${ic('x')}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`
-      :`<div class="empty"><b>${ta?'இந்தத் தேதிகளில் நிரப்பல் இல்லை':'No fillings in these dates'}</b></div>`}
+    {const c=$('#fl-cnt');if(c){const td=(S.D.fills||[]).filter(r=>r.d===todayISO());c.textContent=(ta?'இன்று: ':'Today: ')+td.reduce((a,r)=>a+fillCount(r),0)+(ta?' சிலிண்டர்':' cylinders')}}
+    /* ledger: party x type for the chosen dates */
+    const L={};inDates.forEach(r=>{const k=fillOurs(r)?'own':r.party;const o=L[k]||(L[k]={A:0,B:0,C:0,D:0,t:0,cum:0,kg:0,e:0});o[r.size||'A']=(o[r.size||'A']||0)+fillCount(r);o.t+=fillCount(r);o.e++;if(r.cO!=null&&r.cC!=null)o.cum+=Math.abs(r.cC-r.cO);if(r.kO!=null&&r.kC!=null)o.kg+=Math.abs(r.kC-r.kO)});
+    const keys=Object.keys(L).sort((a,b)=>a==='own'?-1:b==='own'?1:dealerName(a).localeCompare(dealerName(b)));
+    const sum=k=>keys.reduce((a,p)=>a+L[p][k],0);const fx=v=>v?+v.toFixed(2):'—';
+    $('#fl-lsum').textContent=`${fmtD(u.flFrom)} – ${fmtD(u.flTo)}`;
+    $('#fl-ledger').innerHTML=keys.length?`<div class="tbl-wrap"><table class="ledger"><thead><tr><th>${ta?'Party':'Party'}</th>${['A','B','C','D'].map(k=>`<th class="r">${k}${sz[k]?`<div class="small muted" style="font-weight:400">${esc(sz[k])}</div>`:''}</th>`).join('')}<th class="r">${ta?'மொத்தம்':'Total'}</th><th class="r">Cum (m³)</th><th class="r">Kg</th><th class="r">${ta?'பதிவுகள்':'Entries'}</th></tr></thead><tbody>${keys.map(k=>{const o=L[k];return `<tr class="click${k==='own'?' own':''}" data-lp="${esc(k)}"><td>${k==='own'?'⭐ ':''}<b>${esc(dealerName(k))}</b>${k==='own'?`<div class="small muted">${ta?'நம் சிலிண்டர்கள்':'our cylinders'} · ${fillTrack().join(', ')||'—'} ${ta?'பட்டியலில்':'tracked'}</div>`:''}</td>${['A','B','C','D'].map(t=>`<td class="r num ${k==='own'&&fillTrack().includes(t)&&o[t]?'trk':''}">${o[t]||'<span class="muted">0</span>'}</td>`).join('')}<td class="r num"><b>${o.t}</b></td><td class="r num">${fx(o.cum)}</td><td class="r num">${fx(o.kg)}</td><td class="r num">${o.e}</td></tr>`}).join('')}</tbody>
+      <tfoot><tr><td><b>${ta?'மொத்தம்':'Total'}</b></td>${['A','B','C','D'].map(t=>`<td class="r num"><b>${sum(t)}</b></td>`).join('')}<td class="r num"><b>${sum('t')}</b></td><td class="r num"><b>${fx(sum('cum'))}</b></td><td class="r num"><b>${fx(sum('kg'))}</b></td><td class="r num">${sum('e')}</td></tr></tfoot></table></div>
+      <div class="small muted" style="margin-top:6px">${ta?'வரியைத் தொட்டால் அந்த party-யின் பதிவுகள் கீழே வரும். நீலம் = சிலிண்டர் பட்டியலில் கணக்கானவை.':'Tap a row to see that party’s fillings below. Blue = counted in the cylinder list.'}</div>`
+      :`<div class="empty"><b>${ta?'இந்தத் தேதிகளில் நிரப்பல் இல்லை':'No fillings in these dates'}</b></div>`;
+    const rd=(o,c,u2)=>o==null&&c==null?'':`<div class="mono small">${o??'—'} → ${c??'—'}${o!=null&&c!=null?` <b>= ${+Math.abs(c-o).toFixed(2)} ${u2}</b>`:''}</div>`;
+    $('#fl-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'தேதி':'Date'}</th><th>${ta?'Party':'Party'}</th><th>${ta?'வகை':'Type'}</th><th class="r">${ta?'எண்ணிக்கை':'Count'}</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>${ta?'நேரம்':'Time'}</th><th>Cum (m³)</th><th>Kg</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.map(r=>{const tr=fillTracked(r);return `<tr><td class="num">${fmtD(r.d)}</td><td>${fillOurs(r)?'⭐ ':''}<b>${esc(dealerName(r.party))}</b></td><td><b>${esc(r.size||'')}</b> <span class="small muted">${esc(sz[r.size]||'')}</span>${tr?`<div><span class="pill trkp">${ta?'பட்டியல்':'tracked'}</span></div>`:`<div><span class="pill unused">ledger</span></div>`}</td><td class="r num"><b>${fillCount(r)}</b></td><td class="mono small" style="max-width:340px">${(r.cy||[]).map(c=>tr?`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`:esc(c)).join(', ')||'<span class="muted">—</span>'}${r.note?`<div class="muted" style="font-family:var(--f-body)">📝 ${esc(r.note)}</div>`:''}</td><td class="num small">${r.tO||r.tC?`${esc(r.tO||'—')} → ${esc(r.tC||'—')}${durTxt(r.tO,r.tC)?`<div class="muted">${durTxt(r.tO,r.tC)}</div>`:''}`:''}</td><td>${rd(r.cO,r.cC,'m³')}</td><td>${rd(r.kO,r.kC,'kg')}</td><td class="small muted">${fmtDT(r.at)}${r.by!==S.uid?' · '+esc(shortName(r.by)):''}</td><td>${(canManage()||(r.by===S.uid&&madeToday(r)&&canFill()))?`<button class="btn sm ghost" data-act="fldel" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete" style="color:var(--crit)">${ic('x')}</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`
+      :`<div class="empty"><b>${ta?'பதிவு இல்லை':'No fillings match'}</b></div>`}
 };
 
 /* Mismatches */
@@ -2614,17 +2773,19 @@ VIEWS.settings={
       return `<input class="inp" data-pn="${esc(id)}" value="${esc(r.name||'')}" placeholder="${esc(gn||(ta?'பெயர்':'Name'))}" style="min-width:160px"><div class="small muted pinfo">${gn?`👤 ${esc(gn)}`:''}${ge?`<br>✉️ ${esc(ge)}`:''}</div>`};
     const phCell=(id,r)=>`<div class="phrow"><input class="inp mono" data-pp="${esc(id)}" value="${esc(r.ph||'')}" placeholder="98xxxxxxxx" inputmode="tel" style="min-width:130px">${r.ph?`<a class="btn sm" href="tel:${esc(telOf(r.ph))}" title="Call">📞</a>`:''}</div><div class="small muted pinfo">&nbsp;</div>`;
     const me=S.roles[S.uid]||{};const mp=S.profiles[S.uid]||{};
-    const ownerRow=`<tr><td>${nameCell(S.uid,me,mp)}</td><td>${phCell(S.uid,me)}</td><td class="muted small">—</td><td><b>Owner</b></td><td class="muted small">—</td><td class="muted small">—</td><td class="muted small">${ta?'எல்லாம்':'Everything'}</td></tr>`;
-    $('#s-people').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>${ta?'Mobile':'Mobile'}</th><th>${ta?'கடைசியாகத் திறந்தது':'Last opened'}</th><th>Role</th><th>${ta?'கிளை':'Branch'}</th><th>${ta?'பார்வை மட்டும்':'View only'}</th><th>${ta?'அனுமதிகள்':'Permissions'}</th></tr></thead><tbody>${ownerRow}${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td>${nameCell(id,r,p)}</td><td>${phCell(id,r)}</td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
+    const ownerRow=`<tr><td>${nameCell(S.uid,me,mp)}</td><td>${phCell(S.uid,me)}</td><td class="muted small">—</td><td><b>Owner</b></td><td class="muted small">—</td><td class="muted small">—</td><td class="muted small">—</td><td class="muted small">${ta?'எல்லாம்':'Everything'}</td></tr>`;
+    $('#s-people').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>${ta?'Mobile':'Mobile'}</th><th>${ta?'கடைசியாகத் திறந்தது':'Last opened'}</th><th>Role</th><th>${ta?'கிளை':'Branch'}</th><th>${ta?'பார்வை மட்டும்':'View only'}</th><th>${ta?'வருகை photo':'Attendance photo'}</th><th>${ta?'அனுமதிகள்':'Permissions'}</th></tr></thead><tbody>${ownerRow}${ids.map(id=>{const r=S.roles[id]||{};const p=S.profiles[id]||{};return `<tr><td>${nameCell(id,r,p)}</td><td>${phCell(id,r)}</td><td class="muted small">${S.members[id]?fmtDT(S.members[id].seen):'—'}</td>
       <td><select class="inp" data-role="${esc(id)}" style="min-width:110px"><option value="">No access</option>${['staff','manager','viewer'].map(x=>`<option value="${x}" ${r.role===x?'selected':''}>${x[0].toUpperCase()+x.slice(1)}</option>`).join('')}</select></td>
       <td><select class="inp" data-rbr="${esc(id)}">${S.company.branches.map(b=>`<option value="${esc(b)}" ${r.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></td>
       <td>${r.role==='staff'||r.role==='manager'?`<label class="switch"><input type="checkbox" data-vo="${esc(id)}" ${r.viewOnly?'checked':''}><span></span></label>`:'<span class="muted small">—</span>'}</td>
+      <td>${r.role==='staff'||r.role==='manager'?`<label class="switch" title="${ta?'Off = photo இல்லாமல் நேரம், இடம் மட்டும்':'Off = time and place only, no photo'}"><input type="checkbox" data-aph="${esc(id)}" ${r.noPhoto?'':'checked'}><span></span></label> <span class="small muted">${r.noPhoto?(ta?'photo இல்லை':'no photo'):'📷'}</span>`:'<span class="muted small">—</span>'}</td>
       <td>${r.role?(()=>{const pm=permsFor(id);const n=PERM_KEYS.filter(k=>pm[k]&&!(r.viewOnly&&WORK_KEYS.includes(k))).length;return `<button class="btn sm" data-act="permedit" data-v="${esc(id)}">${ic('set')}${n}/${PERM_KEYS.length}${r.perm?` · <span class="small">${ta?'மாற்றப்பட்டது':'custom'}</span>`:''}</button>`})():'<span class="muted small">—</span>'}</td></tr>`}).join('')}</tbody></table></div>
       ${ids.length?'':`<div class="empty"><b>${ta?'வேறு யாரும் இல்லை':'No one else yet'}</b>${ta?'Staff app link-ஐத் திறந்து sign in செய்தவுடன் இங்கே வருவார்கள்.':'When staff open the app link and sign in, they appear here.'}</div>`}`;
     const saveUser=async(id,v,msg)=>{try{const ref=S.db.doc('settings/roles');const s=await ref.get();if(s.exists)await ref.update({users:{[id]:v}});else await ref.set({users:{[id]:v}});toast(msg)}catch(e){toast(dbErr(e))}};
     $$('[data-role],[data-rbr]').forEach(sel=>sel.addEventListener('change',async()=>{const id=sel.dataset.role||sel.dataset.rbr;const role=$(`[data-role="${CSS.escape(id)}"]`).value;const br=$(`[data-rbr="${CSS.escape(id)}"]`).value;
       const v={role,br};if(sel.dataset.role&&window.FBC&&FBC.DEL)v.perm=FBC.DEL;saveUser(id,v,ta?'Role சேமிக்கப்பட்டது':'Role saved')}));
     $$('[data-vo]').forEach(cb=>cb.addEventListener('change',()=>saveUser(cb.dataset.vo,{viewOnly:cb.checked},cb.checked?(ta?'பார்வை மட்டும் — மாற்ற முடியாது':'View only — cannot change anything'):(ta?'மாற்றம் செய்ய அனுமதி':'Can make changes again'))));
+    $$('[data-aph]').forEach(cb=>cb.addEventListener('change',()=>saveUser(cb.dataset.aph,{noPhoto:!cb.checked},cb.checked?(ta?'வருகைக்கு photo எடுக்க வேண்டும்':'Photo needed at attendance'):(ta?'Photo இல்லாமல் வருகை — நேரம், இடம் மட்டும்':'Attendance without photo — time and place only'))));
     $$('[data-pn]').forEach(inp=>inp.addEventListener('change',()=>saveUser(inp.dataset.pn,{name:inp.value.replace(/\s+/g,' ').trim()},ta?'பெயர் சேமிக்கப்பட்டது':'Name saved')));
     $$('[data-pp]').forEach(inp=>inp.addEventListener('change',()=>saveUser(inp.dataset.pp,{ph:inp.value.trim()},ta?'Mobile சேமிக்கப்பட்டது':'Mobile saved')))},
   names(){$$('[data-name]').forEach(el=>{el.textContent=personName(el.dataset.name)})}
@@ -2977,6 +3138,7 @@ const A={
   attin:()=>attPanel('in'),attout:()=>attPanel('out'),
   attday:el=>{const r=VIEWS.att.by&&VIEWS.att.by[el.dataset.k];if(!r)return;const ta=LANG==='ta';
     openDrawer({k:'form',render:()=>[`<h3>${esc(personName(r.uid))} · ${fmtD(r.d)}</h3>`,`<div class="attday">${['in','out'].map(k=>r[k]?`<div><div class="eyebrow">${k==='in'?(ta?'வருகை':'In'):(ta?'வெளியேறல்':'Out')} · <b>${hm(r[k].at)}</b></div>${r[k].ph?`<img src="${r[k].ph}" alt="">`:`<div class="muted small">${ta?'படம் இல்லை':'No photo'}</div>`}<div class="small">${mapLink(r[k].loc)}</div></div>`:`<div class="muted">${k==='out'?(ta?'Out பதிவில்லை':'No out'):''}</div>`).join('')}</div>`]})},
+  dealers:()=>dealerPanel(false),
   fldel:async el=>{if(!confirm(LANG==='ta'?'இந்த நிரப்பல் பதிவை நீக்கவா?':'Delete this filling entry?'))return;try{await S.db.doc('fill/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{del:{by:S.uid,at:new Date().toISOString()}}}});toast(LANG==='ta'?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}},
   pendok:async()=>{try{await S.db.doc('settings/company').update({pendRemAt:todayISO()});S.company.pendRemAt=todayISO();VIEWS.dash.update()}catch(e){toast(dbErr(e))}},
   bigtext:()=>{BIG=!BIG;try{localStorage.setItem('cd-big',BIG?'1':'0')}catch(e){}document.body.classList.toggle('bigtext',BIG);closeDrawer();toast(BIG?(LANG==='ta'?'பெரிய எழுத்து':'Bigger text'):(LANG==='ta'?'சாதாரண எழுத்து':'Normal text'))},
@@ -3164,7 +3326,7 @@ async function boot(){
   bootData();registerMember();watchMembers();
   paintShell();
 }
-if(window.__TEST)window.__T={BK,bkRun,S,dcPdf,saveLoc,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
+if(window.__TEST)window.__T={NAV,VIEWS,go,openDrawer,closeDrawer,BK,bkRun,S,dcPdf,saveLoc,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
 boot();
 })();
 </script>

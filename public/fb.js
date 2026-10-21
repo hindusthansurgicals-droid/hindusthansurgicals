@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='3.18.0';window.CD_BUILD='2026-10-20';
+window.CD_VERSION='3.19.0';window.CD_BUILD='2026-10-21';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -183,7 +183,7 @@ const dl={save:async({filename,data})=>{
 /* ---------- full backup (same format import.html restores) ---------- */
 /* The security rules allow the two settings documents to be read one by one, not the whole folder,
    so settings are read by name; every other folder is read whole. members/profiles are optional. */
-const BACKUP_COLS=['settings','cust','cyl','hist','log','bill','trade','reg','fill','insp','att','logins','loc','members','profiles'];
+const BACKUP_COLS=['settings','cust','cyl','hist','log','bill','trade','reg','fill','dealers','insp','att','logins','loc','members','profiles'];
 const SETTINGS_DOCS=['company','roles'];
 async function backupAll(source,opts){
   const o=source?{source}:undefined;const out={};const missing=[];
