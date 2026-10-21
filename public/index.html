@@ -238,6 +238,10 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.morelist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.morelist button{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 12px;font:600 14px var(--f-body);color:var(--ink);text-align:left}
+.morelist button svg{width:20px;height:20px;color:var(--accent)}
+.morelist button[aria-current=page]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 .autono{position:relative;display:flex;align-items:center;gap:4px}
 .autono input{flex:1;min-width:0}
 .autono input[readonly]{background:var(--surface-2);color:var(--muted)}
@@ -275,17 +279,18 @@ body.no-money .money{display:none}
 .fullret{border:1px dashed var(--line);border-radius:9px;padding:8px 10px;display:flex;gap:8px;align-items:flex-start}
 .fullret.on{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
 @media (max-width:900px){
-  body.staff .rail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:30;background:var(--surface);border-top:1px solid var(--line);border-bottom:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(0,0,0,.08)}
-  body.staff .rail>button{display:none}
-  body.staff .tabbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
-  body.staff .tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 4px;min-height:56px;color:var(--ink);font-weight:600;font-size:12px}
-  body.staff .tabbar button b{font:800 18px/1 var(--f-display)}
-  body.staff .tabbar button[data-v=DC] b{color:var(--info)}
-  body.staff .tabbar button[data-v=MT] b{color:var(--mt)}
-  body.staff .tabbar button span{font-size:11px;color:var(--muted)}
-  body.staff .tabbar button svg{width:20px;height:20px}
-  body.staff .tabbar button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent)}
-  body.staff main{padding-bottom:100px}
+  body.compact .rail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:30;background:var(--surface);border-top:1px solid var(--line);border-bottom:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(0,0,0,.08)}
+  body.compact .rail>button{display:none}
+  body.compact .tabbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px;width:100%}
+  body.compact .tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 4px;min-height:56px;color:var(--ink);font-weight:600;font-size:12px}
+  body.compact .tabbar button b{font:800 18px/1 var(--f-display)}
+  body.compact .tabbar button[data-v=DC] b{color:var(--info)}
+  body.compact .tabbar button[data-v=MT] b{color:var(--mt)}
+  body.compact .tabbar button span{font-size:11px;color:var(--muted)}
+  body.compact .tabbar button svg{width:20px;height:20px}
+  body.compact .tabbar button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--accent)}
+  body.compact main{padding-bottom:100px}
+  body.compact .rail .rail-foot{display:none}
 }
 .mtlist{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface)}
 .mt-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
@@ -412,9 +417,11 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.9.8';
+const APP_VERSION=window.CD_VERSION||'3.10.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.10.0','2026-10-21',['Phones: simple bottom bar for everyone — DC · MT · Customers · Cylinders · More (all other pages); computers keep the full menu']],
+ ['3.9.9','2026-10-20',['One DC number series and one MT series for both branches','Registers → “Renumber all DC / MT from 1” (owner, one time): fresh numbers in date order, backup first, bills updated, cancelled numbers cleared']],
  ['3.9.8','2026-10-20',['Picking a customer switches the entry branch to the customer’s branch (Krishnagiri customer → Krishnagiri) and its DC / MT number','Customer branch guess is again worked out from their cylinders (Krishnagiri*)']],
  ['3.9.7','2026-10-20',['New entry: “Customer’s own cylinders” option removed (entries already saved that way still show it)']],
  ['3.9.6','2026-10-20',['DC and MT numbers are automatic (the app’s own running number, taken at the moment of saving); ✎ beside the box to change one by hand']],
@@ -444,7 +451,8 @@ const CHANGELOG=[
 ];
 /* ---------------- number series ---------------- */
 const isNum=v=>/^\d+$/.test(String(v||''));
-function seriesRecs(t,br){return S.D.recs.filter(r=>!r.del&&r.t===t&&r.br===br&&isNum(r.dc))}
+/* One DC series and one MT series for all branches (the app's own running numbers). */
+function seriesRecs(t,br){return S.D.recs.filter(r=>!r.del&&r.t===t&&isNum(r.dc))}
 function nextNo(t,br){if(!isCust(t))return '';let mx=0;for(const r of seriesRecs(t,br)){const n=+r.dc;if(n>mx)mx=n}return String(mx+1)}
 function noCheck(f){
   if(!isCust(f.t)||!isNum(f.dc))return null;
@@ -728,7 +736,7 @@ function paintShell(){
   const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
   document.body.classList.toggle('no-editcust',!can('editCust'));document.body.classList.toggle('no-money',!can('money'));
   $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
-  (r==='staff'?`<div class="tabbar">${[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']].map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}</div>`:'')+
+  (r?`<div class="tabbar">${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}${NAV.filter(([k])=>navOk(k)&&!['entry','cust','cyl'].includes(k)).length?`<button data-act="morenav" class="${['entry','cust','cyl'].includes(S.view)?'':'on'}">${ic('list')}<span>${LANG==='ta'?'மேலும்':'More'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
   $('#who').innerHTML='<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+myBranch():'Viewer')}</span>`:''}</div>`:'');
@@ -762,6 +770,27 @@ function brPanel(){
       $('#bp-list').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;const k=b.dataset.bk,v=b.dataset.bv;
         try{await S.db.doc('cust/all').update({list:{[k]:{br:v}}});S.cust[k]=Object.assign({},S.cust[k],{br:v});if(S.D)delete S.D._cbr;toast(`${S.cust[k].n} → ${v==='BOTH'?'Both':brName(v)}`);const row=b.closest('.bprow');if(only&&row)row.remove();else draw()}catch(err){toast(dbErr(err))}});
       draw();$('#bp-q').focus()}});
+}
+/* Owner, one time: give every DC and every MT a fresh number 1, 2, 3 … in date order (both branches together).
+   A backup file is downloaded first. Bills that list DC numbers are updated too; cancelled numbers are cleared. */
+async function renumberAll(){
+  const ta=LANG==='ta';
+  const plan={};const map={};
+  for(const t of ['DC','MT']){
+    const rs=S.D.recs.filter(r=>!r.del&&r.t===t).sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.at||'')<(b.at||'')?-1:(a.at||'')>(b.at||'')?1:0);
+    rs.forEach((r,i)=>{const n=String(i+1);map[r.rid]=n;if(String(r.dc)!==n)(plan[r.docId]=plan[r.docId]||{})[r.rid]={dc:n}});}
+  const nDC=S.D.recs.filter(r=>!r.del&&r.t==='DC').length,nMT=S.D.recs.filter(r=>!r.del&&r.t==='MT').length;
+  if(!confirm(ta?`DC ${nDC} பதிவுகளுக்கு 1 முதல் ${nDC} வரை, MT ${nMT} பதிவுகளுக்கு 1 முதல் ${nMT} வரை, தேதி வரிசைப்படி புதிய எண் தரப்படும் (இரண்டு கிளையும் சேர்த்து).\nமுதலில் backup file download ஆகும். தொடரவா?`:`DC ${nDC} entries get 1–${nDC} and MT ${nMT} entries get 1–${nMT}, in date order (both branches together).\nA backup file downloads first. Continue?`))return;
+  toast(ta?'Backup எடுக்கிறது…':'Taking a backup…');
+  try{const ok=await runReport('backup');if(ok===false&&!confirm(ta?'Backup சேமிக்கப்படவில்லை. இருந்தாலும் தொடரவா?':'The backup was not saved. Continue anyway?'))return}catch(e){if(!confirm(ta?'Backup சேமிக்கப்படவில்லை. இருந்தாலும் தொடரவா?':'The backup was not saved. Continue anyway?'))return}
+  try{
+    const docs=Object.entries(plan);let k=0;
+    for(const [docId,recs] of docs){await S.db.doc('log/'+docId).update({recs});k++;if(k%10===0)toast(`${k}/${docs.length}`)}
+    for(const [bid,b] of Object.entries(S.bill||{})){const ch={};for(const [iid,v] of Object.entries(b.inv||{})){if(!Array.isArray(v.dcs))continue;let changed=false;const nd=v.dcs.map(x=>{const a=Array.isArray(x)?x.slice():x;if(Array.isArray(a)&&map[a[1]]&&a[2]!==map[a[1]]){a[2]=map[a[1]];changed=true}return a});if(changed)ch[iid]={dcs:nd}}if(Object.keys(ch).length)await S.db.doc('bill/'+bid).update({inv:ch})}
+    if(Object.keys(S.voids||{}).length)await S.db.doc('reg/void').set({list:{}});
+    if(S.form&&!S.form.edit){S.form.dcAuto=true}
+    toast(ta?`முடிந்தது — DC 1–${nDC}, MT 1–${nMT}`:`Done — DC 1–${nDC}, MT 1–${nMT}`);
+  }catch(e){toast(dbErr(e))}
 }
 /* Owner: switch each permission on/off for one person. */
 function permPanel(id){
@@ -1000,6 +1029,7 @@ function refresh(){
   if(role()==='staff'&&!S._langAuto){S._langAuto=true;let chosen=null;try{chosen=localStorage.getItem('cd-lang')}catch(e){}if(!chosen&&LANG!=='ta'){setLang('ta');return}}
   if(!navOk(S.view)){const f=NAV.find(([k])=>navOk(k));S.view=f?f[0]:'help'}
   document.body.classList.toggle('staff',role()==='staff');
+  document.body.classList.toggle('compact',!!role());
   const V=VIEWS[S.view];
   if(mounted!==S.view){v.innerHTML=V.mount();mounted=S.view;V.after&&V.after()}
   else V.update&&V.update();
@@ -1053,7 +1083,7 @@ VIEWS.dash={
     ${open?`<div class="notice crit">${ic('warn')}<div><b>${open} cylinder ${open===1?'movement needs':'movements need'} checking.</b> A cylinder came back from the wrong customer or an entry is missing. <button class="btn sm" data-act="nav" data-v="mism" style="margin-left:6px">Open mismatches</button></div></div>`:''}
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
     ${canManage()&&(S.company.lastBackup||'')<t.slice(0,7)?`<div class="notice info">${ic('dl')}<div><b>This month's backup is not downloaded yet.</b> Keep one copy every month. <button class="btn sm" data-act="backupnow" style="margin-left:6px">Download backup</button></div></div>`:''}
-    ${(()=>{const g=[];S.company.branches.forEach(b=>['DC','MT'].forEach(ty=>{const n=gaps(ty,b).length;if(n)g.push(n+' '+ty+' ('+brName(b)+')')}));return g.length?`<div class="notice warn">${ic('warn')}<div><b>Missing numbers:</b> ${esc(g.join(', '))}. <button class="btn sm" data-act="nav" data-v="reg" style="margin-left:6px">Open registers</button></div></div>`:''})()}
+    ${(()=>{const g=[];['DC','MT'].forEach(ty=>{const n=gaps(ty,'ALL').length;if(n)g.push(n+' '+ty)});return g.length?`<div class="notice warn">${ic('warn')}<div><b>Missing numbers:</b> ${esc(g.join(', '))}. <button class="btn sm" data-act="nav" data-v="reg" style="margin-left:6px">Open registers</button></div></div>`:''})()}
     <div class="stats">
       <div class="stat"><span><i style="background:var(--info)"></i>With customers</span><b>${cnt.out}</b></div>
       <div class="stat"><span><i style="background:var(--ok)"></i>Godown · full</span><b>${cnt.full}</b></div>
@@ -1600,17 +1630,18 @@ VIEWS.reg={
   mount(){const u=S.ui;if(!u.regBr)u.regBr=myBranch();
     return `<div class="page-head"><div><h2>DC & MT registers</h2><p>Every DC and MT number in order. Missing numbers show in red. A number entered late is placed in its correct position automatically.</p></div></div>
     <div class="panel"><div class="row"><div class="field" style="flex:0 1 auto"><label>Register</label><div class="seg" id="g-t"></div></div>
-    <div class="field" style="flex:0 1 160px"><label for="g-br">Branch</label><select class="inp" id="g-br">${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.regBr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
+    
     <div class="field" style="flex:0 1 170px"><label for="g-cbr">${LANG==='ta'?'Customer கிளை':'Customer branch'}</label><select class="inp" id="g-cbr"><option value="all">${LANG==='ta'?'எல்லாம்':'All'}</option>${S.company.branches.map(b=>`<option value="${esc(b)}" ${u.regCbr===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
     <div class="field search"><label for="g-q">Number or customer</label><div class="rel">${ic('search')}<input class="inp mono" id="g-q" value="${esc(u.regQ||'')}" placeholder="eg. 513"></div></div></div></div><div class="panel" id="g-list"></div>`},
-  after(){$('#g-br').addEventListener('change',e=>{S.ui.regBr=e.target.value;this.update()});$('#g-cbr').addEventListener('change',e=>{S.ui.regCbr=e.target.value;this.update()});$('#g-q').addEventListener('input',e=>{S.ui.regQ=e.target.value;this.update()});this.update()},
-  update(){const u=S.ui;const t=u.regT||'DC',br=u.regBr||myBranch();
+  after(){$('#g-cbr').addEventListener('change',e=>{S.ui.regCbr=e.target.value;this.update()});$('#g-q').addEventListener('input',e=>{S.ui.regQ=e.target.value;this.update()});this.update()},
+  update(){const u=S.ui;const t=u.regT||'DC',br='ALL';
     $('#g-t').innerHTML=[['DC','DC register'],['MT','MT register']].map(([k,l])=>`<button data-act="regt" data-v="${k}" aria-pressed="${t===k}">${l}</button>`).join('');
-    const rs=seriesRecs(t,br).sort((a,b)=>(+b.dc)-(+a.dc));const other=S.D.recs.filter(r=>!r.del&&r.t===t&&r.br===br&&!isNum(r.dc));
+    const rs=seriesRecs(t,br).sort((a,b)=>(+b.dc)-(+a.dc));const other=S.D.recs.filter(r=>!r.del&&r.t===t&&!isNum(r.dc));
     const miss=gaps(t,br);const q=(u.regQ||'').trim().toLowerCase();const vd=S.voids||{};
-    let html=`<div class="panel-head"><h3>${t} ${esc(brName(br))}</h3><span class="muted">${rs.length} numbers${rs.length?` · ${rs[rs.length-1].dc} to ${rs[0].dc}`:''}${miss.length?` · <b style="color:var(--crit)">${miss.length} missing</b>`:''}</span></div>`;
-    if(!rs.length){const ta=LANG==='ta';const others=S.company.branches.filter(b=>b!==br).map(b=>[b,seriesRecs(t,b).length]).filter(x=>x[1]);
-      $('#g-list').innerHTML=html+`<div class="empty"><b>${ta?`${brName(br)} கிளையில் இன்னும் ${t} எண் இல்லை`:`No ${t} numbers for ${brName(br)} yet`}</b>${ta?`App-இல் இந்தக் கிளைக்குப் போட்ட ${t} பதிவுகள் மட்டும் இங்கே வரும். பழைய Excel history-இல் DC எண் இல்லை.`:`Only ${t} entries saved in the app for this branch show here. Old Excel history has no DC numbers.`}${others.length?`<div style="margin-top:8px">${others.map(([b,n])=>`<button class="btn sm" type="button" data-act="regbr" data-v="${esc(b)}">${esc(brName(b))} · ${n}</button>`).join(' ')}</div>`:''}</div>`;return}
+    let html=`<div class="panel-head"><h3>${t} register</h3><span class="muted">${rs.length} numbers${rs.length?` · ${rs[rs.length-1].dc} to ${rs[0].dc}`:''}${miss.length?` · <b style="color:var(--crit)">${miss.length} missing</b>`:''}</span></div>`;
+    if(!rs.length){const ta=LANG==='ta';const others=[];
+      $('#g-list').innerHTML=html+`<div class="empty"><b>${ta?`இன்னும் ${t} எண் இல்லை`:`No ${t} numbers yet`}</b>${ta?`App-இல் இந்தக் கிளைக்குப் போட்ட ${t} பதிவுகள் மட்டும் இங்கே வரும். பழைய Excel history-இல் DC எண் இல்லை.`:`Only ${t} entries saved in the app for this branch show here. Old Excel history has no DC numbers.`}${others.length?`<div style="margin-top:8px">${others.map(([b,n])=>`<button class="btn sm" type="button" data-act="regbr" data-v="${esc(b)}">${esc(brName(b))} · ${n}</button>`).join(' ')}</div>`:''}</div>`;return}
+    if(S.isOwner)html+=`<div class="row" style="margin-bottom:10px;justify-content:flex-end"><button class="btn sm" type="button" data-act="renumber">${ic('rep')}${LANG==='ta'?'எல்லா DC / MT எண்களையும் 1 முதல் மறுஎண் இடு':'Renumber all DC / MT from 1'}</button></div>`;
     if(miss.length)html+=`<div class="notice crit" style="margin-bottom:12px">${ic('warn')}<div><b>Missing ${t} numbers:</b> <span class="mono">${esc(rangesTxt(miss))}</span><div class="small" style="margin-top:4px">Enter them with their real date, or cancel a number that was never used (torn, spoiled).</div></div></div>`;
     html+=`<div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Date</th><th>${t==='DC'?'Customer':'From customer'}</th><th class="r">Cyl.</th><th>Cylinders</th><th>Entered</th><th></th></tr></thead><tbody>`;
     let prev=null;const rows=[];
@@ -2199,6 +2230,10 @@ const A={
   syncpanel:()=>openSyncPanel(),
   sign:el=>signPanel(el.dataset.doc,el.dataset.rid),
   permedit:el=>permPanel(el.dataset.v),
+  morenav:()=>{const ta=LANG==='ta';const items=NAV.filter(([k])=>navOk(k)&&!['entry','cust','cyl'].includes(k));
+    openDrawer({k:'form',render:()=>[`<h3>${ta?'மேலும்':'More'}</h3>`,`<div class="morelist">${items.map(([k,l,i])=>`<button type="button" data-act="mgo" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${ic(i)}<span>${esc(TA&&LANG==='ta'&&TA[l]?TA[l]:l)}</span></button>`).join('')}</div>`]})},
+  mgo:el=>{closeDrawer();go(el.dataset.v)},
+  renumber:()=>renumberAll(),
   brfix:()=>brPanel(),
   regbr:el=>{S.ui.regBr=el.dataset.v;const g=$('#g-br');if(g)g.value=el.dataset.v;VIEWS.reg.update()},
   entall:()=>{S.ui.entFrom='';S.ui.entTo='';const f=$('#e-from'),t=$('#e-to');if(f)f.value='';if(t)t.value='';VIEWS.entries.update()},
