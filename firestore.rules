@@ -24,8 +24,10 @@ service cloud.firestore {
     function myRole() { return me().get('role', ''); }
 
     function canRead()   { return isOwner() || myRole() in ['manager', 'staff', 'viewer']; }
-    function canWrite()  { return isOwner() || myRole() in ['manager', 'staff']; }
-    function canManage() { return isOwner() || myRole() == 'manager'; }
+    // "View only" (set by the owner in People) blocks every change for that person.
+    function viewOnly()  { return me().get('viewOnly', false) == true; }
+    function canWrite()  { return isOwner() || (myRole() in ['manager', 'staff'] && !viewOnly()); }
+    function canManage() { return isOwner() || (myRole() == 'manager' && !viewOnly()); }
 
     // Per-person permissions set by the owner (Settings → People → Permissions).
     // Without a setting, the role's default applies (same defaults as the app).
