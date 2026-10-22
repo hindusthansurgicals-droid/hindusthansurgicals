@@ -116,6 +116,15 @@ service cloud.firestore {
       allow read: if canRead();
       allow write: if canManage() || can('fill');
     }
+    // Tank readings per plant per day, and liquid purchases (batches): the filling team and managers.
+    match /pday/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || can('fill');
+    }
+    match /lpur/{doc} {
+      allow read: if canRead();
+      allow write: if canManage() || can('fill');
+    }
     match /insp/{doc} {
       allow read: if canRead();
       allow write: if canManage() || (can('insp') && doc.matches('.*_' + request.auth.uid));
