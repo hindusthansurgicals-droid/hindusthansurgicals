@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.1.0"><link rel="icon" href="icon.svg?v=4.1.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.1.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.1.1"><link rel="icon" href="icon.svg?v=4.1.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.1.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,7 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.dd button svg{width:16px;height:16px;flex:none}
 @media (max-width:900px){#fab{display:none!important}}
 .docrow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
 .docrow.over{background:color-mix(in srgb,var(--crit) 6%,var(--surface))}.docrow.soon,.docrow.today{background:color-mix(in srgb,var(--warn) 7%,var(--surface))}.docrow.done{opacity:.6}
@@ -792,7 +793,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.1.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.1.1" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -812,7 +813,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.1.0"></script>
+<script src="fb.js?v=4.1.1"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -847,9 +848,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.1.0';
+const APP_VERSION=window.CD_VERSION||'4.1.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['4.1.1','2026-10-22',['Double entry check covers DC and MT together (same customer, same day, same cylinders); owner / manager can allow a real same-day return','Mismatches page lists double entries already saved','“+” sign for a new dealer is the right size']],
  ['4.1.0','2026-10-22',['Documents & renewals: insurance, vehicle papers, drug licence, fire certificate, PESO, PCB… with expiry; reminded before they run out','One-time or repeating reminders (eg. collect the bus parcel at 6 PM) — pop up at the time while the app is open','🔔 bell now shows customer reminders and documents together','Scans (photos → one PDF, or a PDF) are kept in your own Google Drive folder “HSAP Documents”, open on phone and computer; the owner and managers can open them']],
  ['4.0.0','2026-10-22',['New Filling register: two plants (Hindusthan Gases & Air Products · Dharmapuri, Adiyaman Gases · Krishnagiri), chosen from the staff branch','Tank reading each day: opening / closing liquid level and pressure, on / off time','Filling entry like the notebook: party short code → type letter A B C D → numbers; Duro mark; A = 1, B = 1.5, C = 3, D = 7 m³','Day summary page (party × size × count = m³, Medical and Duro totals) with print','Stock & loss: level used, m³ filled, m³ per level, overnight vapour loss','Liquid purchases: invoice, weighbridge (net kg), tank level, supplier certificate → our batch number','Purity certificate for any batch, and from any DC (the batch its cylinders were filled from); purity is the supplier’s, never made up','Our cylinders tracked by number: our own fillings → godown full; our rental cylinders filled for a dealer → noted in history; dealer cylinders → ledger only','Dealers have a short code; customers page: “Merge by hand”','DC / MT: the same date, customer and cylinder numbers cannot be saved twice — a red warning shows the entry already saved']],
  ['3.22.0','2026-10-22',['Customer box empty + Enter / Space: nothing is picked by itself; the box blinks red “Type the customer name”','Adding a new customer from the search asks first and shows names that look alike','Delete a customer (owner / manager) when it has no entries; with entries it offers Merge instead','Gas count chips all the same size','“auto” tag sits inside the receipt number box','Dashboard title: “Dashboard — today’s summary”','Customer box: numbers alone are not taken as a name — a red warning shows instead of “Add new customer”','Customers: “Same name? — merge suggestions” button finds look-alike names (DNV Hos / dnv too); Keep this = merge, Different = skip']],
@@ -2119,8 +2121,8 @@ VIEWS.entry={
       shown.map(r=>{const w=why(r);return w.length?`<div class="tbad">${entryCard(r)}<ul class="why">${w.map(x=>`<li><span class="mono">${esc(x.c)}</span> ${esc(x.f)}</li>`).join('')}</ul></div>`:entryCard(r)}).join('')+`</div>`
       :`<div class="empty"><b>Nothing yet today</b>Every entry made today, by anyone, appears here.</div>`;
   },
-  updateSave(){const f=S.form;const de=dupEntry(f);
-    {const w=$('#f-dupw');if(w){const ta=LANG==='ta';w.innerHTML=de?`<div class="notice crit dupw">${ic('warn')}<div style="flex:1"><b>⛔ ${ta?'இதே பதிவு ஏற்கனவே உள்ளது — மீண்டும் சேமிக்க முடியாது':'This entry is already saved — it cannot be saved twice'}</b><div style="margin-top:4px">${esc(TLABEL[de.r.t])} ${de.r.dc?'#'+esc(de.r.dc):''} · ${esc(recTitle(de.r))} · ${fmtD(de.r.d)} · ${ta?'அதே எண்கள்':'same numbers'}: <b class="mono">${esc(de.same.join(', '))}</b></div><div class="row" style="margin-top:6px;gap:6px"><button type="button" class="btn sm" data-act="openrec" data-rid="${esc(de.r.rid)}">${ta?'அந்தப் பதிவைப் பார்':'Open that entry'}</button><button type="button" class="btn sm ghost" data-act="dupclear">${ta?'இந்த எண்களை நீக்கு':'Remove these numbers'}</button></div></div></div>`:''}}const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
+  updateSave(){const f=S.form;const de0=dupEntry(f);const de=de0&&!(de0.cross&&f.dupOk&&canManage())?de0:null;
+    {const w=$('#f-dupw');if(w){const ta=LANG==='ta';w.innerHTML=de?`<div class="notice crit dupw">${ic('warn')}<div style="flex:1"><b>⛔ ${ta?'இதே பதிவு ஏற்கனவே உள்ளது — மீண்டும் சேமிக்க முடியாது':'This entry is already saved — it cannot be saved twice'}</b><div style="margin-top:4px">${esc(TLABEL[de.r.t])} ${de.r.dc?'#'+esc(de.r.dc):''} · ${esc(recTitle(de.r))} · ${fmtD(de.r.d)} · ${ta?'அதே எண்கள்':'same numbers'}: <b class="mono">${esc(de.same.join(', '))}</b></div><div class="row" style="margin-top:6px;gap:6px"><button type="button" class="btn sm" data-act="openrec" data-rid="${esc(de.r.rid)}">${ta?'அந்தப் பதிவைப் பார்':'Open that entry'}</button><button type="button" class="btn sm ghost" data-act="dupclear">${ta?'இந்த எண்களை நீக்கு':'Remove these numbers'}</button></div>${de.cross?`<div class="small" style="margin-top:6px">${ta?`இதே நாள், இதே customer-க்கு <b>${esc(de.r.t)}</b>-இல் இதே எண்கள் உள்ளன. DC / MT வகை தவறாகப் போட்டிருக்கலாம் — சரிபார்க்கவும்.`:`The same numbers are on a <b>${esc(de.r.t)}</b> for this customer on the same day — the DC / MT type may be wrong.`}${canManage()?`<label class="check" style="margin-top:6px"><input type="checkbox" data-act="dupok"> ${ta?'உண்மையில் அன்றே திரும்பியது — சேமிக்கலாம் (owner / manager)':'It really came back the same day — allow saving (owner / manager)'}</label>`:''}</div>`:''}</div></div>`:''}}const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
     const who=isCust(f.t)?!!f.ck:!!f.pl.trim();
     const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const fOwn=f.own&&+f.ownN>0;{const w=$('#f-own-wrap');if(w)w.hidden=!(isCust(f.t)&&f.own)}
     const ok=who&&(f.cy.length||(fOwn&&isCust(f.t)))&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup&&!de;
@@ -2128,9 +2130,13 @@ VIEWS.entry={
     const sum=$('#f-sum');if(sum)sum.textContent=de?(LANG==='ta'?'இதே பதிவு ஏற்கனவே உள்ளது':'Already saved — duplicate'):!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length&&!(fOwn&&isCust(f.t))?(f.own?(LANG==='ta'?'எத்தனை சிலிண்டர் என்று போடவும்':'Type how many'):'Add at least one cylinder'):hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
 };
 /* same type, same date, same customer (or plant) and the same cylinder numbers already saved = duplicate */
+function oldDups(){const out=[];const by={};for(const r of S.D.recs){if(r.del||!isCust(r.t)||!r.ck)continue;(by[r.d+'|'+r.ck]=by[r.d+'|'+r.ck]||[]).push(r)}
+  for(const L of Object.values(by)){for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const same=(L[i].cy||[]).filter(c=>(L[j].cy||[]).includes(c));if(same.length)out.push([L[i],L[j],same])}}
+  return out.sort((x,y)=>x[0].d<y[0].d?1:-1)}
 function dupEntry(f){if(!f||!f.cy||!f.cy.length||!f.d||!S.D)return null;const cust=isCust(f.t);const who=cust?f.ck:(f.pl||'').trim().toLowerCase();if(!who)return null;const er=f.edit&&f.edit.rid;
-  for(const r of S.D.recs){if(r.del||r.rid===er||r.t!==f.t||r.d!==f.d)continue;if(cust?r.ck!==f.ck:(r.pl||'').trim().toLowerCase()!==who)continue;
-    const same=f.cy.filter(c=>(r.cy||[]).includes(c));if(same.length)return {r,same}}return null}
+  /* DC and MT count together: the same cylinders to and from the same customer on the same day is almost always a double entry */
+  for(const r of S.D.recs){if(r.del||r.rid===er||r.d!==f.d)continue;if(cust?(!isCust(r.t)||r.ck!==f.ck):(r.t!==f.t||(r.pl||'').trim().toLowerCase()!==who))continue;
+    const same=f.cy.filter(c=>(r.cy||[]).includes(c));if(same.length)return {r,same,cross:r.t!==f.t}}return null}
 function blinkCust(){const el=$('#f-cust');if(!el)return;el.classList.remove('needfill');void el.offsetWidth;el.classList.add('needfill');el.focus();
   const info=$('#f-cust-info');if(info)info.innerHTML=`<span style="color:var(--crit);font-weight:600">${LANG==='ta'?'Customer பெயர் போடவும்':'Type the customer name'}</span>`}
 /* a customer name needs at least two letters (English or Tamil) — numbers alone are not a name */
@@ -2146,7 +2152,7 @@ async function addCustomer(name){
     if(S.custDoc)await ref.update({list:{[ck]:body}});else await ref.set({list:{[ck]:body}});
     S.cust[ck]=body;toast('Added customer '+name);return ck}catch(e){toast(dbErr(e));return null}
 }
-async function saveEntry(){{const de=dupEntry(S.form);if(de){toast(LANG==='ta'?'இதே பதிவு ஏற்கனவே உள்ளது — சேமிக்கவில்லை':'Already saved — not saved again',4000);return}}
+async function saveEntry(){{const de=dupEntry(S.form);if(de&&!(de.cross&&S.form.dupOk&&canManage())){toast(LANG==='ta'?'இதே பதிவு ஏற்கனவே உள்ளது — சேமிக்கவில்லை':'Already saved — not saved again',4000);return}}
   const f=S.form;if(f.busy)return;
   const cust=isCust(f.t);
   const own=cust&&f.own&&+f.ownN>0?{n:+f.ownN,g:f.ownG||'O2',nos:(f.ownNos||'').trim()}:null;
@@ -2823,7 +2829,7 @@ VIEWS.fill={
     const pi=$('#fe-p'),pdd=$('#fe-pdd'),inp=$('#fe-in');let sel=-1,moved=false;
     const list=()=>{const q=fe.party?'':pi.value.trim().toLowerCase();return parties().filter(p=>!q||p.n.toLowerCase().includes(q)||(p.c||'').toLowerCase().startsWith(q)).sort((a,b)=>((b.c||'').toLowerCase()===q)-((a.c||'').toLowerCase()===q)||((b.c||'').toLowerCase().startsWith(q))-((a.c||'').toLowerCase().startsWith(q))).slice(0,10)};
     const show=()=>{const L=list();const q=fe.party?'':pi.value.trim();
-      pdd.innerHTML=L.map((p,i)=>`<button type="button" data-pk="${esc(p.k)}" aria-selected="${i===sel}"><span class="mono" style="min-width:58px;font-weight:700">${esc(p.c||'')}</span><span class="cn">${esc(p.n)}</span>${p.own?`<span class="pill info">${ta?'நம்முடையது':'ours'}</span>`:''}</button>`).join('')+(q&&!L.length&&nameOk(q)?`<button type="button" data-pnew="1" aria-selected="${sel===0}">${ic('plus')} ${ta?`“${esc(q)}” — புதிய dealer சேர்…`:`Add “${esc(q)}” as a new dealer…`}</button>`:'')+(q&&!nameOk(q)?`<div class="dd-warn">⚠ ${ta?'எண்கள் மட்டும் — party பெயர் அல்ல':'Only numbers — not a party name'}</div>`:'');
+      pdd.innerHTML=L.map((p,i)=>`<button type="button" data-pk="${esc(p.k)}" aria-selected="${i===sel}"><span class="mono" style="min-width:58px;font-weight:700">${esc(p.c||'')}</span><span class="cn">${esc(p.n)}</span>${p.own?`<span class="pill info">${ta?'நம்முடையது':'ours'}</span>`:''}</button>`).join('')+(q&&!L.length&&nameOk(q)?`<button type="button" data-pnew="1" aria-selected="${sel===0}">${ic('plus','style="width:15px;height:15px"')} ${ta?`“${esc(q)}” — புதிய dealer சேர்…`:`Add “${esc(q)}” as a new dealer…`}</button>`:'')+(q&&!nameOk(q)?`<div class="dd-warn">⚠ ${ta?'எண்கள் மட்டும் — party பெயர் அல்ல':'Only numbers — not a party name'}</div>`:'');
       pdd.hidden=!pdd.innerHTML;const b=pdd.querySelectorAll('button')[sel];b&&b.scrollIntoView({block:'nearest'})};
     const pick=k=>{fe.party=k;fe.pq='';pi.value=(partyCode(k)?partyCode(k)+' · ':'')+dealerName(k);pi.classList.remove('needfill');pdd.hidden=true;fe.ours={};self.chips();inp.focus()};
     const blink=()=>{pi.classList.remove('needfill');void pi.offsetWidth;pi.classList.add('needfill');pi.focus()};
@@ -3069,6 +3075,7 @@ VIEWS.docs={
 /* Mismatches */
 VIEWS.mism={
   mount(){return `<div class="page-head"><div><h2>Mismatches</h2><p>Entries that do not match where the cylinder should be. Fix the entry if it was typed wrong, or verify it after checking with the customer.</p></div><div class="actions">${S.isOwner&&datelessList().length?`<button class="btn" data-act="dlopen">${ic('cal')}${LANG==='ta'?'தேதி இல்லாத பழைய பதிவுகள்':'Old entries without date'} · ${datelessList().length}</button>`:''}<div class="seg" id="m-seg"></div></div></div>
+    ${(()=>{const L=oldDups();const ta=LANG==='ta';return L.length?`<div class="panel"><div class="panel-head"><h3>🔁 ${ta?'இரட்டைப் பதிவுகள் (ஏற்கனவே சேமிக்கப்பட்டவை)':'Double entries already saved'} · ${L.length}</h3></div><div class="small muted" style="margin-bottom:8px">${ta?'அதே நாள், அதே customer, அதே சிலிண்டர்கள் — தவறானதைத் திறந்து நீக்கவும் அல்லது திருத்தவும்.':'Same day, same customer, same cylinders — open the wrong one and delete or correct it.'}</div>${L.slice(0,50).map(([a,b,same])=>`<div class="docrow"><div style="flex:1;min-width:0"><b>${esc(recTitle(a))}</b> · ${fmtD(a.d)} · <span class="mono">${esc(same.join(', '))}</span></div><button class="btn sm" data-act="openrec" data-rid="${esc(a.rid)}">${esc(a.t)} ${a.dc?'#'+esc(a.dc):''}</button><button class="btn sm" data-act="openrec" data-rid="${esc(b.rid)}">${esc(b.t)} ${b.dc?'#'+esc(b.dc):''}</button></div>`).join('')}</div>`:''})()}
     <div class="grid g3">
       <div class="panel"><div class="eyebrow">Wrong number on DC</div><p style="margin:6px 0 0">The driver gave 1108 but wrote 1100. Edit the DC entry and change the number. Everything recalculates.</p></div>
       <div class="panel"><div class="eyebrow">Customer swapped cylinders</div><p style="margin:6px 0 0">The customer really returned another cylinder. Call them, then press Verify and write what you found.</p></div>
@@ -3756,6 +3763,7 @@ const A={
   entall:()=>{S.ui.entFrom='';S.ui.entTo='';const f=$('#e-from'),t=$('#e-to');if(f)f.value='';if(t)t.value='';VIEWS.entries.update()},
   mergeinto:el=>mergeIntoPanel(el.dataset.v),
   openrec:el=>recDrawer(el.dataset.rid),
+  dupok:el=>{S.form.dupOk=el.checked;VIEWS.entry.updateSave()},
   dupclear:()=>{const f=S.form;const de=dupEntry(f);if(!de)return;f.cy=f.cy.filter(c=>!de.same.includes(c));f.confirm=false;VIEWS.entry.update();const c=$('#f-cyl');c&&c.focus()},
   mergeman:()=>{const ta=LANG==='ta';openDrawer({k:'form',render:()=>[`<h3>🔀 ${ta?'கையால் இணை — 1. தவறான / இரட்டைப் பெயர்':'Merge by hand — 1. the wrong / extra name'}</h3>`,
     `<p class="muted" style="margin-top:0">${ta?'நீக்க வேண்டிய (தவறான) பெயரைத் தேர்வு செய்யவும். அடுத்து சரியான பெயரைக் கேட்கும்.':'Pick the name to remove (the wrong one). Next it asks for the correct name.'}</p><input class="inp" id="mm-q" placeholder="${ta?'பெயர் தேடு':'Search name'}" autocomplete="off"><div id="mm-list" style="margin-top:8px"></div>`],
