@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.20.0"><link rel="icon" href="icon.svg?v=3.20.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.20.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.21.0"><link rel="icon" href="icon.svg?v=3.21.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.21.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,15 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.ec-gas{display:inline-flex;gap:5px;flex-wrap:wrap;margin-left:8px;vertical-align:middle}
+.ec-gas .gc{font:600 12px/1 var(--f-body);padding:4px 8px;border-radius:999px;color:var(--gc);background:color-mix(in srgb,var(--gc) 13%,var(--surface));border:1px solid color-mix(in srgb,var(--gc) 35%,transparent)}.ec-gas .gc b{font-size:13px}.ec-gas .gc.tot{--gc:#0F766E}
+@media (max-width:600px){.ec-gas{display:flex;margin:4px 0 0}}
+.entry-card[data-rec]{cursor:pointer}.entry-card[data-rec]:focus-visible{outline:3px solid var(--accent);outline-offset:1px}.entry-card[data-rec]:hover{background:color-mix(in srgb,var(--accent) 4%,var(--surface))}
+.entry-card .ec-name{font-weight:700;color:var(--ink);text-decoration:none}.entry-card .ec-name:hover{text-decoration:underline}
+.rd-t{display:inline-grid;place-items:center;font-size:12px;padding:2px 8px;border-radius:6px;vertical-align:middle}
+.mt-row.kb{outline:2px solid var(--accent);outline-offset:-2px}
+#f-sum.flash,.chkflash{animation:chkflash .9s ease 2}
+@keyframes chkflash{50%{box-shadow:0 0 0 4px #FCD34D}}
 #dash-sub .dsub{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 12px 0 0}
 #dash-sub .dsub .dc,#dash-sub .dsub .mt{padding:2px 8px;border-radius:999px;font-size:12.5px}
 #dash-sub .dsub .dc{background:var(--info-bg);color:var(--info)}#dash-sub .dsub .mt{background:var(--mt-bg);color:var(--mt)}
@@ -736,7 +745,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.20.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.21.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -756,7 +765,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.20.0"></script>
+<script src="fb.js?v=3.21.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -791,9 +800,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.20.0';
+const APP_VERSION=window.CD_VERSION||'3.21.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['3.21.0','2026-10-22',['Today’s entries: click an entry for its full details — each cylinder, came back or not, where it is now, what to check','Customer list: Tab / Shift+Tab move through names, Space picks and jumps to the cylinder box','Cylinder box: in the empty box Tab / Space / Enter saves; if “Check before saving” is shown, the first press ticks it and the second saves (a quick double press is ignored)','Ctrl+Enter saves at once (ticks “Save anyway” too)','MT list: ↓ ↑ to move, Space to tick, Esc back to typing','After saving, the cursor goes straight to the customer box for the next entry','Each entry shows the count by gas (O2: 3 · CO2 30: 1 · Total) like the entry box','Entry lists: F9 jumps to the entries, ↓ ↑ move, Enter opens the details, Esc comes back']],
  ['3.20.0','2026-10-21',['Attendance: In / Out card on the staff home screen (no working hours shown to staff)','Work time for each person; drivers can be “No fixed time” (no late mark, no reminder, no OT)','After a person’s end time the app asks “Record Out?” (again every hour if still working)','Out not pressed: the last time they worked in the app is shown as Out with *','Owner sees total hours and OT in the monthly ledger','Owner and manager can correct or add In / Out with a reason (“edited” mark) and delete attendance photos','Dashboard title line now reads “Today: DC sent full · MT came back empty” and the same for this month']],
  ['3.19.1','2026-10-21',['Location: staff and managers are asked after every login until they allow it; once allowed it never asks again; if blocked, the popup shows how to allow it','When someone cannot make DC / MT or inspect, the page now says why (Viewer role, View only on, or permission off) instead of hiding it silently']],
  ['3.19.0','2026-10-21',['New entry: live time and date on the right of the title box','Attendance photo: owner switches it on or off for each person in Settings → People; without it only time and place are saved','Filling register: opening / closing time, Cum (m³) and Kg with the used amount; next filling starts from the last closing','Filling register: “Dealer name” instead of filler — Hindusthan Surgicals (ours) or a dealer; dealers list with mobile, GSTIN, address','Only our own C and D fillings go to the cylinder list; A, B and every dealer filling stay in the ledger only (owner can change which types)','Ledger by party and type with totals, Cum and Kg','Phones: fits small and zoomed screens (big system font) — header, bottom bar, popups and tables shrink to fit']],
@@ -882,7 +892,7 @@ const TA={
  '· dd-mm':'· நாள்-மாதம்','Year':'வருடம்',
  'Type a number and press Enter or Tab for the next one. When done, press Tab in the empty box, then Enter to save.':'எண்ணை type செய்து Enter அல்லது Tab அழுத்தினால் அடுத்த எண். முடிந்ததும் காலி பெட்டியில் Tab, பிறகு Enter அழுத்தினால் சேமிக்கும்.',
  "Today's entries":'இன்றைய பதிவுகள்','Every entry made today, by anyone, appears here.':'இன்று யார் போட்ட பதிவும் இங்கே வரும்.','Check the date':'தேதியைச் சரிபார்க்கவும்',
- '· Enter / Tab after each · empty box Tab → Save':'· ஒவ்வொன்றுக்கும் Enter / Tab · காலி பெட்டியில் Tab → சேமி','More details: vehicle, driver, remarks':'மேலும்: வாகனம், ஓட்டுநர், குறிப்பு','· dd-mm-yy':'· நாள்-மாதம்-வருடம்',
+ '· Space / Tab / Enter after each · empty box: same key saves · Ctrl+Enter = save now':'· ஒவ்வொன்றுக்கும் Space / Tab / Enter · காலி பெட்டியில் அதே key = சேமி · Ctrl+Enter = உடனே சேமி','More details: vehicle, driver, remarks':'மேலும்: வாகனம், ஓட்டுநர், குறிப்பு','· dd-mm-yy':'· நாள்-மாதம்-வருடம்',
  'Full Excel (all details)':'முழு Excel (எல்லா விவரங்களும்)',
  'Cylinder register (old Excel layout)':'சிலிண்டர் பதிவேடு (பழைய Excel அமைப்பு)',
  'Import old files':'பழைய file இறக்குமதி',
@@ -1483,7 +1493,7 @@ function phClock(){const n=new Date();return `<b>${n.toLocaleTimeString('en-IN',
 setInterval(()=>{$$('.ph-clock').forEach(el=>{el.innerHTML=phClock()})},1000);
 setInterval(()=>{const c=document.getElementById('sb-clock');if(c)c.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
 function paintStatus(){const el=$('#statusbar');if(!el||!S.D)return;const [k,label]=syncState();const ta=LANG==='ta';
-  el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span class="kb">⌨ F2 DC · F3 MT · Ctrl+K ${ta?'தேடல்':'Search'}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
+  el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span class="kb">⌨ F2 DC · F3 MT · F9 Entries · Ctrl+K ${ta?'தேடல்':'Search'}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
     <span class="sb-r"><span class="clock">🕐 <b id="sb-clock">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})}</b></span><span>${ta?'சிலிண்டர் வெளியே':'Out'}: <b>${Object.values(S.D.state).filter(x=>x.st==='out').length}</b></span><span>${ta?'வாடிக்கையாளர்':'Customers'}: <b>${Object.keys(S.cust).length}</b></span><span>${ta?'இன்று':'Today'}: <b>${fmtD(todayISO())}</b></span></span>`}
 function paintSync(){
   paintStatus();
@@ -1767,7 +1777,7 @@ VIEWS.entry={
           <div class="small muted" id="f-cust-info"></div>
         </div>
         <div class="field" id="f-pl-wrap"><label for="f-pl">Filling plant / supplier</label><input class="inp" id="f-pl" list="dl-pl" value="${esc(f.pl)}" placeholder="eg. Own plant, HS &amp; AP"><datalist id="dl-pl">${datalistVals('pl').map(v=>`<option value="${esc(v)}">`).join('')}</datalist></div>
-        <div class="field rel"><label for="f-cyl" class="cyl-lbl"><span class="lbl-t">Cylinder numbers <span class="muted" style="font-weight:400">· Enter / Tab after each · empty box Tab → Save</span></span><span id="f-gascount" class="gascount"></span></label>
+        <div class="field rel"><label for="f-cyl" class="cyl-lbl"><span class="lbl-t">Cylinder numbers <span class="muted" style="font-weight:400">· Space / Tab / Enter after each · empty box: same key saves · Ctrl+Enter = save now</span></span><span id="f-gascount" class="gascount"></span></label>
           <div class="cylbox" id="f-cylbox"><span id="f-chips" class="chips"></span><input id="f-cyl" placeholder="505, C1008, D101" inputmode="${isTouch()?'numeric':'text'}" aria-describedby="f-cyl-help" aria-controls="f-cyl-dd"></div>
           <div class="dd pick" id="f-cyl-dd" role="listbox" hidden></div>
           <div class="prefbar" id="f-pref">${['C','N','A','D','K'].map(x=>`<button type="button" data-pre="${x}" tabindex="-1">${x}</button>`).join('')}<button type="button" data-pre="abc" tabindex="-1">ABC</button><button type="button" data-pre="ok" tabindex="-1" class="ok">${LANG==='ta'?'சேர் ↵':'Add ↵'}</button></div>
@@ -1801,7 +1811,9 @@ VIEWS.entry={
   },
   after(){
     const f=S.form;
-    $('#entry-form').addEventListener('submit',e=>{e.preventDefault();saveEntry()});
+    $('#entry-form').addEventListener('submit',e=>{e.preventDefault();if(S._tickAt&&Date.now()-S._tickAt<500)return;saveEntry()});
+    $('#f-save').addEventListener('keydown',e=>{if(S._tickAt&&Date.now()-S._tickAt<500&&(e.key===' '||e.key==='Enter'||e.key==='Tab')){e.preventDefault();return}
+      if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();const b=$('#f-save');if(b&&!b.disabled)b.click()}});
     /* Typed date: 24-9-26, 24/09/2026, 240926, 24-9 (this year). Tab or Enter turns it into dd-mm-yyyy; mistakes are shown. */
     const dIn=$('#f-date'),dMsg=$('#f-date-msg'),dPick=$('#f-date-pick'),yIn=$('#f-year');
     /* Year box: used when only day-month is typed. Stays for this session; highlighted when it is not this year. */
@@ -1865,14 +1877,18 @@ VIEWS.entry={
         if(can('otherBr')){f.br=b;const sel=$('#f-br');if(sel)sel.value=b;if(isCust(f.t)&&f.dcAuto){f.dc=nextNo(f.t,f.br);const d=$('#f-dc');if(d)d.value=f.dc}toast((LANG==='ta'?'கிளை தானாக மாறியது: ':'Branch changed to ')+brName(b))}
         else toast((LANG==='ta'?'இந்த customer ':'This customer is ')+brName(b)+(LANG==='ta'?' கிளை — உங்கள் கிளையில் பதிவாகிறது':' — saving under your branch'))}}
       f.ck=ck;f.cq='';ci.value=custName(ck);dd.hidden=true;ci.setAttribute('aria-expanded','false');this.update();$('#f-cyl').focus()};
-    ci.addEventListener('input',()=>{f.ck='';f.cq=ci.value;sel=-1;showDD();this.update()});
-    ci.addEventListener('focus',()=>{if(!f.ck){sel=-1;showDD()}});
+    let moved=false;
+    ci.addEventListener('input',()=>{f.ck='';f.cq=ci.value;sel=-1;moved=false;showDD();this.update()});
+    ci.addEventListener('focus',()=>{if(!f.ck){sel=-1;moved=false;showDD()}});
     ci.addEventListener('blur',()=>setTimeout(()=>{dd.hidden=true},180));
     ci.addEventListener('keydown',e=>{
       const n=dd.querySelectorAll('button').length;if(dd.hidden||!n)return;
-      if(e.key==='ArrowDown'){e.preventDefault();sel=Math.min(n-1,sel+1);showDD()}
-      else if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(0,sel-1);showDD()}
-      else if(e.key==='Enter'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();const b=dd.querySelectorAll('button')[Math.max(sel,0)];b&&b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true}))}
+      const go1=()=>{const b=dd.querySelectorAll('button')[Math.max(sel,0)];b&&b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true}))};
+      const show=()=>{showDD();const b=dd.querySelectorAll('button')[sel];b&&b.scrollIntoView({block:'nearest'})};
+      if(e.key==='ArrowDown'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();sel=sel<0?0:Math.min(n-1,sel+1);moved=true;show()}
+      else if(e.key==='ArrowUp'||(e.key==='Tab'&&e.shiftKey)){e.preventDefault();sel=Math.max(0,sel-1);moved=true;show()}
+      else if(e.key==='Enter'){e.preventDefault();go1()}
+      else if(e.key===' '&&(moved||!ci.value.trim())){e.preventDefault();go1()}
     });
     dd.addEventListener('mousedown',async e=>{const ed=e.target.closest('[data-ed]');if(ed){e.preventDefault();e.stopPropagation();dd.hidden=true;custForm(ed.dataset.ed,true);return}
       const b=e.target.closest('button');if(!b)return;e.preventDefault();
@@ -1893,7 +1909,14 @@ VIEWS.entry={
     const pend=[];let psel=0;const pdd=$('#f-cyl-dd');
     /* Tab from the cylinder box jumps to Save entry (Enter there saves). If something is missing, the reason is shown. */
     const onlyNeedsTick=()=>{const cb=$('#f-confirm');if(!cb||f.confirm)return false;f.confirm=true;VIEWS.entry.updateSave();const ok=!$('#f-save').disabled;f.confirm=false;VIEWS.entry.updateSave();return ok};
-    const tickAndSave=()=>{const cb=$('#f-confirm');cb.checked=true;f.confirm=true;VIEWS.entry.updateSave();$('#f-save').focus()};
+    const tickAndSave=()=>{const cb=$('#f-confirm');cb.checked=true;f.confirm=true;VIEWS.entry.updateSave();S._tickAt=Date.now();const box=cb.closest('.notice')||cb.parentElement;if(box){box.classList.remove('chkflash');void box.offsetWidth;box.classList.add('chkflash')}$('#f-save').focus()};
+    /* empty box + Tab / Space / Enter: no problem → save now; only “Save anyway” missing → tick it (2nd press saves) */
+    const smartGo=()=>{if(!dIn.value.trim()||!f.d){if(!readDate()){dIn.focus();return}}VIEWS.entry.updateSave();const b=$('#f-save');
+      if(b&&!b.disabled){b.click();return}
+      if(onlyNeedsTick()){tickAndSave();return}
+      toSave()};
+    const mtRows=()=>[...document.querySelectorAll('#f-expect [data-mt]')].map(c=>c.dataset.mt);
+    const kbPaint=()=>{$$('#f-expect .mt-row').forEach((el,i)=>el.classList.toggle('kb',i===f.mtCur));const el=$$('#f-expect .mt-row')[f.mtCur];el&&el.scrollIntoView({block:'nearest'})};
     const toSave=()=>{if(!dIn.value.trim()||!f.d){if(!readDate()){dIn.focus();return}}VIEWS.entry.updateSave();const b=$('#f-save');
       if(b&&!b.disabled){b.focus();return}
       if(onlyNeedsTick()){$('#f-confirm').focus();return}
@@ -1928,9 +1951,20 @@ VIEWS.entry={
         if(e.key==='Enter'){e.preventDefault();choose(pend[0].list[psel]);return}
         if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();choose(pend[0].list[psel]);return}
         if(e.key==='Escape'){e.preventDefault();e.stopPropagation();choose(null);return}}
-      /* Tab after a number adds it and stays here for the next one; Tab in an empty box goes to Save */
-      if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value='';return}if(!pend.length)toSave();return}
-      if(e.key===' '&&!cyIn.value.trim()&&!pend.length&&onlyNeedsTick()){e.preventDefault();tickAndSave();return}
+      if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}if(pend.length)return;VIEWS.entry.updateSave();if(onlyNeedsTick()){const cb=$('#f-confirm');cb.checked=true;f.confirm=true;VIEWS.entry.updateSave()}const b=$('#f-save');if(b&&!b.disabled)b.click();else toSave();return}
+      /* MT list from the keyboard: ↓ ↑ move, Space ticks, Esc or typing goes back to the box */
+      const rowsN=mtRows().length;
+      if(!cyIn.value.trim()&&!pend.length&&rowsN){
+        if(e.key==='ArrowDown'){e.preventDefault();f.mtCur=f.mtCur==null||f.mtCur<0?0:Math.min(rowsN-1,f.mtCur+1);kbPaint();return}
+        if(e.key==='ArrowUp'&&f.mtCur>=0){e.preventDefault();f.mtCur=Math.max(-1,f.mtCur-1);kbPaint();return}
+        if(f.mtCur>=0){
+          if(e.key===' '){e.preventDefault();const id=mtRows()[f.mtCur];const i=f.cy.indexOf(id);if(i<0)f.cy.push(id);else f.cy.splice(i,1);f.confirm=false;this.update();kbPaint();return}
+          if(e.key==='Escape'){e.preventDefault();e.stopPropagation();f.mtCur=-1;kbPaint();return}
+          if(e.key==='Enter'||e.key==='Tab'){f.mtCur=-1;kbPaint()}
+          else if(e.key.length===1){f.mtCur=-1;kbPaint()}}}
+      /* Tab / Space / Enter after a number adds it; in an empty box they save (or tick “Save anyway” first) */
+      if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value='';return}if(!pend.length)smartGo();return}
+      if((e.key===' '||e.key==='Enter')&&!cyIn.value.trim()&&!pend.length&&f.cy.length){e.preventDefault();smartGo();return}
       if(e.key===' '&&!cyIn.value.trim()&&!pend.length&&f.cy.some(id=>chipStatus(id,f)[0]==='crit')){e.preventDefault();toast(LANG==='ta'?'பட்டியலில் இல்லாத எண் உள்ளது — நீக்கவும் அல்லது சேர்க்கவும்':'A number is not in the cylinder list — remove it or add it');const w=$('#f-warn');w&&w.scrollIntoView({block:'nearest'});return}
       if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();if(cyIn.value.trim()){addFrom(cyIn.value);cyIn.value=''}}
       else if(e.key==='Backspace'&&!cyIn.value&&f.cy.length){f.cy.pop();this.update()}
@@ -1968,6 +2002,7 @@ VIEWS.entry={
         <div class="mt-rows">${list.map(s=>{const on=f.cy.includes(s.id);return `<label class="mt-row ${on?'on':''}"><input type="checkbox" tabindex="-1" data-mt="${esc(s.id)}" ${on?'checked':''}><span class="cyl">${esc(s.id)}</span><span class="small muted">${esc(s.g||'')}</span><span class="small muted">DC ${fmtD(s.d)}</span>${dp(s.days)}</label>`}).join('')}</div>
         ${extra.length?`<div class="small" style="margin-top:6px;color:var(--warn)">${ta?'பட்டியலில் இல்லாதவை (சரிபார்க்கப்படும்): ':'Not in this list (will be checked): '}<span class="mono">${esc(extra.join(', '))}</span></div>`:''}
         <div class="small muted" style="margin-top:6px">${ta?'பட்டியலில் இல்லாத எண்ணையும் மேலே type செய்யலாம்.':'A number that is not in this list can still be typed in the box above.'}</div></div>`;
+      if(f.mtCur>=0){const el=$$('#f-expect .mt-row')[f.mtCur];el&&el.classList.add('kb')}
       $$('#f-expect [data-mt]').forEach(c=>c.addEventListener('change',()=>{const id=c.dataset.mt;const i=f.cy.indexOf(id);if(c.checked&&i<0)f.cy.push(id);if(!c.checked&&i>=0)f.cy.splice(i,1);f.confirm=false;VIEWS.entry.update()}));
     }
     else if(list){const left=list.filter(s=>!f.cy.includes(s.id));
@@ -2048,14 +2083,34 @@ async function saveEntry(){
     if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?fmtNo(nn):'';S.form.dcAuto=!!nn}
     if(cust&&isTouch()&&can('saveLoc')&&S.cust[body.ck]&&!S.cust[body.ck].loc)S.ui.askLoc=body.ck;
     toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+(body.cy.length?body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')):'')+(ownN(body)?(body.cy.length?' + ':'')+ownTxt(body):''));
-    mounted=null;refresh();setTimeout(()=>{const c=$('#f-date');c&&c.focus()},50);
+    mounted=null;refresh();setTimeout(()=>{const c=isTouch()?null:(isCust(S.form.t)?$('#f-cust'):$('#f-pl'));(c||$('#f-date'))&&!isTouch()&&(c||$('#f-date')).focus()},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
 function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readOnly||(!S.isOwner&&viewOnly()))return false;if(can('editAny'))return true;return can('editOwn')&&r.by===S.uid&&madeToday(r)}
+/* One entry in full: each cylinder, where it is now, whether it came back */
+function recDrawer(rid){const r=(S.D.recs||[]).find(x=>x.rid===rid);if(!r)return;const ta=LANG==='ta';
+  const st2=c=>{const st=S.D.state[c]||{};return st.st==='out'?(ta?'அவரிடம்: ':'With ')+esc(custName(st.ck))+(st.days!=null?` · ${st.days}d`:''):st.st==='full'?(ta?'குடோன் · full':'Godown · full'):st.st==='empty'?(ta?'குடோன் · காலி':'Godown · empty'):st.st==='filling'?(ta?'நிரப்ப சென்றது':'At filling'):st.st==='missing'?(ta?'காணவில்லை':'Missing'):st.st==='sold'?(ta?'விற்றது':'Sold'):'—'};
+  const rows=r.cy.map(c=>{const ev=S.D.tl[c]||[];const i=ev.findIndex(e=>e.rid===r.rid&&e.cyl===c);const me=ev[i]||{};let link='—';
+    if(r.t==='DC'&&i>=0){const nx=ev.slice(i+1).find(e=>e.t==='MT'||e.t==='DC'||e.t==='FL');link=nx&&nx.t==='MT'?`<span class="pill ok">${ta?'திரும்பியது':'Back'}</span> MT ${esc(nx.dc||'')} · ${fmtD(nx.d)}${nx.ck&&nx.ck!==r.ck?` · <span style="color:var(--crit)">${esc(custName(nx.ck))}</span>`:''}`:nx&&nx.t==='FL'?`<span class="pill ok">🏭 ${ta?'நிரப்பப்பட்டது':'Filled'}</span> ${fmtD(nx.d)}`:`<span class="pill ${daysSince(r.d)>90?'crit':'warn'}">${ta?'இன்னும் வரவில்லை':'Not back yet'} · ${daysSince(r.d)}d</span>`}
+    else if(r.t==='MT'&&i>=0){const pv=ev.slice(0,i).reverse().find(e=>e.t==='DC'||e.t==='MT');link=pv&&pv.t==='DC'?`DC ${esc(pv.dc||'')} · ${fmtD(pv.d)}${pv.ck!==r.ck?` · <span style="color:var(--crit)">${esc(custName(pv.ck))}</span>`:''} · ${Math.max(0,Math.round((new Date(r.d)-new Date(pv.d))/864e5))}d`:`<span class="pill warn">${ta?'DC இல்லை':'No DC'}</span>`}
+    const g=(S.cyl[c]||{}).g||'';
+    return `<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</button></td><td class="small">${esc(g)}</td><td class="small">${link}</td><td class="small">${st2(c)}</td><td class="small">${me.flag&&!me.vf?`<span style="color:var(--warn)">⚠ ${esc(me.flag)}</span>`:''}</td></tr>`}).join('');
+  const kv=(a,b)=>b?`<div><span>${a}</span><b>${b}</b></div>`:'';
+  const acts=`<div class="row" style="margin-top:12px;gap:6px">${!r.del&&isCust(r.t)?`<button class="btn sm wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('wa')}WhatsApp</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('dl')}DC PDF</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('edit')}${ta?'திருத்து':'Edit'}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}${isCust(r.t)&&r.ck?`<button class="btn sm ghost" data-act="opencust" data-v="${esc(r.ck)}">👥 ${ta?'Customer பக்கம்':'Customer page'}</button>`:''}</div>`;
+  openDrawer({k:'form',rec:rid,render:()=>[`<h3><span class="tcol ${r.t.toLowerCase()} rd-t">${TSHORT[r.t]}</span> ${esc(recTitle(r))} ${r.dc?`<span class="muted mono">#${esc(r.dc)}</span>`:''}</h3>`,
+    `<div class="kv">${kv(ta?'தேதி':'Date',fmtD(r.d))}${kv(ta?'கிளை':'Branch',esc(brName(r.br)))}${kv(ta?'சிலிண்டர்கள்':'Cylinders',r.cy.length+(ownN(r)?' + '+esc(ownTxt(r)):''))}${kv(ta?'பதிவு செய்தவர்':'Entered by',esc(personName(r.by))+' · '+fmtDT(r.at))}${r.ed?kv(ta?'மாற்றம்':'Edited',esc(r.ed.by?personName(r.ed.by):'')+(r.ed.at?' · '+fmtDT(r.ed.at):'')):''}${r.dcOld?kv(ta?'பழைய எண்':'Old number',esc(r.dcOld)):''}${r.sig?kv(ta?'கையெழுத்து':'Signature','✍ '+(ta?'உள்ளது':'yes')):''}${r.full?kv(ta?'நிலை':'Note',ta?'நிரம்பியபடி திரும்பியது':'Came back full'):''}${r.rm?kv(ta?'குறிப்பு':'Remarks',esc(r.rm)):''}${r.del?kv(ta?'நிலை':'Status',ta?'நீக்கப்பட்டது':'Deleted'):''}</div>
+     ${isCust(r.t)&&r.cy.length?`<div style="margin-top:10px">${recFollow(r)}</div>`:''}
+     ${r.cy.length?`<div class="tbl-wrap" style="margin-top:10px"><table><thead><tr><th>${ta?'சிலிண்டர்':'Cylinder'}</th><th>${ta?'வாயு':'Gas'}</th><th>${r.t==='DC'?(ta?'திரும்பியதா':'Came back?'):r.t==='MT'?(ta?'எந்த DC-இல் போனது':'Went out on'):''}</th><th>${ta?'இப்போது':'Now'}</th><th>${ta?'சரிபார்க்க':'To check'}</th></tr></thead><tbody>${rows}</tbody></table></div>`:''}
+     ${r.sig?`<div style="margin-top:10px"><img src="${r.sig}" alt="" style="max-width:260px;border:1px solid var(--line);border-radius:8px;background:#fff"></div>`:''}${acts}`]});
+}
+/* count by gas as coloured chips: O2: 3 · CO2 30: 1 · Total: 4 */
+function gasChips(cy){if(!cy||!cy.length)return '';const cnt={};cy.forEach(id=>{const g=((S.cyl[id]||{}).g||'?').replace(/\s*kg$/i,'');cnt[g]=(cnt[g]||0)+1});
+  const GC={O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'};
+  return `<span class="ec-gas">${Object.entries(cnt).map(([g,n])=>`<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`).join('')}<span class="gc tot">${LANG==='ta'?'மொத்தம்':'Total'}: <b>${cy.length}</b></span></span>`}
 function entryCard(r){
   const flags=r.cy.filter(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf});
-  return `<div class="entry-card ${r.del?'del':''}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
-  <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div><b>${esc(recTitle(r))}</b> ${isCust(r.t)&&r.ck?brTag(r.ck):''} ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}</div>
+  return `<div class="entry-card ${r.del?'del':''}" data-rec="${esc(r.rid)}" tabindex="0" title="${LANG==='ta'?'விவரம் பார்க்க அழுத்தவும்':'Click for details'}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
+  <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div>${isCust(r.t)&&r.ck?`<a href="#" class="ec-name" data-act="opencust" data-v="${esc(r.ck)}">${esc(recTitle(r))}</a>`:`<b>${esc(recTitle(r))}</b>`} ${isCust(r.t)&&r.ck?brTag(r.ck):''} ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}${gasChips(r.cy)}</div>
   <button type="button" class="swipe-more" aria-label="More">⋯</button>
   <div class="chips">${ownN(r)?`<span class="pill info">${esc(ownTxt(r))}</span>`:''}${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
   <div class="meta"><span>📅 ${fmtD(r.d)} · ${esc(brName(r.br))}</span>${isCust(r.t)&&!r.del&&r.cy.length?`<span>${recFollow(r)}</span>`:''}${isCust(r.t)&&r.ck&&!r.del?`<a href="#" data-act="opencust" data-v="${esc(r.ck)}">👥 ${LANG==='ta'?'இப்போது அவரிடம்':'holding now'} <b>${(S.D.holding[r.ck]||[]).length}</b></a>`:''}<span title="${LANG==='ta'?'பதிவு செய்த நேரம்':'Entered at'}">🕐 ${fmtDT(r.at)}</span>${r.by&&r.by!==S.uid?`<span>👤 <span data-name="${esc(r.by)}">${esc(shortName(r.by))}</span></span>`:''}${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.sig?`<span class="pill ok">✍ ${LANG==='ta'?'கையெழுத்து உள்ளது':'signed'}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
@@ -3426,10 +3481,17 @@ function custForm(ck,stay){
       const body={n,t:$('#cu-t').value,br:$('#cu-br').value,town:$('#cu-town').value.replace(/\s+/g,' ').trim(),ph:$('#cu-ph').value.trim(),ad:$('#cu-ad').value.trim(),dep:$('#cu-dep').value,rate:$('#cu-rate').value,free:$('#cu-free').value,gst:$('#cu-gst').value.trim(),pr:Object.fromEntries($$('[data-pr]').map(i=>[i.dataset.pr,i.value]))};
       try{if(ck){await S.db.doc('cust/all').update({list:{[ck]:body}});toast('Saved');closeDrawer();if(S.D)delete S.D._cbr;if(stay){const ci=$('#f-cust');if(ci){ci.focus()}}else openDrawer({k:'cust',v:ck})}
         else{const k=slug(n);if(S.cust[k]){toast(n+' already exists');return}if(S.custDoc)await S.db.doc('cust/all').update({list:{[k]:Object.assign(body,{by:S.uid,at:new Date().toISOString()})}});else await S.db.doc('cust/all').set({list:{[k]:body}});toast('Added '+n);closeDrawer()}}catch(e){toast(dbErr(e))}},ck?'Save':'Add customer')}
+/* keyboard on entry lists: ↓ ↑ move between entries, Enter / Space opens the details */
+document.addEventListener('keydown',e=>{const c=e.target.closest&&e.target.closest('.entry-card[data-rec]');if(!c||e.target!==c)return;
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();recDrawer(c.dataset.rec);return}
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();const all=[...document.querySelectorAll('.entry-card[data-rec]')];const i=all.indexOf(c);const n=all[i+(e.key==='ArrowDown'?1:-1)];n&&n.focus()}});
+document.addEventListener('click',e=>{const card=e.target.closest&&e.target.closest('.entry-card[data-rec]');
+  if(card&&!e.target.closest('[data-act],a,button,input,label,.acts')&&!(window.getSelection&&String(window.getSelection()).length)){recDrawer(card.dataset.rec);return}});
 document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(!f)return;if(el.tagName==='A')e.preventDefault();f(el,e)});
 document.addEventListener('keydown',e=>{
   if(e.altKey&&!e.ctrlKey&&(e.key==='d'||e.key==='D'||e.key==='m'||e.key==='M')&&canEnter()){e.preventDefault();A.quick({dataset:{v:/d/i.test(e.key)?'DC':'MT'}});return}
-  if(e.key==='Escape'&&S.drawer)closeDrawer();
+  if(e.key==='F9'){e.preventDefault();if(S.drawer)closeDrawer();const c=document.querySelector('.entry-card[data-rec]');if(c){c.focus();c.scrollIntoView({block:'nearest'})}else toast(LANG==='ta'?'இந்தப் பக்கத்தில் பதிவுகள் இல்லை':'No entries on this page');return}
+  if(e.key==='Escape'&&S.drawer){const from=S.drawer.rec;closeDrawer();if(from){const c=document.querySelector(`.entry-card[data-rec="${CSS.escape(from)}"]`);c&&c.focus()}return}
   if(e.key==='Enter'){const tr=e.target.closest&&e.target.closest('tr.click');if(tr){const f=A[tr.dataset.act];f&&f(tr)}}});
 
 /* phone: swipe an entry card left to show its buttons, right (or tap elsewhere) to hide */
