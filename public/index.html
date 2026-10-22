@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=3.21.0"><link rel="icon" href="icon.svg?v=3.21.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=3.21.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.0.0"><link rel="icon" href="icon.svg?v=4.0.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.0.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,46 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.dupw{margin-top:8px}
+.fl-top .fl-batch{margin-left:auto;align-self:center}
+.bt-pill{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:999px;background:#ECFEFF;border:1px solid #67E8F9;color:#155E75;font-size:13px}
+.bt-pill.none{background:var(--warn-bg);border-color:#FCD34D;color:#92400E}
+.rd-grid{display:grid;grid-template-columns:150px repeat(3,minmax(0,1fr));gap:6px 10px;align-items:center}
+.rd-grid .frh{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.rd-grid>label{font-weight:600;font-size:13px}
+@media (max-width:600px){.rd-grid{grid-template-columns:78px repeat(3,minmax(0,1fr));gap:5px}.rd-grid .inp{padding-left:6px;padding-right:4px}}
+.sz-seg button{padding:6px 10px}.sz-seg button .small{opacity:.7}
+#fe-p.needfill{border-color:var(--crit)!important;animation:needfill .45s ease 3}
+.chip.ours{background:var(--info-bg);border-color:color-mix(in srgb,var(--info) 40%,transparent);cursor:pointer}
+.chip.dlr{background:var(--surface-2);border-color:var(--line);cursor:pointer}
+.pu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.pu-box{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface-2)}
+.pu-calc{margin-top:6px;font-size:13px;min-height:18px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat-row .stat{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.stat-row .stat span{font-size:12px;color:var(--muted)}.stat-row .stat b{font-size:20px}
+.sum-top{display:flex;flex-wrap:wrap;gap:8px 24px;margin-bottom:10px;font-size:14px}
+.sum-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:14px}
+@media (max-width:800px){.sum-grid{grid-template-columns:1fr}}
+.sumtbl tr.first td{border-top:2px solid var(--line)}
+.sum-side{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface-2)}.sum-side table{width:100%}.sum-side td{padding:3px 4px}
+.sum-side tr.st td{border-top:1px solid var(--line)}.sum-total{margin-top:12px;font:800 20px var(--f-display);color:var(--accent)}
+.certprev{border:1px solid var(--line);border-radius:10px;padding:18px;background:#fff;color:#111}
+.cert{font-family:Georgia,serif;color:#111;max-width:720px;margin:0 auto}.cert .c-h{text-align:center;border-bottom:2px solid #111;padding-bottom:8px}
+.cert .c-co{font-size:26px;font-weight:700}.cert .c-ad{font-size:13px}.cert .c-t{text-align:center;font-size:18px;font-weight:700;letter-spacing:.08em;margin:18px 0;text-decoration:underline}
+.cert table{border-collapse:collapse;width:100%;margin:8px 0}.cert .c-kv td{padding:3px 6px;vertical-align:top}.cert .c-kv td:first-child{width:150px}
+.cert .c-spec th,.cert .c-spec td{border:1px solid #333;padding:6px 8px;text-align:left}.cert .c-note{font-size:12px;color:#444}
+.cert .c-sign{display:flex;flex-direction:column;align-items:flex-end;margin-top:50px;gap:40px}.cert .c-line{border-top:1px solid #111;padding-top:4px;min-width:200px;text-align:center}
+#printarea{display:none}
+@media print{body.printcert>*:not(#printarea){display:none!important}body.printcert #printarea{display:block!important;padding:20px}}
+.dd-warn{padding:10px 12px;color:var(--crit);background:var(--crit-bg);font-weight:600;font-size:13px}
+#f-cust.badname{border-color:var(--crit)!important}
+.btn.warnbtn{background:#FFFBEB;border-color:#FCD34D;color:#92400E}
+.gascount .gc,.ec-gas .gc{display:inline-flex;align-items:center;gap:4px;height:26px;box-sizing:border-box;padding:0 10px!important;font:600 12.5px/1 var(--f-body)!important;white-space:nowrap}
+.gascount .gc b,.ec-gas .gc b{font-size:13.5px!important;line-height:1}
+.ec-gas .gc{height:24px}
+.gascount{align-items:center}
+#f-cust.needfill{border-color:var(--crit)!important;animation:needfill .45s ease 3}
+@keyframes needfill{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--crit) 35%,transparent)}}
 .ec-gas{display:inline-flex;gap:5px;flex-wrap:wrap;margin-left:8px;vertical-align:middle}
 .ec-gas .gc{font:600 12px/1 var(--f-body);padding:4px 8px;border-radius:999px;color:var(--gc);background:color-mix(in srgb,var(--gc) 13%,var(--surface));border:1px solid color-mix(in srgb,var(--gc) 35%,transparent)}.ec-gas .gc b{font-size:13px}.ec-gas .gc.tot{--gc:#0F766E}
 @media (max-width:600px){.ec-gas{display:flex;margin:4px 0 0}}
@@ -336,7 +376,8 @@ body.pro:not(.skin-light) .gsearch .inp{background:rgba(255,255,255,.95)}
 .autono{position:relative;display:flex;align-items:center;gap:4px}
 .autono input{flex:1;min-width:0}
 .autono input[readonly]{background:var(--surface-2);color:var(--muted)}
-.autotag{position:absolute;right:44px;font:600 10.5px var(--f-body);color:var(--ok);background:var(--ok-bg);padding:2px 6px;border-radius:999px;pointer-events:none}
+.autowrap{position:relative;flex:1;min-width:0;display:flex}.autowrap input{padding-right:62px}
+.autotag{position:absolute;right:8px;top:50%;transform:translateY(-50%);font:600 10.5px var(--f-body);color:var(--ok);background:var(--ok-bg);padding:2px 6px;border-radius:999px;pointer-events:none}
 .bprow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .today-tools{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:2;background:var(--surface);padding:4px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
 .today-tools .rel svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
@@ -745,7 +786,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=3.21.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.0.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -765,7 +806,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=3.21.0"></script>
+<script src="fb.js?v=4.0.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -794,15 +835,17 @@ const BUCKETS=['0–30','31–90','91–180','181–365','1 yr+'];
 const GAS_VAR={'O2':'--gas-o2','CO2':'--gas-co2','CO2 30kg':'--gas-co2','CO2 40kg':'--gas-co2','N2':'--gas-n2','Argon':'--gas-ar','DURO':'--gas-duro'};
 const gasTag=g=>`<span class="gas" style="--gc:var(${GAS_VAR[g]||'--muted'})">${esc(g||'—')}</span>`;
 const STATUS={out:['With customer','out'],full:['Godown · full','in'],empty:['Godown · empty','unused'],filling:['At filling','warn'],unused:['Not used yet','unused'],missing:['Missing','missing'],sold:['Sold','sold']};
-const TSHORT={DC:'DC',MT:'MT',FS:'FILL',FR:'FULL',FL:'🏭'};
+const TSHORT={DC:'DC',MT:'MT',FS:'FILL',FR:'FULL',FL:'🏭',FD:'🏭D'};
 const TLABEL={DC:'DC',MT:'MT',FS:'To filling',FR:'Received full'};
 const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Received full · '+(r.pl||''):custName(r.ck);
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'3.21.0';
+const APP_VERSION=window.CD_VERSION||'4.0.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['4.0.0','2026-10-22',['New Filling register: two plants (Hindusthan Gases & Air Products · Dharmapuri, Adiyaman Gases · Krishnagiri), chosen from the staff branch','Tank reading each day: opening / closing liquid level and pressure, on / off time','Filling entry like the notebook: party short code → type letter A B C D → numbers; Duro mark; A = 1, B = 1.5, C = 3, D = 7 m³','Day summary page (party × size × count = m³, Medical and Duro totals) with print','Stock & loss: level used, m³ filled, m³ per level, overnight vapour loss','Liquid purchases: invoice, weighbridge (net kg), tank level, supplier certificate → our batch number','Purity certificate for any batch, and from any DC (the batch its cylinders were filled from); purity is the supplier’s, never made up','Our cylinders tracked by number: our own fillings → godown full; our rental cylinders filled for a dealer → noted in history; dealer cylinders → ledger only','Dealers have a short code; customers page: “Merge by hand”','DC / MT: the same date, customer and cylinder numbers cannot be saved twice — a red warning shows the entry already saved']],
+ ['3.22.0','2026-10-22',['Customer box empty + Enter / Space: nothing is picked by itself; the box blinks red “Type the customer name”','Adding a new customer from the search asks first and shows names that look alike','Delete a customer (owner / manager) when it has no entries; with entries it offers Merge instead','Gas count chips all the same size','“auto” tag sits inside the receipt number box','Dashboard title: “Dashboard — today’s summary”','Customer box: numbers alone are not taken as a name — a red warning shows instead of “Add new customer”','Customers: “Same name? — merge suggestions” button finds look-alike names (DNV Hos / dnv too); Keep this = merge, Different = skip']],
  ['3.21.0','2026-10-22',['Today’s entries: click an entry for its full details — each cylinder, came back or not, where it is now, what to check','Customer list: Tab / Shift+Tab move through names, Space picks and jumps to the cylinder box','Cylinder box: in the empty box Tab / Space / Enter saves; if “Check before saving” is shown, the first press ticks it and the second saves (a quick double press is ignored)','Ctrl+Enter saves at once (ticks “Save anyway” too)','MT list: ↓ ↑ to move, Space to tick, Esc back to typing','After saving, the cursor goes straight to the customer box for the next entry','Each entry shows the count by gas (O2: 3 · CO2 30: 1 · Total) like the entry box','Entry lists: F9 jumps to the entries, ↓ ↑ move, Enter opens the details, Esc comes back']],
  ['3.20.0','2026-10-21',['Attendance: In / Out card on the staff home screen (no working hours shown to staff)','Work time for each person; drivers can be “No fixed time” (no late mark, no reminder, no OT)','After a person’s end time the app asks “Record Out?” (again every hour if still working)','Out not pressed: the last time they worked in the app is shown as Out with *','Owner sees total hours and OT in the monthly ledger','Owner and manager can correct or add In / Out with a reason (“edited” mark) and delete attendance photos','Dashboard title line now reads “Today: DC sent full · MT came back empty” and the same for this month']],
  ['3.19.1','2026-10-21',['Location: staff and managers are asked after every login until they allow it; once allowed it never asks again; if blocked, the popup shows how to allow it','When someone cannot make DC / MT or inspect, the page now says why (Viewer role, View only on, or permission off) instead of hiding it silently']],
@@ -897,7 +940,7 @@ const TA={
  'Cylinder register (old Excel layout)':'சிலிண்டர் பதிவேடு (பழைய Excel அமைப்பு)',
  'Import old files':'பழைய file இறக்குமதி',
  'Dashboard':'முகப்பு','New entry':'புதிய பதிவு','Entries':'பதிவுகள்','Registers':'பதிவேடுகள்','Cylinders':'சிலிண்டர்கள்','Customers':'வாடிக்கையாளர்கள்','Follow-up':'பின்தொடர்வு','Filling register':'நிரப்பல் பதிவேடு','Physical inspection':'நேரடி சரிபார்ப்பு','Attendance & logins':'வருகை & login','Reminders':'நினைவூட்டல்','Mismatches':'பொருந்தாதவை','Billing':'பில்லிங்','Purchases & sales':'வாங்கல் & விற்பனை','Analysis':'பகுப்பாய்வு','Reports':'அறிக்கைகள்','Settings':'அமைப்புகள்','Help':'உதவி',
- 'Today at a glance':'இன்றைய நிலை','With customers':'வாடிக்கையாளரிடம்','Godown · full':'குடோன் · நிரம்பியது','Godown · empty':'குடோன் · காலி','At filling':'நிரப்ப சென்றது','Out over 90 days':'90 நாளுக்கு மேல்','Missing':'காணவில்லை','Today':'இன்று','How long with customers':'வாடிக்கையாளரிடம் எத்தனை நாள்','Cylinders by gas':'வாயு வாரியாக சிலிண்டர்கள்','Customers holding the most cylinders':'அதிக சிலிண்டர் வைத்திருப்பவர்கள்',
+ 'Today at a glance':'இன்றைய நிலை','Dashboard — Today’s Summary':'டாஷ்போர்டு — இன்றைய சுருக்கம்','With customers':'வாடிக்கையாளரிடம்','Godown · full':'குடோன் · நிரம்பியது','Godown · empty':'குடோன் · காலி','At filling':'நிரப்ப சென்றது','Out over 90 days':'90 நாளுக்கு மேல்','Missing':'காணவில்லை','Today':'இன்று','How long with customers':'வாடிக்கையாளரிடம் எத்தனை நாள்','Cylinders by gas':'வாயு வாரியாக சிலிண்டர்கள்','Customers holding the most cylinders':'அதிக சிலிண்டர் வைத்திருப்பவர்கள்',
  'Branch':'கிளை','Customer':'வாடிக்கையாளர்','Holding':'வைத்திருப்பது','Over 90 days':'90 நாளுக்கு மேல்','Last movement':'கடைசி நகர்வு','Gas':'வாயு','Out':'வெளியே','Full':'நிரம்பியது','Empty':'காலி','Filling':'நிரப்புதல்','Total':'மொத்தம்','Status':'நிலை','Since':'முதல்','Days':'நாட்கள்','Date':'தேதி','Remarks':'குறிப்பு','Driver':'ஓட்டுநர்','Vehicle no.':'வாகன எண்','Cylinder numbers':'சிலிண்டர் எண்கள்','Filling plant / supplier':'நிரப்பும் இடம் / சப்ளையர்',
  'Full to customer':'Full அனுப்புதல்','Empty from customer':'காலி திரும்புதல்','Send for filling':'நிரப்ப அனுப்பு','Received full':'நிரம்பி வந்தது','Save entry':'பதிவை சேமி','Save changes':'மாற்றங்களை சேமி','Cancel edit':'திருத்தத்தை ரத்து செய்','Check before saving':'சேமிக்கும் முன் சரிபார்க்கவும்','Your entries today':'இன்றைய உங்கள் பதிவுகள்','Nothing yet today':'இன்று இன்னும் எதுவும் இல்லை',
  'Choose a customer':'வாடிக்கையாளரை தேர்வு செய்யவும்','Add at least one cylinder':'குறைந்தது ஒரு சிலிண்டர் சேர்க்கவும்','Download DC (PDF)':'DC பதிவிறக்கு (PDF)','With customer':'வாடிக்கையாளரிடம்','Not used yet':'இன்னும் பயன்படவில்லை','Sold':'விற்கப்பட்டது',
@@ -961,7 +1004,7 @@ const S={
   db:null,user:null,dl:null,uid:null,isOwner:false,me:null,profiles:{},
   company:{name:'SRI M.M',addr:'',phone:'',gst:'',branches:['DPI','KGIRI'],branchNames:{DPI:'Dharmapuri',KGIRI:'Krishnagiri'}},
   roles:{},members:{},cust:{},custDoc:false,cyl:{},cylSrc:{},hist:null,logs:{},bill:{},trade:{buy:{},sell:{}},voids:{},
-  loaded:{company:false,roles:false,cust:false,cyl:false,hist:false,logs:false},fills:{},insps:{},dealers:{},
+  loaded:{company:false,roles:false,cust:false,cyl:false,hist:false,logs:false},fills:{},insps:{},dealers:{},lpur:{},pday:{},
   view:'dash',drawer:null,D:null,readOnly:false,
   ui:{dashBr:'all',cylQ:'',cylGas:'all',cylSt:'all',cylBr:'all',cylAge:'all',cylTest:'all',cylPage:0,fuDays:'',fuQ:'',custQ:'',custSort:'hold',entFrom:'',entTo:'',entBr:'all',entType:'all',entQ:'',mmShow:'open'},
   form:null
@@ -1029,8 +1072,9 @@ function derive(){
   const fills=[];
   for(const [docId,doc] of Object.entries(S.fills||{})){for(const [rid,r] of Object.entries((doc&&doc.recs)||{})){
     if(!r||r.del)continue;if(!Array.isArray(r.cy))r.cy=[];fills.push(Object.assign({},r,{rid,docId}));
-    if(!fillTracked(r))continue;
-    r.cy.forEach(c=>moves.push({src:'fill',t:'FL',d:r.d,at:r.at||'',ck:'',by:r.by,filler:r.filler||'',size:r.size||'',rid,docId,cyl:c}))}}
+    const own=fillOurs(r);
+    r.cy.forEach(c=>{if(own&&S.cyl[c])moves.push({src:'fill',t:'FL',d:r.d,at:r.at||'',ck:'',by:r.by,size:r.size||'',rid,docId,cyl:c});
+      else if(!own&&(r.ours||[]).includes(c))moves.push({src:'fill',t:'FD',d:r.d,at:r.at||'',ck:'',pn:r.pn||'',by:r.by,size:r.size||'',rid,docId,cyl:c})})}}
   fills.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.at||'').localeCompare(a.at||''));
   moves.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:numCmp(a,b));
   for(const m of moves){if(!tl[m.cyl])tl[m.cyl]=[];tl[m.cyl].push(m)}
@@ -1043,6 +1087,7 @@ function derive(){
     let prev=null,lastCk='',lastPl='';
     const fillsAfter=d=>evs.filter(x=>x.t==='FL'&&x.d&&d&&x.d>=d).map(x=>x.d);
     for(const ev of evs){
+      if(ev.t==='FD')continue;   /* our rental cylinder filled for a dealer: history only, it stays with the dealer */
       if(ev.src==='fill'){
         if(prev&&prev.t==='DC'){const due=daysSince(ev.d)>PEND_DAYS;const it={id,kind:'nomt',ck:prev.ck,dcD:prev.d,dcNo:prev.dc||'',fillD:ev.d,due};
           if(due){const m=Object.assign({id},ev,{flag:'MT not entered — filled at factory on '+fmtD(ev.d)+' (over '+PEND_DAYS+' days)',ck:prev.ck});mism.push(m)}else pend.push(it)}
@@ -1092,6 +1137,8 @@ function bootData(){
   db.doc('trade/sell').onSnapshot(s=>{S.trade.sell=(s.exists&&s.data().sales)||{};scheduleDerive()},err);
   db.doc('dealers/list').onSnapshot(d=>{S.dealers=(d.exists&&d.data().list)||{};if(S.view==='fill'&&!S.drawer)scheduleDerive()},err);
   db.collection('fill').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.fills=m;scheduleDerive()},err);
+  db.collection('lpur').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.lpur=m;scheduleDerive()},err);
+  db.collection('pday').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.pday=m;scheduleDerive()},err);
   db.collection('insp').onSnapshot(q=>{const m={};q.docs.forEach(d=>{m[d.id]=d.data()});S.insps=m;scheduleDerive()},err);
   db.doc('reg/void').onSnapshot(s=>{S.voids=(s.exists&&s.data().list)||{};scheduleDerive()},err);
   db.collection('cyl').onSnapshot(q=>{const m={},src={};q.docs.forEach(d=>{const l=(d.data()||{}).list||{};for(const k in l){m[k]=l[k];src[k]=d.id}});S.cyl=m;S.cylSrc=src;S.loaded.cyl=true;scheduleDerive()},err);
@@ -1206,6 +1253,12 @@ function paintShell(){try{paintAttCard()}catch(e){}
   {const w=$('#gs-wrap');if(w){w.hidden=!r;const i=$('#gq');if(!w._b){w._b=1;w.querySelector('.gs-ic').innerHTML=ic('search');gBind(i,$('#gq-dd'))}i.placeholder=LANG==='ta'?'சிலிண்டர் / customer தேடு…':'Find cylinder / customer…'}}
 }
 /* Owner: merge this customer into any other one (picked by name). */
+function custUsed(ck){const n=(S.D.custMoves[ck]||[]).length+(S.D.holding[ck]||[]).length+(S.D.recs||[]).filter(r=>r.ck===ck).length;
+  let b=0;try{b=JSON.stringify(S.bill||{}).includes('"'+ck+'"')?1:0}catch(e){}return n+b}
+async function delCust(ck){const ta=LANG==='ta';const c=S.cust[ck];if(!c)return;
+  if(custUsed(ck)){if(confirm(ta?`“${c.n}”-க்கு பதிவுகள் உள்ளன, அதனால் நீக்க முடியாது.\n\nசரியான பெயருடன் இணைக்கவா (Merge)?`:`“${c.n}” has entries, so it cannot be deleted.\n\nMerge it into the correct customer instead?`))mergeIntoPanel(ck);return}
+  if(!confirm(ta?`“${c.n}” customer-ஐ நீக்கவா? இதை மீண்டும் கொண்டுவர முடியாது.`:`Delete customer “${c.n}”? This cannot be undone.`))return;
+  try{await S.db.doc('cust/all').update({list:{[ck]:FBC.DEL}});delete S.cust[ck];if(S.D)delete S.D._cbr;closeDrawer();toast((ta?'நீக்கப்பட்டது: ':'Deleted: ')+c.n);if(VIEWS[S.view]&&VIEWS[S.view].update)VIEWS[S.view].update()}catch(e){toast(dbErr(e))}}
 function mergeIntoPanel(from){
   const F=S.cust[from];if(!F)return;const ta=LANG==='ta';
   openDrawer({k:'form',render:()=>[`<h3>🔀 ${ta?'இணை':'Merge'} · ${esc(F.n)}</h3>`,
@@ -1366,9 +1419,16 @@ function similarCustomers(){
   const L=Object.entries(S.cust).filter(([k,c])=>c&&c.n&&!c.off).map(([k,c])=>{const t=nkTok(c.n);return {k,n:c.n,key:t.join(''),t}});
   const pairs=[];
   for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const a=L[i],b=L[j];if(!a.key||!b.key)continue;
-    const mx=Math.max(a.key.length,b.key.length);if(Math.abs(a.key.length-b.key.length)>3)continue;
-    const d=levD(a.key,b.key);const sc=1-d/mx;
-    if(sc<0.84||d>3)continue;
+    const mx=Math.max(a.key.length,b.key.length);
+    /* same name once words like Hos / Eng / Ind are left out (DNV Hos = dnv), or one name starts with the other */
+    const GEN=new Set(['hos','eng','ind','and','the','ltd','pvt','co','company','clinic','m','s','ms']);
+    const ca=a.t.filter(w=>!GEN.has(w)).join(''),cb=b.t.filter(w=>!GEN.has(w)).join('');
+    /* Ambigai Eng and Ambigai Hos are two different places */
+    const TY=['hos','eng','ind','clinic'];const ta1=a.t.filter(w=>TY.includes(w)).join(),tb1=b.t.filter(w=>TY.includes(w)).join();if(ta1&&tb1&&ta1!==tb1)continue;
+    let sc=0;
+    if(ca&&cb&&ca===cb)sc=0.97;
+    else if(Math.min(a.key.length,b.key.length)>=4&&(a.key.startsWith(b.key)||b.key.startsWith(a.key)))sc=0.9;
+    else{if(Math.abs(a.key.length-b.key.length)>3)continue;const d=levD(a.key,b.key);sc=1-d/mx;if(sc<0.84||d>3)continue}
     // different numbers in the name (Annai 1 / Annai 2) are different customers
     const na=a.n.match(/\d+/g)||[],nb=b.n.match(/\d+/g)||[];if(na.join()!==nb.join())continue;
     const key=[a.k,b.k].sort().join('|');if(not[key])continue;
@@ -1597,7 +1657,7 @@ const cylGo=(st,extra)=>dgo('cyl',Object.assign({cylQ:'',cylGas:'all',cylSt:st||
 const entGo=(extra)=>dgo('entries',Object.assign({entFrom:S.D.today,entTo:S.D.today,entBr:S.ui.dashBr||'all',entType:'all',entQ:''},extra||{}));
 const fuGo=(mn,mx)=>dgo('fu',{fuMin:String(mn),fuMax:mx==null?'':String(mx),fuDue:false,fuFrom:'',fuTo:'',fuQ:'',fuBr:S.ui.dashBr||'all'});
 VIEWS.dash={
-  mount(){return `<div class="page-head"><div><h2>Today at a glance</h2><p id="dash-sub"></p></div><div class="actions">${navOk('insp')?`<button class="btn" data-act="nav" data-v="insp">${ic('insp')}${LANG==='ta'?'நேரடி சரிபார்ப்பு':'Physical inspection'}</button>`:''}${navOk('fill')?`<button class="btn" data-act="nav" data-v="fill">${ic('fill')}${LANG==='ta'?'நிரப்பல்':'Filling'}</button>`:''}<div class="seg" id="dash-br"></div>${canEnter()?`<button class="btn primary" data-act="nav" data-v="entry">${ic('plus')}New entry</button>`:''}</div></div><div id="dash-body"></div>`},
+  mount(){return `<div class="page-head"><div><h2>Dashboard — Today’s Summary</h2><p id="dash-sub"></p></div><div class="actions">${navOk('insp')?`<button class="btn" data-act="nav" data-v="insp">${ic('insp')}${LANG==='ta'?'நேரடி சரிபார்ப்பு':'Physical inspection'}</button>`:''}${navOk('fill')?`<button class="btn" data-act="nav" data-v="fill">${ic('fill')}${LANG==='ta'?'நிரப்பல்':'Filling'}</button>`:''}<div class="seg" id="dash-br"></div>${canEnter()?`<button class="btn primary" data-act="nav" data-v="entry">${ic('plus')}New entry</button>`:''}</div></div><div id="dash-body"></div>`},
   after(){this.update()},
   update(){
     const D=S.D,br=S.ui.dashBr;
@@ -1768,7 +1828,7 @@ VIEWS.entry={
         <div class="row">
           <div class="field"><div class="date-head"><label for="f-date">Date</label><label class="yr" title="Year used when you type only day and month">Year <input id="f-year" class="mono" inputmode="numeric" maxlength="4" tabindex="-1" value="${esc(String(f.edit&&f.d?f.d.slice(0,4):(S.ui.year||new Date().getFullYear())))}"></label></div><div class="datebox"><input class="inp mono" id="f-date" value="${esc(f.d?fmtD(f.d):'')}" placeholder="24-9" inputmode="numeric" autocomplete="off" aria-describedby="f-date-msg"><button type="button" class="btn ghost sm" id="f-date-cal" aria-label="Calendar" tabindex="-1">${ic('cal')}</button><input type="date" id="f-date-pick" value="${esc(f.d)}" max="${todayISO()}" tabindex="-1" aria-hidden="true"></div><div class="small" id="f-date-msg"></div></div>
           <div class="field"><label for="f-br">Branch</label><select class="inp" id="f-br" ${can('otherBr')?'':'disabled title="Only your branch"'}>${S.company.branches.map(b=>`<option value="${esc(b)}" ${f.br===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
-          <div class="field"><label for="f-dc" id="f-dc-l">DC / receipt no.</label><div class="autono"><input class="inp mono" id="f-dc" value="${esc(f.dc)}" placeholder="auto" readonly tabindex="-1"><span class="autotag" id="f-dc-auto">${LANG==='ta'?'தானாக':'auto'}</span><button type="button" class="btn sm ghost" id="f-dc-ed" tabindex="-1" title="${LANG==='ta'?'எண்ணை மாற்று':'Change number'}">${ic('edit')}</button></div></div>
+          <div class="field"><label for="f-dc" id="f-dc-l">DC / receipt no.</label><div class="autono"><span class="autowrap"><input class="inp mono" id="f-dc" value="${esc(f.dc)}" placeholder="auto" readonly tabindex="-1"><span class="autotag" id="f-dc-auto">${LANG==='ta'?'தானாக':'auto'}</span></span><button type="button" class="btn sm ghost" id="f-dc-ed" tabindex="-1" title="${LANG==='ta'?'எண்ணை மாற்று':'Change number'}">${ic('edit')}</button></div></div>
         </div>
         <div id="f-no-info"></div>
         <div class="field rel" id="f-cust-wrap"><label for="f-cust">Customer</label>
@@ -1782,6 +1842,7 @@ VIEWS.entry={
           <div class="dd pick" id="f-cyl-dd" role="listbox" hidden></div>
           <div class="prefbar" id="f-pref">${['C','N','A','D','K'].map(x=>`<button type="button" data-pre="${x}" tabindex="-1">${x}</button>`).join('')}<button type="button" data-pre="abc" tabindex="-1">ABC</button><button type="button" data-pre="ok" tabindex="-1" class="ok">${LANG==='ta'?'சேர் ↵':'Add ↵'}</button></div>
           <div class="small muted" id="f-cyl-help"></div>
+          <div id="f-dupw"></div>
         </div>
         <div id="f-expect"></div>
         <label class="check fullret" id="f-full-wrap" ${f.t==='MT'?'':'hidden'}><input type="checkbox" id="f-full" tabindex="-1" ${f.full?'checked':''}> <span><b>${LANG==='ta'?'நிரம்பியபடியே திரும்பி வந்தது (பயன்படுத்தவில்லை)':'Came back FULL (not used)'}</b> <span class="muted small">${LANG==='ta'?'— குடோனில் “நிரம்பியது” என்று சேரும்':'— goes to the godown as full'}</span></span></label>
@@ -1869,31 +1930,37 @@ VIEWS.entry={
       const items=(q?all.filter(([k,c])=>c.n.toLowerCase().includes(q)||(custTown(c)||'').toLowerCase().includes(q)):all).sort((a,b)=>{const ai=a[1].n.toLowerCase().startsWith(q)?0:1,bi=b[1].n.toLowerCase().startsWith(q)?0:1;return ai-bi||sameBr(a[0])-sameBr(b[0])||a[1].n.localeCompare(b[1].n)}).slice(0,10);
       const exact=all.some(([k,c])=>c.n.toLowerCase()===q);
       let html=items.map(([k,c],i)=>`<button type="button" role="option" data-ck="${esc(k)}" aria-selected="${i===sel}"><span class="cn">${esc(c.n)}</span>${brTag(k)}${c.loc?'<span title="Place saved">📍</span>':''}${custTown(c)?`<span class="town">${esc(custTown(c))}</span>`:''}<span class="sub num">${(S.D.holding[k]||[]).length} holding</span><span class="ed" data-ed="${esc(k)}" title="${LANG==='ta'?'திருத்து':'Edit'}">${ic('edit')}</span></button>`).join('');
-      if(q&&!exact&&can('newCust'))html+=`<button type="button" data-new="1" aria-selected="${items.length===sel}">${ic('plus','style="width:15px;height:15px"')}<span>Add “${esc(ci.value.trim())}” as a new customer</span></button>`;
+      if(q&&!nameOk(q)){html=(items.length?html:'')+`<div class="dd-warn">⚠ ${LANG==='ta'?'எண்கள் மட்டும் — இது customer பெயர் அல்ல. சிலிண்டர் எண் என்றால் கீழே உள்ள சிலிண்டர் பெட்டியில் போடவும்.':'Only numbers — this is not a customer name. Cylinder numbers go in the cylinder box below.'}</div>`;ci.classList.add('badname')}
+      else{ci.classList.remove('badname');if(q&&!exact&&can('newCust'))html+=`<button type="button" data-new="1" aria-selected="${items.length===sel}">${ic('plus','style="width:15px;height:15px"')}<span>Add “${esc(ci.value.trim())}” as a new customer</span></button>`}
       dd.innerHTML=html;dd.hidden=!html;ci.setAttribute('aria-expanded',String(!!html));
     };
     const pick=ck=>{
       {const b=custBr(ck).br;if(!f.edit&&b&&b!=='BOTH'&&b!==f.br&&S.company.branches.includes(b)){
         if(can('otherBr')){f.br=b;const sel=$('#f-br');if(sel)sel.value=b;if(isCust(f.t)&&f.dcAuto){f.dc=nextNo(f.t,f.br);const d=$('#f-dc');if(d)d.value=f.dc}toast((LANG==='ta'?'கிளை தானாக மாறியது: ':'Branch changed to ')+brName(b))}
         else toast((LANG==='ta'?'இந்த customer ':'This customer is ')+brName(b)+(LANG==='ta'?' கிளை — உங்கள் கிளையில் பதிவாகிறது':' — saving under your branch'))}}
-      f.ck=ck;f.cq='';ci.value=custName(ck);dd.hidden=true;ci.setAttribute('aria-expanded','false');this.update();$('#f-cyl').focus()};
+      f.ck=ck;f.cq='';ci.value=custName(ck);ci.classList.remove('needfill');dd.hidden=true;ci.setAttribute('aria-expanded','false');this.update();$('#f-cyl').focus()};
     let moved=false;
-    ci.addEventListener('input',()=>{f.ck='';f.cq=ci.value;sel=-1;moved=false;showDD();this.update()});
+    ci.addEventListener('input',()=>{ci.classList.remove('needfill');f.ck='';f.cq=ci.value;sel=-1;moved=false;showDD();this.update()});
     ci.addEventListener('focus',()=>{if(!f.ck){sel=-1;moved=false;showDD()}});
     ci.addEventListener('blur',()=>setTimeout(()=>{dd.hidden=true},180));
     ci.addEventListener('keydown',e=>{
+      if((e.key==='Enter'||e.key===' ')&&!ci.value.trim()&&!moved){e.preventDefault();blinkCust();return}
       const n=dd.querySelectorAll('button').length;if(dd.hidden||!n)return;
       const go1=()=>{const b=dd.querySelectorAll('button')[Math.max(sel,0)];b&&b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true}))};
       const show=()=>{showDD();const b=dd.querySelectorAll('button')[sel];b&&b.scrollIntoView({block:'nearest'})};
       if(e.key==='ArrowDown'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();sel=sel<0?0:Math.min(n-1,sel+1);moved=true;show()}
       else if(e.key==='ArrowUp'||(e.key==='Tab'&&e.shiftKey)){e.preventDefault();sel=Math.max(0,sel-1);moved=true;show()}
-      else if(e.key==='Enter'){e.preventDefault();go1()}
-      else if(e.key===' '&&(moved||!ci.value.trim())){e.preventDefault();go1()}
+      else if(e.key==='Enter'){e.preventDefault();if(!ci.value.trim()&&!moved){blinkCust();return}go1()}
+      else if(e.key===' '&&moved){e.preventDefault();go1()}
     });
     dd.addEventListener('mousedown',async e=>{const ed=e.target.closest('[data-ed]');if(ed){e.preventDefault();e.stopPropagation();dd.hidden=true;custForm(ed.dataset.ed,true);return}
       const b=e.target.closest('button');if(!b)return;e.preventDefault();
       if(b.dataset.ck)pick(b.dataset.ck);
-      else if(b.dataset.new){const ck=await addCustomer(ci.value.trim());if(ck)pick(ck)}});
+      else if(b.dataset.new){const nm=ci.value.replace(/\s+/g,' ').trim();const ta=LANG==='ta';
+        const like=Object.values(S.cust).filter(c=>!c.off&&c.n&&(c.n.toLowerCase().includes(nm.toLowerCase().slice(0,3))||nm.toLowerCase().includes(c.n.toLowerCase().slice(0,3)))).slice(0,5).map(c=>c.n);
+        dd.hidden=true;
+        if(!confirm((ta?`“${nm}” — புதிய customer-ஆகச் சேர்க்கவா?`:`Add “${nm}” as a NEW customer?`)+(like.length?(ta?'\n\nஇதே மாதிரி ஏற்கனவே உள்ளவை:\n• ':'\n\nLooks like these existing ones:\n• ')+like.join('\n• '):''))){ci.focus();return}
+        const ck=await addCustomer(nm);if(ck)pick(ck)}});
     const cyIn=$('#f-cyl');
     /* Same number used for more than one cylinder (1014 Dharmapuri / K1014 Krishnagiri, 1002 O2 / C1002 CO2):
        typing just the number asks which one, best match first. */
@@ -1921,7 +1988,7 @@ VIEWS.entry={
       if(b&&!b.disabled){b.focus();return}
       if(onlyNeedsTick()){$('#f-confirm').focus();return}
       const sum=$('#f-sum');if(sum){sum.classList.remove('flash');void sum.offsetWidth;sum.classList.add('flash')}
-      if(isCust(f.t)&&!f.ck)$('#f-cust').focus();else if(!isCust(f.t)&&!f.pl.trim())$('#f-pl').focus();else cyIn.focus()};
+      if(isCust(f.t)&&!f.ck)blinkCust();else if(!isCust(f.t)&&!f.pl.trim())$('#f-pl').focus();else cyIn.focus()};
     const showPick=()=>{
       if(!pend.length){pdd.hidden=true;pdd.innerHTML='';cyIn.setAttribute('aria-expanded','false');return}
       const {tok,list}=pend[0];const ta=LANG==='ta';
@@ -2040,14 +2107,24 @@ VIEWS.entry={
       shown.map(r=>{const w=why(r);return w.length?`<div class="tbad">${entryCard(r)}<ul class="why">${w.map(x=>`<li><span class="mono">${esc(x.c)}</span> ${esc(x.f)}</li>`).join('')}</ul></div>`:entryCard(r)}).join('')+`</div>`
       :`<div class="empty"><b>Nothing yet today</b>Every entry made today, by anyone, appears here.</div>`;
   },
-  updateSave(){const f=S.form;const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
+  updateSave(){const f=S.form;const de=dupEntry(f);
+    {const w=$('#f-dupw');if(w){const ta=LANG==='ta';w.innerHTML=de?`<div class="notice crit dupw">${ic('warn')}<div style="flex:1"><b>⛔ ${ta?'இதே பதிவு ஏற்கனவே உள்ளது — மீண்டும் சேமிக்க முடியாது':'This entry is already saved — it cannot be saved twice'}</b><div style="margin-top:4px">${esc(TLABEL[de.r.t])} ${de.r.dc?'#'+esc(de.r.dc):''} · ${esc(recTitle(de.r))} · ${fmtD(de.r.d)} · ${ta?'அதே எண்கள்':'same numbers'}: <b class="mono">${esc(de.same.join(', '))}</b></div><div class="row" style="margin-top:6px;gap:6px"><button type="button" class="btn sm" data-act="openrec" data-rid="${esc(de.r.rid)}">${ta?'அந்தப் பதிவைப் பார்':'Open that entry'}</button><button type="button" class="btn sm ghost" data-act="dupclear">${ta?'இந்த எண்களை நீக்கு':'Remove these numbers'}</button></div></div></div>`:''}}const probs=f.cy.filter(id=>chipStatus(id,f)[0]!=='ok').length;const hard=f.cy.some(id=>chipStatus(id,f)[0]==='crit');
     const who=isCust(f.t)?!!f.ck:!!f.pl.trim();
     const nc=noCheck(f);const dup=!!(nc&&nc.k==='crit');const fOwn=f.own&&+f.ownN>0;{const w=$('#f-own-wrap');if(w)w.hidden=!(isCust(f.t)&&f.own)}
-    const ok=who&&(f.cy.length||(fOwn&&isCust(f.t)))&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup;
+    const ok=who&&(f.cy.length||(fOwn&&isCust(f.t)))&&f.d&&!f.busy&&(!probs||f.confirm)&&!hard&&!dup&&!de;
     const b=$('#f-save');if(b)b.disabled=!ok;
-    const sum=$('#f-sum');if(sum)sum.textContent=!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length&&!(fOwn&&isCust(f.t))?(f.own?(LANG==='ta'?'எத்தனை சிலிண்டர் என்று போடவும்':'Type how many'):'Add at least one cylinder'):hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
+    const sum=$('#f-sum');if(sum)sum.textContent=de?(LANG==='ta'?'இதே பதிவு ஏற்கனவே உள்ளது':'Already saved — duplicate'):!f.d?'Check the date':dup?'This number is already used':!who?(isCust(f.t)?'Choose a customer':'Type the filling plant or supplier'):!f.cy.length&&!(fOwn&&isCust(f.t))?(f.own?(LANG==='ta'?'எத்தனை சிலிண்டர் என்று போடவும்':'Type how many'):'Add at least one cylinder'):hard?'Remove numbers that are not in the list':probs&&!f.confirm?(LANG==='ta'?'தொடர Space அழுத்தவும் (அல்லது “Save anyway” tick செய்யவும்)':'Press Space (or tick “Save anyway”) to continue'):''}
 };
+/* same type, same date, same customer (or plant) and the same cylinder numbers already saved = duplicate */
+function dupEntry(f){if(!f||!f.cy||!f.cy.length||!f.d||!S.D)return null;const cust=isCust(f.t);const who=cust?f.ck:(f.pl||'').trim().toLowerCase();if(!who)return null;const er=f.edit&&f.edit.rid;
+  for(const r of S.D.recs){if(r.del||r.rid===er||r.t!==f.t||r.d!==f.d)continue;if(cust?r.ck!==f.ck:(r.pl||'').trim().toLowerCase()!==who)continue;
+    const same=f.cy.filter(c=>(r.cy||[]).includes(c));if(same.length)return {r,same}}return null}
+function blinkCust(){const el=$('#f-cust');if(!el)return;el.classList.remove('needfill');void el.offsetWidth;el.classList.add('needfill');el.focus();
+  const info=$('#f-cust-info');if(info)info.innerHTML=`<span style="color:var(--crit);font-weight:600">${LANG==='ta'?'Customer பெயர் போடவும்':'Type the customer name'}</span>`}
+/* a customer name needs at least two letters (English or Tamil) — numbers alone are not a name */
+const nameOk=n=>(String(n||'').match(/[A-Za-z\u0B80-\u0BFF]/g)||[]).length>=2;
 async function addCustomer(name){
+  if(!nameOk(name)){toast(LANG==='ta'?'Customer பெயரில் எழுத்துகள் வேண்டும் — எண்கள் மட்டும் கூடாது':'A customer name needs letters — numbers alone are not allowed',4000);blinkCust();return null}
   if(!can('newCust')){toast(LANG==='ta'?'புதிய வாடிக்கையாளர் சேர்க்க அனுமதி இல்லை. Owner-இடம் கேட்கவும்.':'You are not allowed to add customers. Ask the owner.');return null}
   name=name.replace(/\s+/g,' ').trim();if(!name)return null;
   const ck=slug(name);if(!ck)return null;
@@ -2057,7 +2134,7 @@ async function addCustomer(name){
     if(S.custDoc)await ref.update({list:{[ck]:body}});else await ref.set({list:{[ck]:body}});
     S.cust[ck]=body;toast('Added customer '+name);return ck}catch(e){toast(dbErr(e));return null}
 }
-async function saveEntry(){
+async function saveEntry(){{const de=dupEntry(S.form);if(de){toast(LANG==='ta'?'இதே பதிவு ஏற்கனவே உள்ளது — சேமிக்கவில்லை':'Already saved — not saved again',4000);return}}
   const f=S.form;if(f.busy)return;
   const cust=isCust(f.t);
   const own=cust&&f.own&&+f.ownN>0?{n:+f.ownN,g:f.ownG||'O2',nos:(f.ownNos||'').trim()}:null;
@@ -2096,7 +2173,7 @@ function recDrawer(rid){const r=(S.D.recs||[]).find(x=>x.rid===rid);if(!r)return
     const g=(S.cyl[c]||{}).g||'';
     return `<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</button></td><td class="small">${esc(g)}</td><td class="small">${link}</td><td class="small">${st2(c)}</td><td class="small">${me.flag&&!me.vf?`<span style="color:var(--warn)">⚠ ${esc(me.flag)}</span>`:''}</td></tr>`}).join('');
   const kv=(a,b)=>b?`<div><span>${a}</span><b>${b}</b></div>`:'';
-  const acts=`<div class="row" style="margin-top:12px;gap:6px">${!r.del&&isCust(r.t)?`<button class="btn sm wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('wa')}WhatsApp</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('dl')}DC PDF</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('edit')}${ta?'திருத்து':'Edit'}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}${isCust(r.t)&&r.ck?`<button class="btn sm ghost" data-act="opencust" data-v="${esc(r.ck)}">👥 ${ta?'Customer பக்கம்':'Customer page'}</button>`:''}</div>`;
+  const acts=`<div class="row" style="margin-top:12px;gap:6px">${!r.del&&isCust(r.t)?`<button class="btn sm wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('wa')}WhatsApp</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('dl')}DC PDF</button><button class="btn sm" data-act="certrec" data-rid="${esc(r.rid)}">📄 ${LANG==='ta'?'Purity certificate':'Purity certificate'}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('edit')}${ta?'திருத்து':'Edit'}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}${isCust(r.t)&&r.ck?`<button class="btn sm ghost" data-act="opencust" data-v="${esc(r.ck)}">👥 ${ta?'Customer பக்கம்':'Customer page'}</button>`:''}</div>`;
   openDrawer({k:'form',rec:rid,render:()=>[`<h3><span class="tcol ${r.t.toLowerCase()} rd-t">${TSHORT[r.t]}</span> ${esc(recTitle(r))} ${r.dc?`<span class="muted mono">#${esc(r.dc)}</span>`:''}</h3>`,
     `<div class="kv">${kv(ta?'தேதி':'Date',fmtD(r.d))}${kv(ta?'கிளை':'Branch',esc(brName(r.br)))}${kv(ta?'சிலிண்டர்கள்':'Cylinders',r.cy.length+(ownN(r)?' + '+esc(ownTxt(r)):''))}${kv(ta?'பதிவு செய்தவர்':'Entered by',esc(personName(r.by))+' · '+fmtDT(r.at))}${r.ed?kv(ta?'மாற்றம்':'Edited',esc(r.ed.by?personName(r.ed.by):'')+(r.ed.at?' · '+fmtDT(r.ed.at):'')):''}${r.dcOld?kv(ta?'பழைய எண்':'Old number',esc(r.dcOld)):''}${r.sig?kv(ta?'கையெழுத்து':'Signature','✍ '+(ta?'உள்ளது':'yes')):''}${r.full?kv(ta?'நிலை':'Note',ta?'நிரம்பியபடி திரும்பியது':'Came back full'):''}${r.rm?kv(ta?'குறிப்பு':'Remarks',esc(r.rm)):''}${r.del?kv(ta?'நிலை':'Status',ta?'நீக்கப்பட்டது':'Deleted'):''}</div>
      ${isCust(r.t)&&r.cy.length?`<div style="margin-top:10px">${recFollow(r)}</div>`:''}
@@ -2185,7 +2262,7 @@ VIEWS.cyl={
 
 /* Customers */
 VIEWS.cust={
-  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return n?`<button class="btn" data-act="mergeopen">${ic('warn')}${LANG==='ta'?'ஒத்த பெயர்கள்':'Look-alike names'} · ${n}</button>`:''})():''}${S.isOwner?(()=>{const n=Object.keys(S.cust).filter(k=>!custBr(k).set).length;return `<button class="btn" data-act="brfix">${LANG==='ta'?'Customer கிளைகள்':'Customer branches'}${n?` · ${n}`:''}</button>`})():''}${can('newCust')?`<button class="btn" data-act="newcust">${ic('plus')}Add customer</button>`:''}</div>`:''}</div>
+  mount(){const u=S.ui;return `<div class="page-head"><div><h2>Customers</h2><p>Who is holding our cylinders, and for how long.</p></div>${canEnter()?`<div class="actions">${S.isOwner?(()=>{const n=similarCustomers().length;return `<button class="btn ${n?'warnbtn':''}" data-act="mergeopen">🔀 ${LANG==='ta'?'ஒரே பெயர் — இணைக்கப் பரிந்துரை':'Same name? — merge suggestions'} · ${n}</button><button class="btn" data-act="mergeman">🔀 ${LANG==='ta'?'கையால் இணை':'Merge by hand'}</button>`})():''}${S.isOwner?(()=>{const n=Object.keys(S.cust).filter(k=>!custBr(k).set).length;return `<button class="btn" data-act="brfix">${LANG==='ta'?'Customer கிளைகள்':'Customer branches'}${n?` · ${n}`:''}</button>`})():''}${can('newCust')?`<button class="btn" data-act="newcust">${ic('plus')}Add customer</button>`:''}</div>`:''}</div>
     <div class="panel"><div class="row"><div class="field search"><label for="k-q">Customer</label><div class="rel">${ic('search')}<input class="inp" id="k-q" value="${esc(u.custQ)}" placeholder="Search by name"></div></div>
     <div class="field" style="flex:0 1 auto"><label>Sort</label><div class="seg" id="k-sort"></div></div></div></div><div class="panel" id="k-list"></div>`},
   after(){$('#k-q').addEventListener('input',e=>{S.ui.custQ=e.target.value;this.update()});this.update()},
@@ -2194,8 +2271,8 @@ VIEWS.cust={
     const rows=Object.entries(S.cust).filter(([k,c])=>!q||c.n.toLowerCase().includes(q)).map(([k,c])=>{const h=S.D.holding[k]||[];return {k,c,h:h.length,o:h.filter(s=>s.days>90).length,last:S.D.lastMove[k]||'',rent:openRent(k)}});
     rows.sort(u.custSort==='name'?(a,b)=>a.c.n.localeCompare(b.c.n):u.custSort==='old'?(a,b)=>b.o-a.o||b.h-a.h:(a,b)=>b.h-a.h||b.last.localeCompare(a.last));
     const anyRent=can('money')&&rows.some(r=>r.rent>0);
-    $('#k-list').innerHTML=rows.length?`<div class="panel-head"><h3>${rows.length} customers</h3><span class="muted">${rows.reduce((a,r)=>a+r.h,0)} cylinders out</span></div><div class="tbl-wrap"><table><thead><tr><th>Customer</th><th>Type</th><th class="r">Holding</th><th class="r">Over 90 days</th>${anyRent?'<th class="r">Rent so far</th>':''}<th class="r">Last movement</th></tr></thead><tbody>
-      ${rows.slice(0,300).map(r=>`<tr class="click" data-act="opencust" data-v="${esc(r.k)}"><td><b>${esc(r.c.n)}</b> ${brTag(r.k)}${custTown(r.c)||r.c.ph?`<div class="small muted">${esc([custTown(r.c),r.c.ph].filter(Boolean).join(' · '))}</div>`:''}</td><td class="muted">${esc(r.c.t||'')}</td><td class="r num">${r.h||'<span class="muted">0</span>'}</td><td class="r">${r.o?`<span class="pill crit num">${r.o}</span>`:'<span class="muted">—</span>'}</td>${anyRent?`<td class="r num">${r.rent?rupee(r.rent):'<span class="muted">—</span>'}</td>`:''}<td class="r num muted">${fmtD(r.last)}</td></tr>`).join('')}</tbody></table></div>`
+    $('#k-list').innerHTML=rows.length?`<div class="panel-head"><h3>${rows.length} customers</h3><span class="muted">${rows.reduce((a,r)=>a+r.h,0)} cylinders out</span></div><div class="tbl-wrap"><table><thead><tr><th>Customer</th><th>Type</th><th class="r">Holding</th><th class="r">Over 90 days</th>${anyRent?'<th class="r">Rent so far</th>':''}<th class="r">Last movement</th>${canManage()?'<th></th>':''}</tr></thead><tbody>
+      ${rows.slice(0,300).map(r=>`<tr class="click" data-act="opencust" data-v="${esc(r.k)}"><td><b>${esc(r.c.n)}</b> ${brTag(r.k)}${custTown(r.c)||r.c.ph?`<div class="small muted">${esc([custTown(r.c),r.c.ph].filter(Boolean).join(' · '))}</div>`:''}</td><td class="muted">${esc(r.c.t||'')}</td><td class="r num">${r.h||'<span class="muted">0</span>'}</td><td class="r">${r.o?`<span class="pill crit num">${r.o}</span>`:'<span class="muted">—</span>'}</td>${anyRent?`<td class="r num">${r.rent?rupee(r.rent):'<span class="muted">—</span>'}</td>`:''}<td class="r num muted">${fmtD(r.last)}</td>${canManage()?`<td class="r">${!custUsed(r.k)?`<button class="btn sm ghost danger" data-act="delcust" data-v="${esc(r.k)}" title="${LANG==='ta'?'நீக்கு':'Delete'}">${ic('x')}</button>`:''}</td>`:''}</tr>`).join('')}</tbody></table></div>`
       :`<div class="empty"><b>No customer found</b>Check the spelling or add a new customer.</div>`}
 };
 
@@ -2521,153 +2598,324 @@ VIEWS.att={
     if(u.atTab==='log'){el.innerHTML=`<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>${ta?'நேரம்':'Time'}</th><th>${ta?'பெயர்':'Name'}</th><th>${ta?'கருவி':'Device'}</th><th>${ta?'இடம்':'Place'}</th></tr></thead><tbody>${rows.slice(0,500).map(r=>`<tr><td class="num">${fmtD(r.d)} ${hm(r.at)}</td><td>${esc(personName(r.uid))}</td><td class="small">${esc(r.dev||'')} · ${esc(r.app||'')}</td><td>${mapLink(r.loc)}</td></tr>`).join('')||`<tr><td colspan="4" class="muted">${ta?'இந்த மாதம் login இல்லை':'No logins this month'}</td></tr>`}</tbody></table></div></div>`;return}
     el.innerHTML=`<div class="panel">${S.company.trail?'':`<div class="notice info">${ic('info')}<div>${ta?'இடப் பதிவு off-இல் உள்ளது. மேலே tick செய்தால் தொடங்கும்.':'The location trail is off. Tick the box above to start it.'}</div></div>`}${rows.length?rows.sort((a,b)=>a.d<b.d?1:-1).map(r=>{const pts=Object.entries(r.pts||{}).sort(([a],[b])=>a<b?-1:1);const route=pts.length>1?`https://www.google.com/maps/dir/${pts.slice(-10).map(([k,p])=>p.lat+','+p.lng).join('/')}`:'';return `<div class="trailrow"><b>${esc(personName(r.uid))}</b> · ${fmtD(r.d)} · ${pts.length} ${ta?'இடங்கள்':'points'} ${route?`<a href="${route}" target="_blank" rel="noopener">🧭 ${ta?'பாதை':'Route'}</a>`:''}<div class="small">${pts.map(([k,p])=>`<a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" rel="noopener">${k.slice(0,2)}:${k.slice(2)}</a>`).join(' · ')}</div></div>`}).join(''):`<div class="empty"><b>${ta?'இந்த மாதம் இடப் பதிவு இல்லை':'No trail this month'}</b></div>`}</div>`}
 };
-/* ---------------- Filling register (factory) ---------------- */
-/* Party: 'own' = Hindusthan Surgicals (our cylinders) or a dealer id (filled for another party).
-   Only OUR fillings of the tracked types (default C and D) touch the cylinder list.
-   Everything else is ledger only: count, readings, party. */
-const SIZES=()=>Object.assign({A:'7 m³',B:'1.5 m³',C:'',D:''},S.company.sizes||{});
-const fillTrack=()=>Array.isArray(S.company.fillTrack)?S.company.fillTrack:['C','D'];
+/* ---------------- Filling register (factory) — v4 ----------------
+   Two plants (one per branch): Hindusthan Gases & Air Products · Dharmapuri, Adiyaman Gases · Krishnagiri.
+   Liquid purchases make batches; every filling belongs to the batch in the tank at that time.
+   Ownership: a cylinder is ours when its number is in our cylinder list.
+   - Filled for our own company → it is full in our godown (FL).
+   - Our rental cylinder filled for a dealer → noted in its history (FD), stays with the dealer.
+   - Dealer's own cylinders → ledger only. */
+const SZM=()=>Object.assign({A:1,B:1.5,C:3,D:7},S.company.sz2||{});
+const SIZES=()=>{const m=SZM();return Object.fromEntries(Object.entries(m).map(([k,v])=>[k,v+' m³']))};
+const LOX=()=>+S.company.lox||0.77;              /* kg of liquid oxygen → m³ gas (supplier invoices use 0.77) */
+const PLANT_DEF={DPI:{n:'Hindusthan Gases & Air Products',pl:'Dharmapuri',code:'HSD',pre:'HGAP'},KGIRI:{n:'Adiyaman Gases',pl:'Krishnagiri',code:'ADGS',pre:'AG'}};
+const plant=br=>Object.assign({n:brName(br),pl:brName(br),code:br,pre:br,ad:'',ph:''},PLANT_DEF[br]||{},(S.company.plants||{})[br]||{});
 const ourName=()=>S.company.name||'Hindusthan Surgicals';
-function fillOurs(r){return !r.party||r.party==='own'}
-function fillTracked(r){return fillOurs(r)&&fillTrack().includes(r.size||'A')}
-const dealerName=id=>id==='own'||!id?ourName():((S.dealers||{})[id]||{}).n||'(deleted dealer)';
+function fillOurs(r){return !r.party||r.party==='own'||String(r.party).startsWith('own:')}
+const dealerName=id=>!id||id==='own'?ourName():String(id).startsWith('own:')?plant(id.slice(4)).n:((S.dealers||{})[id]||{}).n||'(deleted dealer)';
+const partyCode=id=>!id||id==='own'?'':String(id).startsWith('own:')?plant(id.slice(4)).code:((S.dealers||{})[id]||{}).c||'';
+const parties=()=>S.company.branches.map(b=>({k:'own:'+b,n:plant(b).n,c:plant(b).code,own:true})).concat(Object.entries(S.dealers||{}).filter(([k,v])=>!v.del).map(([k,v])=>({k,n:v.n,c:v.c||''})).sort((a,b)=>a.n.localeCompare(b.n)));
 const fillCount=r=>(r.cy&&r.cy.length)||+r.n||0;
+const fillM3=r=>fillCount(r)*(SZM()[r.size||'D']||0);
 const numOrNull=v=>{const x=parseFloat(String(v==null?'':v).replace(/,/g,''));return isFinite(x)?x:null};
-const diffTxt=(a,b,u)=>a!=null&&b!=null?`${+Math.abs(b-a).toFixed(2)} ${u}`:'';
-const durTxt=(a,b)=>{if(!a||!b)return '';let m=(+b.slice(0,2)*60+ +b.slice(3))-(+a.slice(0,2)*60+ +a.slice(3));if(m<0)m+=1440;return Math.floor(m/60)+'h '+pad(m%60)+'m'};
+const f2=v=>v==null||v===''?'—':(+(+v).toFixed(2)).toLocaleString('en-IN');
 const canFill=()=>role()&&!S.readOnly&&(S.isOwner||(['manager','staff'].includes(role())&&!viewOnly()&&can('fill')));
-function dealerPanel(pickAfter){
+const canPur=()=>canManage()||canFill();
+/* ---- batches ---- */
+const fyOf=d=>{const y=+d.slice(0,4),m=+d.slice(5,7);const f=m>=4?y:y-1;return String(f).slice(2)+'-'+String(f+1).slice(2)};
+const purList=br=>Object.entries(S.lpur||{}).map(([id,p])=>Object.assign({id},p)).filter(p=>!p.del&&(!br||p.br===br)).sort((a,b)=>(a.d+' '+(a.tm||'00:00')).localeCompare(b.d+' '+(b.tm||'00:00')));
+function batchFor(br,d,t){const key=d+' '+(t||'23:59');let best=null;for(const p of purList(br)){if((p.d+' '+(p.tm||'00:00'))<=key)best=p}return best}
+/* level added by deliveries: on the day (after opening) and overnight (after yesterday's closing, before today's opening) */
+function levelAdds(br,d,prev,dd){let day=0,night=0;const lv=p=>p.lvA!=null&&p.lvB!=null?p.lvA-p.lvB:0;
+  for(const p of purList(br)){if(p.d===d){if(p.tm&&dd&&dd.oT&&p.tm<dd.oT)night+=lv(p);else if(p.tm&&dd&&dd.cT&&p.tm>dd.cT){}else day+=lv(p)}
+    else if(prev&&p.d===prev.d&&p.tm&&prev.cT&&p.tm>prev.cT)night+=lv(p);
+    else if(prev&&p.d>prev.d&&p.d<d)night+=lv(p)}
+  return {day,night}}
+const fillTime=r=>r.at&&localD(r.at)===r.d?hm(r.at):'12:00';
+function purityOf(p){if(!p)return null;if(p.cert&&p.pur)return {v:+p.pur,src:'own',p};
+  const L=purList(p.br);const i=L.findIndex(x=>x.id===p.id);for(let j=i-1;j>=0;j--)if(L[j].cert&&L[j].pur)return {v:+L[j].pur,src:'prev',p:L[j]};return null}
+/* batches of the cylinders in a DC: the last factory filling of each cylinder before the DC */
+function batchesForRec(r){const ids=new Set();
+  for(const c of r.cy||[]){const ev=(S.D.tl[c]||[]).filter(e=>(e.t==='FL'||e.t==='FD')&&e.d<=r.d).pop();
+    if(ev){const fr=(S.D.fills||[]).find(x=>x.rid===ev.rid);const b=fr?batchFor(fr.br||r.br,fr.d,fillTime(fr)):null;if(b)ids.add(b.id)}}
+  if(!ids.size){const b=batchFor(r.br,r.d,'23:59');if(b)ids.add(b.id)}
+  return [...ids]}
+function dealerPanel(pickAfter,pre){
   const ta=LANG==='ta';let edit=null;
   openDrawer({k:'form',render:()=>[`<h3>🏢 ${ta?'Dealers / மற்ற party':'Dealers / other parties'}</h3>`,
-    `<p class="muted" style="margin-top:0">${ta?'நாம் நிரப்பிக் கொடுக்கும் மற்ற party. இவர்களின் சிலிண்டர்கள் நம் சிலிண்டர் பட்டியலில் சேராது — ledger மட்டும்.':'Parties we fill cylinders for. Their cylinders never mix with our cylinder list — ledger only.'}</p>
+    `<p class="muted" style="margin-top:0">${ta?'நாம் நிரப்பிக் கொடுக்கும் மற்ற party. சுருக்கப் பெயர் (code) நோட்டில் எழுதுவது போல — Ammon, PSV, BNY… நிரப்பல் பதிவில் இதை type செய்தால் போதும்.':'Parties we fill for. The short code is what you write in the notebook — Ammon, PSV, BNY… Type it in the filling entry.'}</p>
      <form id="dl-form" class="dl-form" autocomplete="off"><div class="row">
-       <div class="field" style="flex:1 1 220px"><label for="dl-n">${ta?'Dealer பெயர்':'Dealer name'} *</label><input class="inp" id="dl-n" required></div>
-       <div class="field" style="flex:0 1 160px"><label for="dl-ph">Mobile</label><input class="inp mono" id="dl-ph" inputmode="tel"></div>
-       <div class="field" style="flex:0 1 180px"><label for="dl-gst">GSTIN</label><input class="inp mono" id="dl-gst"></div></div>
+       <div class="field" style="flex:0 1 120px"><label for="dl-c">${ta?'சுருக்கம்':'Short code'}</label><input class="inp mono" id="dl-c" placeholder="PSV"></div>
+       <div class="field" style="flex:1 1 220px"><label for="dl-n">${ta?'Dealer முழுப் பெயர்':'Dealer full name'} *</label><input class="inp" id="dl-n" required></div>
+       <div class="field" style="flex:0 1 150px"><label for="dl-ph">Mobile</label><input class="inp mono" id="dl-ph" inputmode="tel"></div>
+       <div class="field" style="flex:0 1 170px"><label for="dl-gst">GSTIN</label><input class="inp mono" id="dl-gst"></div></div>
        <div class="row" style="margin-top:8px"><div class="field" style="flex:1 1 260px"><label for="dl-ad">${ta?'முகவரி / ஊர்':'Address / town'}</label><input class="inp" id="dl-ad"></div>
        <div class="field" style="flex:1 1 200px"><label for="dl-no">${ta?'குறிப்பு':'Note'}</label><input class="inp" id="dl-no"></div></div>
        <div class="row" style="margin-top:10px"><button class="btn primary" id="dl-save">${ic('check')}<span id="dl-sv">${ta?'Dealer சேர்':'Add dealer'}</span></button><button class="btn" type="button" id="dl-new" hidden>${ta?'புதியது':'New'}</button></div></form>
      <div id="dl-list" style="margin-top:14px"></div>`],
-    after(){const F=['n','ph','gst','ad','no'];
+    after(){const F=['c','n','ph','gst','ad','no'];
       const draw=()=>{const ds=Object.entries(S.dealers||{}).filter(([k,v])=>!v.del).sort((a,b)=>a[1].n.localeCompare(b[1].n));
-        $('#dl-list').innerHTML=ds.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'பெயர்':'Name'}</th><th>Mobile</th><th>GSTIN</th><th>${ta?'முகவரி':'Address'}</th><th class="r">${ta?'நிரப்பல்':'Filled'}</th><th></th></tr></thead><tbody>${ds.map(([k,v])=>{const n=(S.D.fills||[]).filter(r=>r.party===k).reduce((a,r)=>a+fillCount(r),0);return `<tr><td><b>${esc(v.n)}</b>${v.no?`<div class="small muted">${esc(v.no)}</div>`:''}</td><td>${v.ph?`<a href="tel:${esc(telOf(v.ph))}">${esc(v.ph)}</a>`:''}</td><td class="mono small">${esc(v.gst||'')}</td><td class="small">${esc(v.ad||'')}</td><td class="r num">${n}</td><td><button class="btn sm" type="button" data-dle="${esc(k)}">${ta?'மாற்று':'Edit'}</button></td></tr>`}).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'இன்னும் dealer இல்லை':'No dealers yet'}</b>${ta?'மேலே பெயர் போட்டு சேர்க்கவும்.':'Type a name above to add one.'}</div>`};
-      const fill=(k)=>{edit=k;const v=k?S.dealers[k]:{};F.forEach(f=>{$('#dl-'+f).value=v[f]||''});$('#dl-sv').textContent=k?(ta?'மாற்றம் சேமி':'Save changes'):(ta?'Dealer சேர்':'Add dealer');$('#dl-new').hidden=!k;$('#dl-n').focus()};
+        $('#dl-list').innerHTML=ds.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'சுருக்கம்':'Code'}</th><th>${ta?'பெயர்':'Name'}</th><th>Mobile</th><th>GSTIN</th><th>${ta?'முகவரி':'Address'}</th><th class="r">${ta?'நிரப்பல்':'Filled'}</th><th></th></tr></thead><tbody>${ds.map(([k,v])=>{const n=(S.D.fills||[]).filter(r=>r.party===k).reduce((a,r)=>a+fillCount(r),0);return `<tr><td class="mono"><b>${esc(v.c||'')}</b></td><td><b>${esc(v.n)}</b>${v.no?`<div class="small muted">${esc(v.no)}</div>`:''}</td><td>${v.ph?`<a href="tel:${esc(telOf(v.ph))}">${esc(v.ph)}</a>`:''}</td><td class="mono small">${esc(v.gst||'')}</td><td class="small">${esc(v.ad||'')}</td><td class="r num">${n}</td><td><button class="btn sm" type="button" data-dle="${esc(k)}">${ta?'மாற்று':'Edit'}</button></td></tr>`}).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'இன்னும் dealer இல்லை':'No dealers yet'}</b>${ta?'மேலே பெயர் போட்டு சேர்க்கவும்.':'Type a name above to add one.'}</div>`};
+      const fill=(k)=>{edit=k;const v=k?S.dealers[k]:{};F.forEach(f=>{$('#dl-'+f).value=v[f]||''});$('#dl-sv').textContent=k?(ta?'மாற்றம் சேமி':'Save changes'):(ta?'Dealer சேர்':'Add dealer');$('#dl-new').hidden=!k;$('#dl-c').focus()};
       $('#dl-list').addEventListener('click',e=>{const b=e.target.closest('[data-dle]');if(b)fill(b.dataset.dle)});
       $('#dl-new').onclick=()=>fill(null);
       $('#dl-form').addEventListener('submit',async e=>{e.preventDefault();const v={};F.forEach(f=>{v[f]=$('#dl-'+f).value.replace(/\s+/g,' ').trim()});if(!v.n)return;
-        const dup=Object.entries(S.dealers||{}).find(([k,d])=>k!==edit&&!d.del&&d.n.toLowerCase()===v.n.toLowerCase());if(dup){toast(ta?'இந்தப் பெயர் ஏற்கனவே உள்ளது':'This name is already there');return}
+        if(!nameOk(v.n)){toast(ta?'பெயரில் எழுத்துகள் வேண்டும்':'The name needs letters');return}
+        const dup=Object.entries(S.dealers||{}).find(([k,d])=>k!==edit&&!d.del&&(d.n.toLowerCase()===v.n.toLowerCase()||(v.c&&(d.c||'').toLowerCase()===v.c.toLowerCase())));if(dup){toast(ta?'இந்தப் பெயர் / சுருக்கம் ஏற்கனவே உள்ளது':'This name or code is already there');return}
+        if(v.c&&S.company.branches.some(b=>plant(b).code.toLowerCase()===v.c.toLowerCase())){toast(ta?'இந்தச் சுருக்கம் நம் நிறுவனத்துக்கு உரியது':'This code belongs to our own company');return}
         const k=edit||('d'+uidGen());if(!edit){v.at=new Date().toISOString();v.by=S.uid}
         try{await S.db.doc('dealers/list').update({list:{[k]:v}});S.dealers=Object.assign({},S.dealers,{[k]:Object.assign({},S.dealers[k]||{},v)});toast(ta?'சேமிக்கப்பட்டது':'Saved');
-          if(pickAfter&&!edit){S.ui.fl.party=k;closeDrawer();mounted=null;refresh();return}fill(null);draw()}catch(err){toast(dbErr(err))}});
-      draw();$('#dl-n').focus()}});
+          if(pickAfter&&!edit){const fe=S.ui.fe;if(fe){fe.party=k;fe.pq=''}closeDrawer();mounted=null;refresh();return}fill(null);draw()}catch(err){toast(dbErr(err))}});
+      draw();if(pre){const code=!/\s/.test(pre)&&pre.length<=6;$(code?'#dl-c':'#dl-n').value=pre;$(code?'#dl-n':'#dl-c').focus()}else $('#dl-c').focus()}});
 }
+/* ---- plant settings (owner / manager) ---- */
+function plantPanel(){const ta=LANG==='ta';const sz=SZM();
+  openDrawer({k:'form',render:()=>[`<h3>⚙ ${ta?'Plant அமைப்பு':'Plant settings'}</h3>`,
+    `${S.company.branches.map(b=>{const p=plant(b);return `<div class="panel" style="margin-bottom:10px"><div class="eyebrow">${esc(brName(b))}</div><div class="row">
+      <div class="field" style="flex:1 1 240px"><label>${ta?'நிறுவனப் பெயர்':'Company name'}</label><input class="inp" data-pp="${b}" data-k="n" value="${esc(p.n)}"></div>
+      <div class="field" style="flex:0 1 110px"><label>${ta?'சுருக்கம்':'Code'}</label><input class="inp mono" data-pp="${b}" data-k="code" value="${esc(p.code)}"></div>
+      <div class="field" style="flex:0 1 120px"><label>${ta?'Batch முன்னொட்டு':'Batch prefix'}</label><input class="inp mono" data-pp="${b}" data-k="pre" value="${esc(p.pre)}"></div></div>
+      <div class="row" style="margin-top:8px"><div class="field" style="flex:1 1 300px"><label>${ta?'முகவரி (certificate-க்கு)':'Address (for certificates)'}</label><input class="inp" data-pp="${b}" data-k="ad" value="${esc(p.ad||'')}"></div>
+      <div class="field" style="flex:0 1 200px"><label>${ta?'தொலைபேசி':'Phone'}</label><input class="inp" data-pp="${b}" data-k="ph" value="${esc(p.ph||'')}"></div></div></div>`}).join('')}
+     <div class="panel"><div class="eyebrow">${ta?'சிலிண்டர் வகைகள் (m³)':'Cylinder types (m³)'}</div><div class="row">${['A','B','C','D'].map(k=>`<div class="field" style="flex:0 1 100px"><label>${k}</label><input class="inp num" data-sz="${k}" value="${sz[k]}" inputmode="decimal"></div>`).join('')}
+       <div class="field" style="flex:0 1 200px"><label>${ta?'1 kg liquid = m³ gas':'1 kg liquid = m³ gas'}</label><input class="inp num" id="pp-lox" value="${LOX()}" inputmode="decimal"></div></div>
+       <div class="small muted" style="margin-top:6px">${ta?'அறிவியல் கணக்கு: 1 kg = 0.70 Nm³ (0°C), ≈0.74 m³ (15°C). Supplier invoice 0.77 பயன்படுத்துகிறது.':'Physics: 1 kg = 0.70 Nm³ (0°C), ≈0.74 m³ (15°C). Supplier invoices use 0.77.'}</div></div>
+     <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="pp-save">${ic('check')}${ta?'சேமி':'Save'}</button></div>`],
+    after(){$('#pp-save').onclick=async()=>{const pl={};$$('[data-pp]').forEach(i=>{(pl[i.dataset.pp]=pl[i.dataset.pp]||{})[i.dataset.k]=i.value.trim()});
+      const s2={};$$('[data-sz]').forEach(i=>{const v=numOrNull(i.value);if(v)s2[i.dataset.sz]=v});const lox=numOrNull($('#pp-lox').value)||0.77;
+      try{await S.db.doc('settings/company').update({plants:pl,sz2:s2,lox});Object.assign(S.company,{plants:pl,sz2:s2,lox});toast(ta?'சேமிக்கப்பட்டது':'Saved');closeDrawer();mounted=null;refresh()}catch(e){toast(dbErr(e))}}}});
+}
+/* ---- liquid purchase form ---- */
+function purPanel(id){const ta=LANG==='ta';const P=id?Object.assign({},S.lpur[id]):{br:S.ui.fe&&S.ui.fe.br||myBranch(),d:todayISO(),tm:'',sup:'',inv:'',invD:'',dn:'',veh:'',cbm:'',rate:'',w1:'',w2:'',lvB:'',lvA:'',sb:'',cert:false,pur:'',note:''};
+  const sups=[...new Set(purList().map(p=>p.sup).filter(Boolean))];
+  const F=(k,l,a='')=>`<div class="field" ${a}><label for="pu-${k}">${l}</label><input class="inp" id="pu-${k}" value="${esc(P[k]??'')}"></div>`;
+  openDrawer({k:'form',render:()=>[`<h3>🛢 ${id?(ta?'Liquid வாங்குதல் — திருத்து':'Liquid purchase — edit'):(ta?'புதிய liquid வாங்குதல்':'New liquid purchase')}${P.bn?` · <span class="mono">${esc(P.bn)}</span>`:''}</h3>`,
+    `<form id="pu-form" autocomplete="off"><div class="row">
+       <div class="field" style="flex:0 1 170px"><label for="pu-br">${ta?'Plant':'Plant'}</label><select class="inp" id="pu-br">${S.company.branches.map(b=>`<option value="${b}" ${P.br===b?'selected':''}>${esc(plant(b).n)}</option>`).join('')}</select></div>
+       <div class="field" style="flex:0 1 160px"><label for="pu-d">${ta?'Tank-இல் இறக்கிய தேதி':'Unloaded on'}</label><input type="date" class="inp" id="pu-d" value="${esc(P.d)}"></div>
+       <div class="field" style="flex:0 1 120px"><label for="pu-tm">${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="pu-tm" value="${esc(P.tm||'')}"></div>
+       <div class="field" style="flex:1 1 220px"><label for="pu-sup">${ta?'Supplier':'Supplier'}</label><input class="inp" id="pu-sup" list="pu-sups" value="${esc(P.sup)}"><datalist id="pu-sups">${sups.map(x=>`<option value="${esc(x)}">`).join('')}</datalist></div></div>
+     <div class="row" style="margin-top:8px">${F('inv',ta?'Invoice எண்':'Invoice no.','style="flex:1 1 180px"')}<div class="field" style="flex:0 1 160px"><label for="pu-invD">${ta?'Invoice தேதி':'Invoice date'}</label><input type="date" class="inp" id="pu-invD" value="${esc(P.invD||'')}"></div>${F('dn',ta?'Delivery note':'Delivery note','style="flex:0 1 140px"')}${F('veh',ta?'Tanker எண்':'Tanker no.','style="flex:0 1 150px"')}</div>
+     <div class="pu-grid">
+       <div class="pu-box"><div class="eyebrow">⚖ ${ta?'Weighbridge':'Weighbridge'}</div><div class="row">${F('w1',ta?'முதல் எடை (kg)':'First wt (kg)','style="flex:1 1 120px"')}${F('w2',ta?'இரண்டாம் எடை (kg)':'Second wt (kg)','style="flex:1 1 120px"')}</div><div class="pu-calc" id="pu-kg"></div></div>
+       <div class="pu-box"><div class="eyebrow">🧾 ${ta?'Invoice அளவு':'Invoice quantity'}</div><div class="row">${F('cbm','CBM (m³)','style="flex:1 1 110px"')}${F('rate',ta?'விலை / CBM':'Rate / CBM','style="flex:1 1 100px"')}</div><div class="pu-calc" id="pu-amt"></div></div>
+       <div class="pu-box"><div class="eyebrow">🛢 ${ta?'Tank level':'Tank level'}</div><div class="row">${F('lvB',ta?'இறக்கும் முன்':'Before','style="flex:1 1 100px"')}${F('lvA',ta?'இறக்கிய பின்':'After','style="flex:1 1 100px"')}</div><div class="pu-calc" id="pu-lv"></div></div>
+     </div>
+     <div class="pu-box" style="margin-top:10px"><div class="eyebrow">🧪 ${ta?'Purity certificate':'Purity certificate'}</div>
+       <div class="row" style="align-items:flex-end"><label class="check" style="flex:0 1 auto"><input type="checkbox" id="pu-cert" ${P.cert?'checked':''}> ${ta?'Supplier certificate கிடைத்தது':'Supplier certificate received'}</label>
+       ${F('sb',ta?'Supplier batch எண்':'Supplier batch no.','style="flex:1 1 160px"')}${F('pur',ta?'Purity %':'Purity %','style="flex:0 1 110px"')}</div>
+       <div class="small" id="pu-purn" style="margin-top:6px"></div></div>
+     ${F('note',ta?'குறிப்பு':'Note','style="margin-top:10px"')}
+     <div class="row" style="margin-top:12px"><button class="btn primary">${ic('check')}${ta?'சேமி':'Save'}</button>${id&&canManage()?`<button class="btn ghost danger" type="button" id="pu-del">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}</div></form>`],
+    after(){const g=k=>$('#pu-'+k).value.trim();
+      const calc=()=>{const w1=numOrNull(g('w1')),w2=numOrNull(g('w2'));const kg=w1!=null&&w2!=null?w1-w2:null;
+        $('#pu-kg').innerHTML=kg!=null?`${ta?'நிகர':'Net'} <b>${f2(kg)} kg</b> ≈ <b>${f2(kg*LOX())} m³</b> <span class="muted">(×${LOX()})</span>`:'';
+        const cbm=numOrNull(g('cbm')),rt=numOrNull(g('rate'));$('#pu-amt').innerHTML=(cbm&&rt?`₹ <b>${f2(cbm*rt)}</b>`:'')+(cbm&&kg?` <span class="muted">· ${ta?'invoice / kg':'invoice / kg'} = ${(cbm/kg).toFixed(3)}</span>`:'');
+        const a=numOrNull(g('lvA')),b=numOrNull(g('lvB'));$('#pu-lv').innerHTML=a!=null&&b!=null?`${ta?'சேர்ந்தது':'Added'} <b>${f2(a-b)}</b>`:'';
+        const c=$('#pu-cert').checked;$('#pu-pur').disabled=!c;$('#pu-sb').disabled=!c;const pv=numOrNull(g('pur'));
+        $('#pu-purn').innerHTML=!c?`<span class="muted">${ta?'Certificate இல்லை — நம் certificate-இல் முந்தைய certificate உள்ள batch-இன் purity, அதன் குறிப்புடன் வரும்.':'No certificate — our certificates will show the purity of the last certified batch, with a note saying so.'}</span>`:pv!=null&&pv<99?`<span style="color:var(--crit);font-weight:600">⚠ ${ta?'IP grade-க்குக் குறைந்தபட்சம் 99.0% — இந்த batch-க்கு certificate தர முடியாது':'IP grade needs at least 99.0% — no certificate can be given for this batch'}</span>`:''};
+      $$('#pu-form input').forEach(i=>i.addEventListener('input',calc));$('#pu-cert').addEventListener('change',calc);calc();
+      const del=$('#pu-del');if(del)del.onclick=async()=>{if(!confirm(ta?'இந்த வாங்குதலை நீக்கவா?':'Delete this purchase?'))return;try{await S.db.doc('lpur/'+id).update({del:{by:S.uid,at:new Date().toISOString()}});closeDrawer();toast(ta?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}};
+      $('#pu-form').addEventListener('submit',async e=>{e.preventDefault();
+        const v={br:$('#pu-br').value,d:g('d'),tm:g('tm'),sup:g('sup'),inv:g('inv'),invD:g('invD'),dn:g('dn'),veh:g('veh').toUpperCase(),cbm:numOrNull(g('cbm')),rate:numOrNull(g('rate')),w1:numOrNull(g('w1')),w2:numOrNull(g('w2')),lvB:numOrNull(g('lvB')),lvA:numOrNull(g('lvA')),cert:$('#pu-cert').checked,sb:g('sb'),pur:numOrNull(g('pur')),note:g('note')};
+        if(!v.d||!v.sup){toast(ta?'தேதியும் supplier-உம் வேண்டும்':'Date and supplier are needed');return}
+        if(v.w1!=null&&v.w2!=null)v.kg=v.w1-v.w2;
+        if(v.cert&&(v.pur==null||v.pur<90||v.pur>100)){toast(ta?'Purity % சரியாகப் போடவும்':'Enter the purity %');$('#pu-pur').focus();return}
+        try{const nid=id||('p'+uidGen());
+          if(!id||!P.bn||P.br!==v.br){const fy=fyOf(v.d);const n=purList(v.br).filter(p=>p.bn&&p.fy===fy&&p.id!==nid).length+1;v.fy=fy;v.bn=plant(v.br).pre+'/'+fy+'/'+String(n).padStart(3,'0')}
+          if(!id){v.at=new Date().toISOString();v.by=S.uid}else v.ed={by:S.uid,at:new Date().toISOString()};
+          await S.db.doc('lpur/'+nid).update(v);toast((ta?'சேமிக்கப்பட்டது · batch ':'Saved · batch ')+(v.bn||P.bn));closeDrawer()}catch(err){toast(dbErr(err))}})}});
+}
+/* ---- certificate (print) ---- */
+function certPanel(pid,opt){opt=opt||{};const ta=LANG==='ta';const p=S.lpur[pid]?Object.assign({id:pid},S.lpur[pid]):null;if(!p)return;const pu=purityOf(p);const pl=plant(p.br);
+  const custs=Object.entries(S.cust).filter(([k,c])=>!c.off).sort((a,b)=>a[1].n.localeCompare(b[1].n));
+  openDrawer({k:'form',render:()=>[`<h3>📄 ${ta?'Purity certificate':'Purity certificate'} · <span class="mono">${esc(p.bn||'')}</span></h3>`,
+    !pu?`<div class="notice crit">${ic('warn')}<div>${ta?'இந்த batch-க்கும் அதற்கு முந்தையவற்றுக்கும் supplier purity இல்லை. வாங்குதலில் purity போட்ட பிறகுதான் certificate தர முடியும்.':'No supplier purity for this batch or any earlier one. Enter the purity in the purchase first.'}</div></div>`:pu.v<99?`<div class="notice crit">${ic('warn')}<div>${ta?'Purity 99.0%-க்குக் கீழ் — IP grade certificate தர முடியாது.':'Purity below 99.0% — no IP grade certificate.'}</div></div>`:
+    `<div class="row"><div class="field" style="flex:1 1 260px"><label for="ce-ck">${ta?'Customer':'Customer'}</label><select class="inp" id="ce-ck"><option value="">—</option>${custs.map(([k,c])=>`<option value="${esc(k)}" ${opt.ck===k?'selected':''}>${esc(c.n)}</option>`).join('')}</select></div>
+      <div class="field" style="flex:0 1 140px"><label for="ce-dc">DC ${ta?'எண்':'no.'}</label><input class="inp mono" id="ce-dc" value="${esc(opt.dc||'')}"></div>
+      <div class="field" style="flex:0 1 160px"><label for="ce-d">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="ce-d" value="${esc(opt.d||todayISO())}"></div></div>
+     <div id="ce-prev" class="certprev" style="margin-top:12px"></div>
+     <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="ce-print">🖨 ${ta?'Print / PDF':'Print / PDF'}</button></div>`],
+    after(){if(!pu||pu.v<99)return;
+      const html=()=>{const ck=$('#ce-ck').value,c=S.cust[ck]||{};const d=$('#ce-d').value||todayISO();const dc=$('#ce-dc').value.trim();
+        const no='COA/'+(p.bn||'')+'/'+d.slice(8,10)+d.slice(5,7)+(dc?'/'+dc:'');
+        return `<div class="cert"><div class="c-h"><div class="c-co">${esc(pl.n)}</div><div class="c-ad">${esc([pl.ad||pl.pl,pl.ph?'Ph: '+pl.ph:''].filter(Boolean).join(' · '))}</div></div>
+          <div class="c-t">CERTIFICATE OF ANALYSIS</div>
+          <table class="c-kv"><tr><td>Certificate No.</td><td>: ${esc(no)}</td></tr><tr><td>Date</td><td>: ${fmtD(d)}</td></tr>
+          ${ck?`<tr><td>Customer</td><td>: <b>${esc(c.n||'')}</b>${c.ad?'<br>&nbsp; '+esc(c.ad):''}</td></tr>`:''}${dc?`<tr><td>DC No.</td><td>: ${esc(dc)}</td></tr>`:''}
+          <tr><td>Product</td><td>: <b>Oxygen I.P. (Medical)</b></td></tr><tr><td>Batch No.</td><td>: <b>${esc(p.bn||'')}</b> (${fmtD(p.d)})</td></tr>
+          <tr><td>Source</td><td>: ${esc(p.sup||'')}${p.inv?' · Invoice '+esc(p.inv):''}${p.invD?' · '+fmtD(p.invD):''}${p.cert&&p.sb?' · Supplier batch '+esc(p.sb):''}</td></tr></table>
+          <p>We certify that the Oxygen I.P. supplied from the above batch has the following specification:</p>
+          <table class="c-spec"><tr><th>Parameter</th><th>Specification</th><th>Result</th></tr><tr><td>Purity (O₂)</td><td>Not less than 99.0% v/v (I.P.)</td><td><b>${pu.v.toFixed(1)}% v/v</b></td></tr></table>
+          ${pu.src==='prev'?`<p class="c-note">Purity as per supplier certificate of batch ${esc(pu.p.bn||'')}${pu.p.sb?' (supplier batch '+esc(pu.p.sb)+')':''}; supplier certificate for this batch not received.</p>`:`<p class="c-note">Purity as per supplier certificate${p.sb?' — supplier batch '+esc(p.sb):''}.</p>`}
+          <div class="c-sign"><div>For ${esc(pl.n)}</div><div class="c-line">Authorised Signatory</div></div></div>`};
+      const paint=()=>{$('#ce-prev').innerHTML=html()};['ce-ck','ce-dc','ce-d'].forEach(i=>{$('#'+i).addEventListener('input',paint);$('#'+i).addEventListener('change',paint)});paint();
+      $('#ce-print').onclick=()=>{let pa=document.getElementById('printarea');if(!pa){pa=document.createElement('div');pa.id='printarea';document.body.appendChild(pa)}pa.innerHTML=html();document.body.classList.add('printcert');
+        setTimeout(()=>{try{window.print()}finally{setTimeout(()=>document.body.classList.remove('printcert'),500)}},50)}}});
+}
+/* ---- the page ---- */
 VIEWS.fill={
-  mount(){const u=S.ui;const ta=LANG==='ta';
-    if(!u.fl||u.fl.party===undefined)u.fl={cy:[],d:todayISO(),size:'C',party:'own',n:'',note:'',tO:'',tC:'',cO:'',cC:'',kO:'',kC:''};
-    if(!u.flFrom){const d=new Date();d.setDate(d.getDate()-6);u.flFrom=d.toISOString().slice(0,10);u.flTo=todayISO()}if(!u.flParty)u.flParty='all';
-    const f=u.fl;const sz=SIZES();
-    /* opening = last closing reading of the day */
-    if(f.cO===''&&f.kO===''&&f.tO===''){const last=(S.D.fills||[]).filter(r=>r.d===f.d&&(r.cC!=null||r.kC!=null||r.tC)).sort((a,b)=>(b.at||'').localeCompare(a.at||''))[0];if(last){f.cO=last.cC!=null?String(last.cC):'';f.kO=last.kC!=null?String(last.kC):'';f.tO=last.tC||''}}
-    const ds=Object.entries(S.dealers||{}).filter(([k,v])=>!v.del).sort((a,b)=>a[1].n.localeCompare(b[1].n));
-    return `<div class="page-head"><div><h2>Filling register</h2><p>${ta?'Factory-இல் நிரப்பியதைப் பதிவு செய்யவும். நம் (Hindusthan) C, D சிலிண்டர்கள் மட்டும் சிலிண்டர் பட்டியலில் கணக்கு — dealer சிலிண்டர்களும் A, B-யும் ledger-இல் மட்டும்.':'Record what was filled at the factory. Only our own (Hindusthan) tracked types count in the cylinder list — dealer cylinders, and our other types, stay in the ledger only.'}</p></div>
-      <div class="actions"><button class="btn" data-act="dealers">🏢 ${ta?'Dealers':'Dealers'} · ${ds.length}</button></div></div>
-    ${canFill()?`<div class="panel"><div class="panel-head"><h3>${ta?'புதிய நிரப்பல்':'New filling'}</h3><span class="muted small" id="fl-cnt"></span></div>
-      <div class="row">
-        <div class="field" style="flex:0 1 170px"><label for="fl-d">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="fl-d" value="${esc(f.d)}" max="${todayISO()}"></div>
-        <div class="field" style="flex:1 1 260px"><label for="fl-party">${ta?'Dealer பெயர்':'Dealer name'}</label><select class="inp" id="fl-party"><option value="own" ${f.party==='own'?'selected':''}>⭐ ${esc(ourName())} (${ta?'நம்முடையது':'ours'})</option>${ds.map(([k,v])=>`<option value="${esc(k)}" ${f.party===k?'selected':''}>${esc(v.n)}</option>`).join('')}<option value="__new">＋ ${ta?'புதிய dealer சேர்…':'Add new dealer…'}</option></select></div>
-        <div class="field" style="flex:0 1 190px"><label for="fl-size">${ta?'சிலிண்டர் வகை':'Cylinder type'}</label><select class="inp" id="fl-size">${['A','B','C','D'].map(k=>`<option value="${k}" ${f.size===k?'selected':''}>${k}${sz[k]?' · '+esc(sz[k]):''}</option>`).join('')}</select></div>
-      </div>
-      <div id="fl-mode" class="fl-mode"></div>
-      <div class="fl-read">
-        <div class="frh"></div><div class="frh">${ta?'தொடக்கம் (Opening)':'Opening'}</div><div class="frh">${ta?'முடிவு (Closing)':'Closing'}</div><div class="frh">${ta?'பயன்பாடு':'Used'}</div>
-        <label for="fl-tO">🕐 ${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="fl-tO" value="${esc(f.tO)}"><input type="time" class="inp" id="fl-tC" value="${esc(f.tC)}"><b id="fl-ut" class="fl-used"></b>
-        <label for="fl-cO">💨 Cum (m³)</label><input class="inp mono" id="fl-cO" inputmode="decimal" value="${esc(f.cO)}" placeholder="0.00"><input class="inp mono" id="fl-cC" inputmode="decimal" value="${esc(f.cC)}" placeholder="0.00"><b id="fl-uc" class="fl-used"></b>
-        <label for="fl-kO">⚖️ Kg</label><input class="inp mono" id="fl-kO" inputmode="decimal" value="${esc(f.kO)}" placeholder="0.00"><input class="inp mono" id="fl-kC" inputmode="decimal" value="${esc(f.kC)}" placeholder="0.00"><b id="fl-uk" class="fl-used"></b>
-      </div>
+  mount(){const u=S.ui;const ta=LANG==='ta';if(!u.flTab)u.flTab='entry';
+    if(!u.fe)u.fe={br:role()==='staff'||role()==='manager'?myBranch():S.company.branches[0],d:todayISO(),party:'',pq:'',size:'D',duro:false,cy:[],n:'',ours:{}};
+    if(!u.flM)u.flM=todayISO().slice(0,7);
+    const tabs=[['entry',ta?'இன்றைய நிரப்பல்':'Filling'],['sum',ta?'நாள் சுருக்கம்':'Day summary'],['stock',ta?'Stock & இழப்பு':'Stock & loss'],['pur',ta?'வாங்குதல் & batch':'Purchases & batches'],['led',ta?'Party ledger':'Party ledger']];
+    return `<div class="page-head"><div><h2>Filling register</h2><p>${ta?'Liquid வாங்குதல் → batch → தினசரி நிரப்பல் → stock, இழப்பு, certificate. நம் சிலிண்டர் எண்கள் மட்டும் சிலிண்டர் பட்டியலில் கணக்கு; dealer சிலிண்டர்கள் ledger-இல் மட்டும்.':'Liquid purchase → batch → daily filling → stock, loss and certificates. Only our own cylinder numbers count in the cylinder list; dealer cylinders stay in the ledger.'}</p></div>
+      <div class="actions"><button class="btn" data-act="dealers">🏢 Dealers · ${Object.values(S.dealers||{}).filter(v=>!v.del).length}</button>${canManage()?`<button class="btn" data-act="plantset">⚙ ${ta?'Plant அமைப்பு':'Plant settings'}</button>`:''}</div></div>
+    <div class="panel fl-top"><div class="seg" id="fl-tabs">${tabs.map(([k,l])=>`<button data-t="${k}" aria-pressed="${u.flTab===k}">${l}</button>`).join('')}</div>
+      <div class="row" style="align-items:flex-end;margin-top:10px">
+        <div class="field" style="flex:0 1 260px"><label for="fl-br">${ta?'Plant':'Plant'}</label><select class="inp" id="fl-br">${S.company.branches.map(b=>`<option value="${b}" ${u.fe.br===b?'selected':''}>${esc(plant(b).n)} · ${esc(plant(b).pl)}</option>`).join('')}</select></div>
+        ${u.flTab==='stock'||u.flTab==='led'?`<div class="field" style="flex:0 1 170px"><label for="fl-m">${ta?'மாதம்':'Month'}</label><input type="month" class="inp" id="fl-m" value="${esc(u.flM)}"></div>`:u.flTab==='pur'?'':`<div class="field" style="flex:0 1 170px"><label for="fl-d">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="fl-d" value="${esc(u.fe.d)}" max="${todayISO()}"></div>`}
+        <div id="fl-batch" class="fl-batch"></div></div></div>
+    <div id="fl-body"></div>`},
+  after(){const u=S.ui,fe=u.fe;
+    $('#fl-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;u.flTab=b.dataset.t;mounted=null;refresh()});
+    $('#fl-br').addEventListener('change',e=>{fe.br=e.target.value;fe.cy=[];this.update()});
+    const d=$('#fl-d');if(d)d.addEventListener('change',e=>{if(e.target.value)fe.d=e.target.value;this.update()});
+    const m=$('#fl-m');if(m)m.addEventListener('change',e=>{if(e.target.value)u.flM=e.target.value;this.update()});
+    this.update()},
+  update(){const u=S.ui,fe=u.fe;const ta=LANG==='ta';const el=$('#fl-body');if(!el)return;
+    {const b=batchFor(fe.br,fe.d,'23:59');const pu=purityOf(b);$('#fl-batch').innerHTML=b?`<span class="bt-pill">🧪 ${ta?'Batch':'Batch'} <b class="mono">${esc(b.bn||'')}</b> · ${fmtD(b.d)}${pu?` · ${pu.v}%${pu.src==='prev'?'*':''}`:''}</span>`:`<span class="bt-pill none">${ta?'Batch இல்லை — liquid வாங்குதலைப் பதியவும்':'No batch yet — record the liquid purchase'}</span>`}
+    const T=u.flTab;
+    if(T==='entry'){if(!el.querySelector('#fe-form')||el.dataset.k!==fe.br+fe.d){el.dataset.k=fe.br+fe.d;el.innerHTML=this.entryHtml();this.entryBind()}this.dayList();return}
+    el.dataset.k='';
+    if(T==='sum')el.innerHTML=this.sumHtml();
+    else if(T==='stock')el.innerHTML=this.stockHtml();
+    else if(T==='pur')el.innerHTML=this.purHtml();
+    else el.innerHTML=this.ledHtml()},
+  dayDoc(){const fe=S.ui.fe;return (S.pday||{})[fe.br+'_'+fe.d]||{}},
+  entryHtml(){const fe=S.ui.fe;const ta=LANG==='ta';const dd=this.dayDoc();const sz=SZM();const R=(k,ph)=>`<input class="inp ${k.endsWith('T')||k==='offT'?'':'mono num'}" ${k.endsWith('T')||k==='offT'?'type="time"':'inputmode="decimal"'} data-dk="${k}" value="${esc(dd[k]??'')}" placeholder="${ph||''}" ${canFill()?'':'disabled'}>`;
+    return `<div class="panel"><div class="panel-head"><h3>🛢 ${ta?'Tank reading':'Tank reading'} · ${fmtD(fe.d)}</h3><span class="muted small" id="fe-dsave"></span></div>
+      <div class="rd-grid"><div></div><div class="frh">${ta?'Liquid level':'Liquid level'}</div><div class="frh">${ta?'Pressure (kg)':'Pressure (kg)'}</div><div class="frh">${ta?'நேரம்':'Time'}</div>
+        <label>${ta?'தொடக்கம் (Opening)':'Opening'}</label>${R('oL','5300')}${R('oP','5')}${R('oT')}
+        <label>${ta?'முடிவு (Closing)':'Closing'}</label>${R('cL','4600')}${R('cP','4.5')}${R('cT')}
+        <label>${ta?'Plant off நேரம்':'Plant off at'}</label><div></div><div></div>${R('offT')}</div>
+      <div class="small muted" id="fe-rdinfo" style="margin-top:6px"></div></div>
+    ${canFill()?`<div class="panel" id="fe-form"><div class="panel-head"><h3>${ta?'நிரப்பல் பதிவு':'Filling entry'}</h3><span class="muted small">${ta?'Party → Space · வகை எழுத்து (A B C D) · எண்கள் Space · காலியில் Enter = சேமி':'Party → Space · type letter (A B C D) · numbers + Space · empty box Enter = save'}</span></div>
+      <div class="row" style="align-items:flex-end">
+        <div class="field rel" style="flex:1 1 240px"><label for="fe-p">${ta?'Party (சுருக்கம் / பெயர்)':'Party (code / name)'}</label><input class="inp" id="fe-p" autocomplete="off" value="${esc(fe.party?((partyCode(fe.party)?partyCode(fe.party)+' · ':'')+dealerName(fe.party)):fe.pq)}" placeholder="HSD, ADGS, Ammon, PSV…"><div class="dd" id="fe-pdd" hidden></div></div>
+        <div class="field" style="flex:0 1 auto"><label>${ta?'வகை':'Type'}</label><div class="seg sz-seg" id="fe-sz">${['A','B','C','D'].map(k=>`<button type="button" data-sz="${k}" aria-pressed="${fe.size===k}" tabindex="-1"><b>${k}</b> <span class="small">${sz[k]}</span></button>`).join('')}</div></div>
+        <label class="check" style="flex:0 1 auto;align-self:center"><input type="checkbox" id="fe-duro" ${fe.duro?'checked':''} tabindex="-1"> Duro</label></div>
       <div class="row" style="margin-top:10px;align-items:flex-end">
-        <div class="field" style="flex:1 1 380px"><label for="fl-in" class="cyl-lbl"><span class="lbl-t">${ta?'சிலிண்டர் எண்கள்':'Cylinder numbers'} <span class="muted" style="font-weight:400" id="fl-req"></span></span><span id="fl-gas" class="gascount"></span></label>
-          <div class="cylbox" id="fl-box"><span id="fl-chips" class="chips"></span><input id="fl-in" placeholder="505, C1008, D101" inputmode="${isTouch()?'numeric':'text'}" autocomplete="off"></div></div>
-        <div class="field" style="flex:0 1 130px" id="fl-nwrap"><label for="fl-n">${ta?'எண்ணிக்கை':'Count'}</label><input class="inp num" id="fl-n" inputmode="numeric" value="${esc(f.n)}" placeholder="0"></div>
-      </div>
-      <div class="small muted" id="fl-help"></div>
-      <div class="field" style="margin-top:10px"><label for="fl-note">${ta?'குறிப்பு (விருப்பம்)':'Note (optional)'}</label><input class="inp" id="fl-note" value="${esc(f.note)}"></div>
-      <div class="row" style="margin-top:12px"><button class="btn primary" type="button" id="fl-save">${ic('check')}${ta?'சேமி':'Save filling'}</button><button class="btn" type="button" id="fl-clear">${ta?'அழி':'Clear'}</button></div>
-      ${canManage()?`<details style="margin-top:12px"><summary class="small muted">${ta?'சிலிண்டர் வகைகள் (A, B, C, D) & எது நம் சிலிண்டர் பட்டியலில்':'Cylinder types (A, B, C, D) & which go to our cylinder list'}</summary><div class="row" style="margin-top:8px">${['A','B','C','D'].map(k=>`<div class="field" style="flex:0 1 150px"><label>${k}</label><input class="inp" data-sz="${k}" value="${esc(sz[k]||'')}" placeholder="eg. 7 m³"><label class="check small" style="margin-top:4px"><input type="checkbox" data-tr="${k}" ${fillTrack().includes(k)?'checked':''}> ${ta?'பட்டியலில் கணக்கு':'Track in list'}</label></div>`).join('')}<button class="btn sm" type="button" id="fl-szsave" style="align-self:flex-end">${ta?'சேமி':'Save'}</button></div></details>`:''}
-    </div>`:''}
-    <div class="panel"><div class="panel-head"><h3>${ta?'Ledger — party வாரியாக':'Ledger — by party'}</h3><span class="muted small" id="fl-lsum"></span></div><div id="fl-ledger"></div></div>
-    <div class="panel"><div class="panel-head"><h3>${ta?'நிரப்பல் பதிவுகள்':'Fillings'}</h3><span class="muted small" id="fl-sum"></span></div>
-      <div class="row" style="align-items:flex-end"><div class="field" style="flex:0 1 160px"><label for="fl-from">${ta?'முதல்':'From'}</label><input type="date" class="inp" id="fl-from" value="${esc(u.flFrom)}"></div><div class="field" style="flex:0 1 160px"><label for="fl-to">${ta?'வரை':'To'}</label><input type="date" class="inp" id="fl-to" value="${esc(u.flTo)}"></div>
-      <div class="field" style="flex:0 1 220px"><label for="fl-pf">${ta?'Party':'Party'}</label><select class="inp" id="fl-pf"><option value="all">${ta?'எல்லாம்':'All'}</option><option value="own">⭐ ${esc(ourName())}</option><option value="dealers">${ta?'எல்லா dealers':'All dealers'}</option>${ds.map(([k,v])=>`<option value="${esc(k)}">${esc(v.n)}</option>`).join('')}</select></div>
-      <div class="field search"><label for="fl-q">${ta?'சிலிண்டர் / party தேடு':'Search cylinder / party'}</label><div class="rel">${ic('search')}<input class="inp" id="fl-q" value="${esc(u.flQ||'')}"></div></div></div>
-      <div id="fl-list" style="margin-top:10px"></div></div>`},
-  after(){const u=S.ui,f=u.fl;const ta=LANG==='ta';
-    const fl=$('#fl-from'),tt=$('#fl-to'),q=$('#fl-q'),pf=$('#fl-pf');pf.value=u.flParty;
-    fl.addEventListener('change',()=>{u.flFrom=fl.value;this.update()});tt.addEventListener('change',()=>{u.flTo=tt.value;this.update()});q.addEventListener('input',()=>{u.flQ=q.value;this.update()});pf.addEventListener('change',()=>{u.flParty=pf.value;this.update()});
-    $('#fl-ledger').addEventListener('click',e=>{const r=e.target.closest('[data-lp]');if(!r)return;u.flParty=r.dataset.lp;pf.value=u.flParty;this.update();$('#fl-list').scrollIntoView({behavior:'smooth',block:'start'})});
-    if(!canFill()){this.update();return}
-    const inp=$('#fl-in');
-    const add=v=>{String(v||'').split(/[\s,;]+/).map(x=>normCyl(x)).filter(Boolean).forEach(id=>{if(!f.cy.includes(id))f.cy.push(id)});this.chips()};
-    inp.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===','||e.key===' '||(e.key==='Tab'&&!e.shiftKey&&inp.value.trim())){e.preventDefault();add(inp.value);inp.value=''}
-      else if(e.key==='Backspace'&&!inp.value&&f.cy.length){f.cy.pop();this.chips()}});
+        <div class="field" style="flex:1 1 380px"><label for="fe-in" class="cyl-lbl"><span class="lbl-t">${ta?'சிலிண்டர் எண்கள்':'Cylinder numbers'}</span><span id="fe-gas" class="gascount"></span></label>
+          <div class="cylbox" id="fe-box"><span id="fe-chips" class="chips"></span><input id="fe-in" placeholder="2652, 2294 …" inputmode="${isTouch()?'numeric':'text'}" autocomplete="off"></div></div>
+        <div class="field" style="flex:0 1 110px"><label for="fe-n">${ta?'எண்ணிக்கை':'Count'}</label><input class="inp num" id="fe-n" inputmode="numeric" value="${esc(fe.n)}" placeholder="0"></div>
+        <button class="btn primary" type="button" id="fe-save" style="align-self:flex-end">${ic('check')}${ta?'சேமி':'Save'}</button></div>
+      <div class="small" id="fe-help" style="margin-top:6px"></div></div>`:''}
+    <div class="panel"><div class="panel-head"><h3>${ta?'இந்த நாளின் நிரப்பல்':'Filled this day'}</h3><span class="muted small" id="fe-tot"></span></div><div id="fe-list"></div></div>`},
+  entryBind(){const fe=S.ui.fe;const ta=LANG==='ta';const self=this;
+    /* tank readings save on change */
+    $$('[data-dk]').forEach(i=>i.addEventListener('change',async()=>{const k=i.dataset.dk;const v=k.endsWith('T')||k==='offT'?i.value:numOrNull(i.value);
+      try{await S.db.doc('pday/'+fe.br+'_'+fe.d).update({br:fe.br,d:fe.d,[k]:v,by:S.uid,at:new Date().toISOString()});$('#fe-dsave').textContent=(ta?'சேமிக்கப்பட்டது ':'Saved ')+hm(new Date().toISOString());self.rdInfo()}catch(e){toast(dbErr(e))}}));
+    this.rdInfo();
+    if(!canFill())return;
+    const pi=$('#fe-p'),pdd=$('#fe-pdd'),inp=$('#fe-in');let sel=-1,moved=false;
+    const list=()=>{const q=fe.party?'':pi.value.trim().toLowerCase();return parties().filter(p=>!q||p.n.toLowerCase().includes(q)||(p.c||'').toLowerCase().startsWith(q)).sort((a,b)=>((b.c||'').toLowerCase()===q)-((a.c||'').toLowerCase()===q)||((b.c||'').toLowerCase().startsWith(q))-((a.c||'').toLowerCase().startsWith(q))).slice(0,10)};
+    const show=()=>{const L=list();const q=fe.party?'':pi.value.trim();
+      pdd.innerHTML=L.map((p,i)=>`<button type="button" data-pk="${esc(p.k)}" aria-selected="${i===sel}"><span class="mono" style="min-width:58px;font-weight:700">${esc(p.c||'')}</span><span class="cn">${esc(p.n)}</span>${p.own?`<span class="pill info">${ta?'நம்முடையது':'ours'}</span>`:''}</button>`).join('')+(q&&!L.length&&nameOk(q)?`<button type="button" data-pnew="1" aria-selected="${sel===0}">${ic('plus')} ${ta?`“${esc(q)}” — புதிய dealer சேர்…`:`Add “${esc(q)}” as a new dealer…`}</button>`:'')+(q&&!nameOk(q)?`<div class="dd-warn">⚠ ${ta?'எண்கள் மட்டும் — party பெயர் அல்ல':'Only numbers — not a party name'}</div>`:'');
+      pdd.hidden=!pdd.innerHTML;const b=pdd.querySelectorAll('button')[sel];b&&b.scrollIntoView({block:'nearest'})};
+    const pick=k=>{fe.party=k;fe.pq='';pi.value=(partyCode(k)?partyCode(k)+' · ':'')+dealerName(k);pi.classList.remove('needfill');pdd.hidden=true;fe.ours={};self.chips();inp.focus()};
+    const blink=()=>{pi.classList.remove('needfill');void pi.offsetWidth;pi.classList.add('needfill');pi.focus()};
+    pi.addEventListener('focus',()=>{const v0=pi.value;if(v0)setTimeout(()=>{if(pi.value===v0)pi.select()},0);sel=-1;moved=false;show()});
+    pi.addEventListener('mousedown',e=>{if(fe.party&&document.activeElement===pi){e.preventDefault();pi.select();show()}});
+    pi.addEventListener('input',()=>{fe.party='';fe.pq=pi.value;sel=-1;moved=false;pi.classList.remove('needfill');show()});
+    pi.addEventListener('blur',()=>setTimeout(()=>{pdd.hidden=true},180));
+    pi.addEventListener('keydown',e=>{const n=pdd.querySelectorAll('button').length;
+      if((e.key==='Enter'||e.key===' ')&&fe.party&&!moved){e.preventDefault();pick(fe.party);return}
+      if((e.key==='Enter'||e.key===' ')&&!pi.value.trim()&&!moved){e.preventDefault();blink();return}
+      if(!n)return;
+      if(e.key==='ArrowDown'||(e.key==='Tab'&&!e.shiftKey)){e.preventDefault();sel=sel<0?0:Math.min(n-1,sel+1);moved=true;show()}
+      else if(e.key==='ArrowUp'||(e.key==='Tab'&&e.shiftKey)){e.preventDefault();sel=Math.max(0,sel-1);moved=true;show()}
+      else if(e.key==='Enter'||(e.key===' '&&(moved||list().length===1||list().some(p=>(p.c||'').toLowerCase()===pi.value.trim().toLowerCase())))){e.preventDefault();const b=pdd.querySelectorAll('button')[Math.max(sel,0)];b&&b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true}))}});
+    pdd.addEventListener('mousedown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();if(b.dataset.pk)pick(b.dataset.pk);else if(b.dataset.pnew){pdd.hidden=true;dealerPanel(true,pi.value.trim())}});
+    const setSize=k=>{fe.size=k;$$('#fe-sz [data-sz]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sz===k)));self.chips()};
+    $('#fe-sz').addEventListener('click',e=>{const b=e.target.closest('[data-sz]');if(b){setSize(b.dataset.sz);inp.focus()}});
+    $('#fe-duro').addEventListener('change',e=>{fe.duro=e.target.checked;inp.focus()});
+    const add=v=>{String(v||'').split(/[\s,;]+/).map(x=>normCyl(x)).filter(Boolean).forEach(id=>{if(!fe.cy.includes(id))fe.cy.push(id)});self.chips()};
+    const save=async()=>{if(inp.value.trim()){add(inp.value);inp.value=''}
+      if(!fe.party){blink();toast(ta?'Party பெயர் போடவும்':'Pick the party');return}
+      const n=fe.cy.length||parseInt($('#fe-n').value,10)||0;if(!n){toast(ta?'சிலிண்டர் எண் அல்லது எண்ணிக்கை போடவும்':'Add cylinder numbers or a count');inp.focus();return}
+      if(!fe.d||fe.d>todayISO()){toast(ta?'தேதி சரியில்லை':'Check the date');return}
+      const ours=fillOurs({party:fe.party})?fe.cy.filter(id=>S.cyl[id]):fe.cy.filter(id=>self.isOurs(id));
+      const b=$('#fe-save');b.disabled=true;
+      try{const rid=uidGen();const at=new Date().toISOString();
+        await S.db.doc('fill/'+fe.d+'_'+S.uid).update({d:fe.d,by:S.uid,recs:{[rid]:{d:fe.d,br:fe.br,party:fe.party,pn:dealerName(fe.party),size:fe.size,duro:!!fe.duro,cy:fe.cy.slice(),n,ours,by:S.uid,at}}});
+        toast(`${ta?'சேமிக்கப்பட்டது':'Saved'}: ${partyCode(fe.party)||dealerName(fe.party)} · ${fe.size} × ${n} = ${f2(n*(SZM()[fe.size]||0))} m³`);
+        fe.cy=[];fe.ours={};fe.n='';$('#fe-n').value='';self.chips();pi.focus()}catch(e){toast(dbErr(e))}finally{b.disabled=false}};
+    inp.addEventListener('keydown',e=>{
+      if(!inp.value&&/^[abcdABCD]$/.test(e.key)&&!e.ctrlKey&&!e.altKey){e.preventDefault();setSize(e.key.toUpperCase());return}
+      if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();save();return}
+      if(e.key==='Enter'||e.key===' '||e.key===','||(e.key==='Tab'&&!e.shiftKey)){if(inp.value.trim()){e.preventDefault();add(inp.value);inp.value='';return}
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();if(fe.cy.length||$('#fe-n').value)save();else $('#fe-n').focus();return}}
+      if(e.key==='Backspace'&&!inp.value&&fe.cy.length){fe.cy.pop();self.chips()}});
     inp.addEventListener('paste',e=>{const t=(e.clipboardData||window.clipboardData).getData('text');if(/[\s,;]/.test(t.trim())){e.preventDefault();add(t)}});
-    $('#fl-chips').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;f.cy.splice(+b.dataset.rm,1);this.chips()});
-    $('#fl-d').addEventListener('change',e=>{f.d=e.target.value});
-    $('#fl-size').addEventListener('change',e=>{f.size=e.target.value;this.chips()});
-    $('#fl-party').addEventListener('change',e=>{if(e.target.value==='__new'){e.target.value=f.party;dealerPanel(true);return}f.party=e.target.value;this.chips()});
-    ['tO','tC','cO','cC','kO','kC','n','note'].forEach(k=>{const el=$('#fl-'+k);el.addEventListener('input',()=>{f[k]=el.value;this.used()});el.addEventListener('change',()=>{f[k]=el.value;this.used()})});
-    $('#fl-clear').onclick=()=>{f.cy=[];f.note='';f.n='';$('#fl-note').value='';$('#fl-n').value='';this.chips();inp.focus()};
-    $('#fl-save').onclick=async()=>{if(inp.value.trim()){add(inp.value);inp.value=''}
-      const tracked=fillTracked(f);const n=f.cy.length||parseInt(f.n,10)||0;
-      if(tracked&&!f.cy.length){toast(ta?'நம் '+f.size+' சிலிண்டர் — எண்கள் போடவும்':'Our '+f.size+' cylinders — add the numbers');inp.focus();return}
-      if(!n){toast(ta?'எண்ணிக்கை அல்லது சிலிண்டர் எண் போடவும்':'Add the count or cylinder numbers');$('#fl-n').focus();return}
-      if(!f.d||f.d>todayISO()){toast(ta?'தேதி சரியில்லை':'Check the date');return}
-      const R={cO:numOrNull(f.cO),cC:numOrNull(f.cC),kO:numOrNull(f.kO),kC:numOrNull(f.kC)};
-      if(R.cO!=null&&R.cC!=null&&R.cC<R.cO){toast(ta?'Closing Cum, Opening-ஐ விடக் குறைவு':'Closing Cum is less than opening');return}
-      const b=$('#fl-save');b.disabled=true;
-      try{const rid=uidGen();const at=new Date().toISOString();const docId=f.d+'_'+S.uid;
-        const rec=Object.assign({d:f.d,party:f.party,pn:dealerName(f.party),cy:f.cy.slice(),n,size:f.size,tO:f.tO||'',tC:f.tC||'',note:(f.note||'').trim(),by:S.uid,at},R);
-        await S.db.doc('fill/'+docId).update({d:f.d,by:S.uid,recs:{[rid]:rec}});
-        toast((ta?'சேமிக்கப்பட்டது: ':'Saved: ')+n+' · '+dealerName(f.party));
-        /* next filling starts where this one closed */
-        f.cy=[];f.note='';f.n='';if(f.tC)f.tO=f.tC;if(R.cC!=null)f.cO=String(R.cC);if(R.kC!=null)f.kO=String(R.kC);f.tC='';f.cC='';f.kC='';
-        ['tO','tC','cO','cC','kO','kC','n','note'].forEach(k=>{$('#fl-'+k).value=f[k]||''});this.chips();inp.focus()}
-      catch(e){toast(dbErr(e))}finally{b.disabled=false}};
-    const sz=$('#fl-szsave');if(sz)sz.onclick=async()=>{const o={};$$('[data-sz]').forEach(i=>{o[i.dataset.sz]=i.value.trim()});const tr=$$('[data-tr]').filter(i=>i.checked).map(i=>i.dataset.tr);
-      try{await S.db.doc('settings/company').update({sizes:o,fillTrack:tr});S.company.sizes=o;S.company.fillTrack=tr;scheduleDerive();toast(ta?'சேமிக்கப்பட்டது':'Saved');mounted=null;refresh()}catch(e){toast(dbErr(e))}};
-    this.chips();this.used();this.update()},
-  used(){const f=S.ui.fl;const ut=$('#fl-ut');if(!ut)return;ut.textContent=durTxt(f.tO,f.tC);
-    $('#fl-uc').textContent=diffTxt(numOrNull(f.cO),numOrNull(f.cC),'m³');$('#fl-uk').textContent=diffTxt(numOrNull(f.kO),numOrNull(f.kC),'kg')},
-  chips(){const f=S.ui.fl;const ta=LANG==='ta';const el=$('#fl-chips');if(!el)return;const tracked=fillTracked(f);const ours=fillOurs(f);
-    $('#fl-mode').innerHTML=tracked?`<div class="notice ok">${ic('check')}<div><b>${ta?'நம் சிலிண்டர் · '+f.size:'Our cylinders · type '+f.size}</b> — ${ta?'எண்கள் கட்டாயம். நிரப்பியவை “நம்மிடம் full” என்று சிலிண்டர் பட்டியலில் மாறும்.':'numbers needed. Filled cylinders become “full with us” in the cylinder list.'}</div></div>`
-      :`<div class="notice info">${ic('info')}<div><b>${ta?'Ledger மட்டும்':'Ledger only'}</b> — ${ours?(ta?`நம் ${f.size} வகை சிலிண்டர் பட்டியலில் கணக்கில் இல்லை. எண்ணிக்கை போதும்.`:`our type ${f.size} is not tracked in the cylinder list. The count is enough.`):(ta?`${esc(dealerName(f.party))} சிலிண்டர்கள் — நம் சிலிண்டர் பட்டியலில் சேராது. எண்ணிக்கை போதும், எண்கள் விருப்பம்.`:`${esc(dealerName(f.party))}'s cylinders — never added to our cylinder list. The count is enough; numbers are optional.`)}</div></div>`;
-    $('#fl-req').textContent=tracked?(ta?'· கட்டாயம் · Enter / Tab / இடைவெளி':'· required · Enter / Tab / space after each'):(ta?'· விருப்பம்':'· optional');
-    $('#fl-nwrap').hidden=tracked;const nI=$('#fl-n');if(f.cy.length){nI.value=f.cy.length;nI.readOnly=true}else{nI.readOnly=false;nI.value=f.n||''}
-    el.innerHTML=f.cy.map((id,i)=>{const known=!!S.cyl[id];const g=tracked?(S.cyl[id]||{}).g||'':'';const bad=tracked&&!known;return `<span class="chip ${bad?'crit':'ok'}" title="${bad?(ta?'பட்டியலில் இல்லை':'Not in cylinder list'):''}">${esc(id)}${g?`<span class="chip-note">${esc(g)}</span>`:''}<button type="button" data-rm="${i}" aria-label="Remove">×</button></span>`}).join('');
-    const GC={O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'};
-    if(tracked){const cnt={};f.cy.forEach(id=>{const g=((S.cyl[id]||{}).g||'?').replace(/\s*kg$/i,'');cnt[g]=(cnt[g]||0)+1});
-      $('#fl-gas').innerHTML=f.cy.length?Object.entries(cnt).map(([g,n])=>`<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`).join('')+`<span class="gc tot">${ta?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:''}
-    else $('#fl-gas').innerHTML=f.cy.length?`<span class="gc tot">${ta?'மொத்தம்':'Total'}: <b>${f.cy.length}</b></span>`:'';
-    const unk=tracked?f.cy.filter(id=>!S.cyl[id]).length:0;
-    $('#fl-help').innerHTML=unk?`<span style="color:var(--crit)">${unk} ${ta?'பட்டியலில் இல்லை (இருந்தாலும் சேமிக்கலாம்)':'not in the cylinder list (can still be saved)'}</span>`:''},
-  update(){const u=S.ui;const ta=LANG==='ta';const q=(u.flQ||'').trim().toLowerCase();const P=u.flParty||'all';
-    const inDates=(S.D.fills||[]).filter(r=>(!u.flFrom||r.d>=u.flFrom)&&(!u.flTo||r.d<=u.flTo));
-    const pOk=r=>P==='all'||(P==='own'?fillOurs(r):P==='dealers'?!fillOurs(r):r.party===P);
-    const rs=inDates.filter(r=>pOk(r)&&(!q||(r.cy||[]).some(c=>String(c).toLowerCase().includes(q))||dealerName(r.party).toLowerCase().includes(q)||String(r.note||'').toLowerCase().includes(q)));
-    const tot=rs.reduce((a,r)=>a+fillCount(r),0);const sz=SIZES();
-    $('#fl-sum').textContent=`${rs.length} ${ta?'பதிவு':'entries'} · ${tot} ${ta?'சிலிண்டர்':'cylinders'}`;
-    {const c=$('#fl-cnt');if(c){const td=(S.D.fills||[]).filter(r=>r.d===todayISO());c.textContent=(ta?'இன்று: ':'Today: ')+td.reduce((a,r)=>a+fillCount(r),0)+(ta?' சிலிண்டர்':' cylinders')}}
-    /* ledger: party x type for the chosen dates */
-    const L={};inDates.forEach(r=>{const k=fillOurs(r)?'own':r.party;const o=L[k]||(L[k]={A:0,B:0,C:0,D:0,t:0,cum:0,kg:0,e:0});o[r.size||'A']=(o[r.size||'A']||0)+fillCount(r);o.t+=fillCount(r);o.e++;if(r.cO!=null&&r.cC!=null)o.cum+=Math.abs(r.cC-r.cO);if(r.kO!=null&&r.kC!=null)o.kg+=Math.abs(r.kC-r.kO)});
-    const keys=Object.keys(L).sort((a,b)=>a==='own'?-1:b==='own'?1:dealerName(a).localeCompare(dealerName(b)));
-    const sum=k=>keys.reduce((a,p)=>a+L[p][k],0);const fx=v=>v?+v.toFixed(2):'—';
-    $('#fl-lsum').textContent=`${fmtD(u.flFrom)} – ${fmtD(u.flTo)}`;
-    $('#fl-ledger').innerHTML=keys.length?`<div class="tbl-wrap"><table class="ledger"><thead><tr><th>${ta?'Party':'Party'}</th>${['A','B','C','D'].map(k=>`<th class="r">${k}${sz[k]?`<div class="small muted" style="font-weight:400">${esc(sz[k])}</div>`:''}</th>`).join('')}<th class="r">${ta?'மொத்தம்':'Total'}</th><th class="r">Cum (m³)</th><th class="r">Kg</th><th class="r">${ta?'பதிவுகள்':'Entries'}</th></tr></thead><tbody>${keys.map(k=>{const o=L[k];return `<tr class="click${k==='own'?' own':''}" data-lp="${esc(k)}"><td>${k==='own'?'⭐ ':''}<b>${esc(dealerName(k))}</b>${k==='own'?`<div class="small muted">${ta?'நம் சிலிண்டர்கள்':'our cylinders'} · ${fillTrack().join(', ')||'—'} ${ta?'பட்டியலில்':'tracked'}</div>`:''}</td>${['A','B','C','D'].map(t=>`<td class="r num ${k==='own'&&fillTrack().includes(t)&&o[t]?'trk':''}">${o[t]||'<span class="muted">0</span>'}</td>`).join('')}<td class="r num"><b>${o.t}</b></td><td class="r num">${fx(o.cum)}</td><td class="r num">${fx(o.kg)}</td><td class="r num">${o.e}</td></tr>`}).join('')}</tbody>
-      <tfoot><tr><td><b>${ta?'மொத்தம்':'Total'}</b></td>${['A','B','C','D'].map(t=>`<td class="r num"><b>${sum(t)}</b></td>`).join('')}<td class="r num"><b>${sum('t')}</b></td><td class="r num"><b>${fx(sum('cum'))}</b></td><td class="r num"><b>${fx(sum('kg'))}</b></td><td class="r num">${sum('e')}</td></tr></tfoot></table></div>
-      <div class="small muted" style="margin-top:6px">${ta?'வரியைத் தொட்டால் அந்த party-யின் பதிவுகள் கீழே வரும். நீலம் = சிலிண்டர் பட்டியலில் கணக்கானவை.':'Tap a row to see that party’s fillings below. Blue = counted in the cylinder list.'}</div>`
-      :`<div class="empty"><b>${ta?'இந்தத் தேதிகளில் நிரப்பல் இல்லை':'No fillings in these dates'}</b></div>`;
-    const rd=(o,c,u2)=>o==null&&c==null?'':`<div class="mono small">${o??'—'} → ${c??'—'}${o!=null&&c!=null?` <b>= ${+Math.abs(c-o).toFixed(2)} ${u2}</b>`:''}</div>`;
-    $('#fl-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'தேதி':'Date'}</th><th>${ta?'Party':'Party'}</th><th>${ta?'வகை':'Type'}</th><th class="r">${ta?'எண்ணிக்கை':'Count'}</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>${ta?'நேரம்':'Time'}</th><th>Cum (m³)</th><th>Kg</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.map(r=>{const tr=fillTracked(r);return `<tr><td class="num">${fmtD(r.d)}</td><td>${fillOurs(r)?'⭐ ':''}<b>${esc(dealerName(r.party))}</b></td><td><b>${esc(r.size||'')}</b> <span class="small muted">${esc(sz[r.size]||'')}</span>${tr?`<div><span class="pill trkp">${ta?'பட்டியல்':'tracked'}</span></div>`:`<div><span class="pill unused">ledger</span></div>`}</td><td class="r num"><b>${fillCount(r)}</b></td><td class="mono small" style="max-width:340px">${(r.cy||[]).map(c=>tr?`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`:esc(c)).join(', ')||'<span class="muted">—</span>'}${r.note?`<div class="muted" style="font-family:var(--f-body)">📝 ${esc(r.note)}</div>`:''}</td><td class="num small">${r.tO||r.tC?`${esc(r.tO||'—')} → ${esc(r.tC||'—')}${durTxt(r.tO,r.tC)?`<div class="muted">${durTxt(r.tO,r.tC)}</div>`:''}`:''}</td><td>${rd(r.cO,r.cC,'m³')}</td><td>${rd(r.kO,r.kC,'kg')}</td><td class="small muted">${fmtDT(r.at)}${r.by!==S.uid?' · '+esc(shortName(r.by)):''}</td><td>${(canManage()||(r.by===S.uid&&madeToday(r)&&canFill()))?`<button class="btn sm ghost" data-act="fldel" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete" style="color:var(--crit)">${ic('x')}</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`
-      :`<div class="empty"><b>${ta?'பதிவு இல்லை':'No fillings match'}</b></div>`}
+    $('#fe-n').addEventListener('input',e=>{fe.n=e.target.value});
+    $('#fe-n').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save()}});
+    $('#fe-save').onclick=save;
+    $('#fe-chips').addEventListener('click',e=>{const rm=e.target.closest('[data-rm]');if(rm){fe.cy.splice(+rm.dataset.rm,1);self.chips();return}
+      const t=e.target.closest('[data-own]');if(t){const id=t.dataset.own;fe.ours[id]=!self.isOurs(id);self.chips()}});
+    this.chips()},
+  /* a number in a dealer's lot is ours when it is in our list and we last sent it to that dealer (or the user marked it) */
+  isOurs(id){const fe=S.ui.fe;if(!S.cyl[id])return false;if(fe.ours&&id in fe.ours)return fe.ours[id];const st=S.D.state[id]||{};const dn=dealerName(fe.party).toLowerCase();
+    return !!(st.ck&&custName(st.ck).toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5)===dn.replace(/[^a-z0-9]/g,'').slice(0,5))},
+  chips(){const fe=S.ui.fe;const ta=LANG==='ta';const el=$('#fe-chips');if(!el)return;const own=fe.party?fillOurs({party:fe.party}):true;
+    el.innerHTML=fe.cy.map((id,i)=>{const known=!!S.cyl[id];let cls,note='',tip='';
+      if(own){cls=known?'ok':'warn';note=known?(S.cyl[id].g||''):(ta?'பட்டியலில் இல்லை':'not in list');}
+      else{const o=this.isOurs(id);cls=o?'ours':'dlr';note=o?(ta?'நம்முடையது':'ours'):known?(ta?'dealer?':'dealer?'):'';tip=known?(ta?'தொட்டு மாற்றவும்: நம்முடையது / dealer-உடையது':'Click to switch: ours / dealer’s'):''}
+      return `<span class="chip ${cls}" title="${esc(tip)}" ${!own&&known?`data-own="${esc(id)}"`:''}>${esc(id)}${note?`<span class="chip-note">${esc(note)}</span>`:''}<button type="button" data-rm="${i}" aria-label="Remove">×</button></span>`}).join('');
+    const n=fe.cy.length||parseInt(fe.n,10)||0;$('#fe-gas').innerHTML=fe.cy.length?`<span class="gc tot">${fe.size} × ${fe.cy.length} = <b>${f2(fe.cy.length*(SZM()[fe.size]||0))} m³</b></span>`:'';
+    const nI=$('#fe-n');if(fe.cy.length){nI.value=fe.cy.length;nI.readOnly=true}else{nI.readOnly=false;nI.value=fe.n||''}
+    const unk=own?fe.cy.filter(id=>!S.cyl[id]).length:0;const ourN=!own?fe.cy.filter(id=>this.isOurs(id)).length:0;
+    $('#fe-help').innerHTML=!fe.party?'':own?`<span class="muted">${ta?'நம் சிலிண்டர்கள் — நிரப்பியவை “குடோன் · full” ஆகும்.':'Our cylinders — they become “godown · full”.'}</span>${unk?` · <span style="color:var(--warn)">${unk} ${ta?'பட்டியலில் இல்லை':'not in our list'}</span>`:''}`
+      :`<span class="muted">${ta?'Dealer சிலிண்டர்கள் — ledger மட்டும்.':'Dealer cylinders — ledger only.'}</span>${ourN?` · <span style="color:var(--info);font-weight:600">${ourN} ${ta?'நம் rental சிலிண்டர் — வரலாற்றில் பதிவாகும், dealer-இடமே இருக்கும்':'are our rental cylinders — noted in their history, stay with the dealer'}</span>`:''}`},
+  rdInfo(){const ta=LANG==='ta';const el=$('#fe-rdinfo');if(!el)return;const dd=this.dayDoc();const fe=S.ui.fe;
+    const prev=Object.values(S.pday||{}).filter(x=>x.br===fe.br&&x.d<fe.d&&x.cL!=null).sort((a,b)=>a.d<b.d?1:-1)[0];
+    const LA=levelAdds(fe.br,fe.d,prev,dd);
+    const parts=[];if(dd.oL!=null&&dd.cL!=null){const add=LA.day;parts.push(`${ta?'பயன்பாடு':'Used'}: <b>${f2(dd.oL+add-dd.cL)}</b>${add?` (${ta?'வாங்கியது +':'incl. delivery +'}${f2(add)})`:''}`)}
+    if(prev&&dd.oL!=null){const ov=prev.cL+LA.night-dd.oL;parts.push(`${ta?'இரவு மாற்றம்':'Overnight'} (${fmtD(prev.d)} ${ta?'closing':'closing'} ${f2(prev.cL)} → ${f2(dd.oL)}): <b style="color:${ov>0?'var(--crit)':'inherit'}">${ov>0?'−':''}${f2(Math.abs(ov))}</b>`)}
+    el.innerHTML=parts.join(' · ')},
+  dayRecs(br,d){return (S.D.fills||[]).filter(r=>(r.br||'DPI')===br&&r.d===d)},
+  dayList(){const fe=S.ui.fe;const ta=LANG==='ta';const el=$('#fe-list');if(!el)return;const rs=this.dayRecs(fe.br,fe.d).slice().sort((a,b)=>(b.at||'').localeCompare(a.at||''));
+    const tot=rs.reduce((a,r)=>a+fillCount(r),0),m3=rs.reduce((a,r)=>a+fillM3(r),0);$('#fe-tot').textContent=`${rs.length} ${ta?'பதிவு':'entries'} · ${tot} ${ta?'சிலிண்டர்':'cylinders'} · ${f2(m3)} m³`;
+    el.innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>${ta?'Party':'Party'}</th><th>${ta?'வகை':'Type'}</th><th class="r">${ta?'எண்ணிக்கை':'Count'}</th><th class="r">m³</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.map(r=>`<tr><td><b class="mono">${esc(partyCode(r.party))}</b> ${esc(dealerName(r.party))}${fillOurs(r)?' <span class="pill info">'+(ta?'நம்':'ours')+'</span>':''}</td><td><b>${esc(r.size||'')}</b>${r.duro?' <span class="pill warn">Duro</span>':''}</td><td class="r num"><b>${fillCount(r)}</b></td><td class="r num">${f2(fillM3(r))}</td><td class="mono small" style="max-width:420px">${(r.cy||[]).map(c=>(fillOurs(r)&&S.cyl[c])||(r.ours||[]).includes(c)?`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`:esc(c)).join(', ')||'<span class="muted">—</span>'}</td><td class="small muted">${hm(r.at)}${r.by!==S.uid?' · '+esc(shortName(r.by)):''}</td><td>${(canManage()||(r.by===S.uid&&madeToday(r)&&canFill()))?`<button class="btn sm ghost" data-act="fldel" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete" style="color:var(--crit)">${ic('x')}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'இந்த நாளில் இன்னும் நிரப்பல் இல்லை':'Nothing filled on this day yet'}</b></div>`},
+  /* the notebook's end-of-day page */
+  sumHtml(){const fe=S.ui.fe;const ta=LANG==='ta';const rs=this.dayRecs(fe.br,fe.d);const dd=this.dayDoc();const sz=SZM();
+    const by={};rs.forEach(r=>{const k=r.party||'own:'+fe.br;const o=by[k]=by[k]||{};const kk=(r.duro?'Duro ':'')+(r.size||'D');o[kk]=(o[kk]||0)+fillCount(r)});
+    const med={},duro={};rs.forEach(r=>{const t=r.duro?duro:med;t[r.size||'D']=(t[r.size||'D']||0)+fillCount(r)});
+    const lines=t=>['D','C','B','A'].filter(k=>t[k]).map(k=>`<tr><td>${sz[k].toFixed(1)} × ${t[k]}</td><td class="r num">= ${f2(sz[k]*t[k])}</td></tr>`).join('');
+    const tm=t=>Object.entries(t).reduce((a,[k,n])=>a+n*(sz[k]||0),0);const total=tm(med)+tm(duro);
+    const keys=Object.keys(by).sort((a,b)=>(fillOurs({party:b})-fillOurs({party:a}))||dealerName(a).localeCompare(dealerName(b)));
+    return `<div class="panel sumpage"><div class="panel-head"><h3>${esc(plant(fe.br).n)} · ${fmtD(fe.d)}</h3><button class="btn sm" type="button" onclick="window.print()">🖨 Print</button></div>
+      <div class="sum-top"><div>${ta?'Opening':'Opening'}: <b>${f2(dd.oL)}</b> / ${f2(dd.oP)} kg · ${ta?'On':'On'} ${esc(dd.oT||'—')}</div><div>${ta?'Closing':'Closing'}: <b>${f2(dd.cL)}</b> / ${f2(dd.cP)} kg · ${esc(dd.cT||'—')} · Off ${esc(dd.offT||'—')}</div><div>${ta?'மொத்தம்':'Total'}: <b>${f2(total)} m³</b></div></div>
+      <div class="sum-grid"><div class="tbl-wrap"><table class="sumtbl"><thead><tr><th>${ta?'Party':'Party'}</th><th class="r">m³</th><th class="r">${ta?'எண்ணிக்கை':'Count'}</th><th class="r">${ta?'மொத்தம் m³':'Total m³'}</th></tr></thead><tbody>
+        ${keys.map(k=>Object.entries(by[k]).sort((a,b)=>(sz[b[0].slice(-1)]||0)-(sz[a[0].slice(-1)]||0)).map(([kk,n],i)=>`<tr${i===0?' class="first"':''}><td>${i===0?`<b>${esc(partyCode(k)||dealerName(k))}</b> <span class="small muted">${esc(partyCode(k)?dealerName(k):'')}</span>`:''}</td><td class="r num">${kk.startsWith('Duro')?'Duro ':''}${(sz[kk.slice(-1)]||0).toFixed(1)}</td><td class="r num">${n}</td><td class="r num">${f2(n*(sz[kk.slice(-1)]||0))}</td></tr>`).join('')).join('')||`<tr><td colspan="4" class="muted">${ta?'நிரப்பல் இல்லை':'Nothing filled'}</td></tr>`}
+        </tbody><tfoot><tr><td><b>${ta?'மொத்தம்':'Total'}</b></td><td></td><td class="r num"><b>${rs.reduce((a,r)=>a+fillCount(r),0)}</b></td><td class="r num"><b>${f2(total)}</b></td></tr></tfoot></table></div>
+        <div class="sum-side"><div class="eyebrow">Medical</div><table>${lines(med)||'<tr><td class="muted">—</td></tr>'}<tr class="st"><td></td><td class="r num"><b>${f2(tm(med))}</b></td></tr></table>
+          ${Object.keys(duro).length?`<div class="eyebrow" style="margin-top:10px">Duro</div><table>${lines(duro)}<tr class="st"><td></td><td class="r num"><b>${f2(tm(duro))}</b></td></tr></table>`:''}
+          <div class="sum-total">${ta?'மொத்தம்':'Total'} = ${f2(total)} m³</div></div></div></div>`},
+  stockHtml(){const u=S.ui,fe=u.fe;const ta=LANG==='ta';const m=u.flM;const days=Object.values(S.pday||{}).filter(x=>x.br===fe.br&&x.d.slice(0,7)===m).sort((a,b)=>a.d<b.d?-1:1);
+    const all=Object.values(S.pday||{}).filter(x=>x.br===fe.br).sort((a,b)=>a.d<b.d?-1:1);
+    let sUsed=0,sM3=0,sOv=0,sAdd=0;
+    const rows=days.map(x=>{const i=all.findIndex(y=>y.d===x.d);const pv=i>0?all[i-1]:null;const purs=purList(fe.br).filter(p=>p.d===x.d);const LA=levelAdds(fe.br,x.d,pv,x);const add=LA.day;
+      const used=x.oL!=null&&x.cL!=null?x.oL+add-x.cL:null;const m3=this.dayRecs(fe.br,x.d).reduce((a,r)=>a+fillM3(r),0);const ov=pv&&pv.cL!=null&&x.oL!=null?pv.cL+LA.night-x.oL:null;
+      if(used!=null)sUsed+=used;sM3+=m3;if(ov!=null&&ov>0)sOv+=ov;sAdd+=add;
+      return `<tr><td class="num">${fmtD(x.d)}</td><td class="r num">${f2(x.oL)}<span class="muted small"> / ${f2(x.oP)}</span></td><td class="r num">${add?'+'+f2(add):''}${purs.map(p=>`<div class="small muted mono">${esc(p.bn||'')}</div>`).join('')}</td><td class="r num">${f2(x.cL)}<span class="muted small"> / ${f2(x.cP)}</span></td><td class="r num"><b>${f2(used)}</b></td><td class="r num">${f2(m3)}</td><td class="r num">${used?(m3/used).toFixed(2):'—'}</td><td class="r num" style="color:${ov>0?'var(--crit)':'inherit'}">${ov==null?'—':(ov>0?'−':'')+f2(Math.abs(ov))}</td><td class="small muted">${esc(x.oT||'')}${x.offT?' – '+esc(x.offT):''}</td></tr>`}).join('');
+    const fac=sUsed?sM3/sUsed:0;
+    return `<div class="panel"><div class="panel-head"><h3>${ta?'Tank stock & இழப்பு':'Tank stock & loss'} · ${esc(plant(fe.br).n)}</h3><span class="muted small">${m}</span></div>
+      <div class="stat-row"><div class="stat"><span>${ta?'Level பயன்பாடு':'Level used'}</span><b>${f2(sUsed)}</b></div><div class="stat"><span>${ta?'நிரப்பியது':'Filled'}</span><b>${f2(sM3)} m³</b></div><div class="stat"><span>${ta?'1 level = m³ (சராசரி)':'m³ per level (avg)'}</span><b>${fac?fac.toFixed(2):'—'}</b></div><div class="stat"><span>${ta?'இரவு இழப்பு (ஆவி)':'Overnight loss (vapour)'}</span><b style="color:var(--crit)">${f2(sOv)}</b><span class="small muted">${fac?'≈ '+f2(sOv*fac)+' m³':''}</span></div><div class="stat"><span>${ta?'வாங்கியது (level)':'Delivered (level)'}</span><b>${f2(sAdd)}</b></div></div>
+      <div class="tbl-wrap" style="margin-top:10px"><table><thead><tr><th>${ta?'தேதி':'Date'}</th><th class="r">${ta?'Opening / kg':'Opening / kg'}</th><th class="r">${ta?'+ வாங்கியது':'+ Delivered'}</th><th class="r">${ta?'Closing / kg':'Closing / kg'}</th><th class="r">${ta?'பயன்பாடு':'Used'}</th><th class="r">${ta?'நிரப்பியது m³':'Filled m³'}</th><th class="r">m³ / level</th><th class="r">${ta?'இரவு மாற்றம்':'Overnight'}</th><th>${ta?'நேரம்':'Hours'}</th></tr></thead><tbody>${rows||`<tr><td colspan="9" class="muted">${ta?'இந்த மாதம் tank reading இல்லை':'No tank readings this month'}</td></tr>`}</tbody></table></div>
+      <div class="small muted" style="margin-top:8px">${ta?'பயன்பாடு = Opening + வாங்கியது − Closing. இரவு மாற்றம் = நேற்றைய closing − இன்றைய opening (சிவப்பு = ஆவியான இழப்பு). “m³ / level” வழக்கத்தை விட மிகக் குறைவாக இருந்தால் அன்று இழப்பு அதிகம்.':'Used = opening + delivered − closing. Overnight = yesterday’s closing − today’s opening (red = vapour loss). If “m³ / level” is much lower than usual, that day lost more.'}</div></div>`},
+  purHtml(){const fe=S.ui.fe;const ta=LANG==='ta';const L=purList(fe.br).slice().reverse();
+    return `<div class="panel"><div class="panel-head"><h3>${ta?'Liquid வாங்குதல் & batch':'Liquid purchases & batches'} · ${esc(plant(fe.br).n)}</h3>${canPur()?`<button class="btn primary sm" data-act="purnew">${ic('plus')}${ta?'புதிய வாங்குதல்':'New purchase'}</button>`:''}</div>
+      ${L.length?`<div class="tbl-wrap"><table><thead><tr><th>Batch</th><th>${ta?'தேதி':'Date'}</th><th>${ta?'Supplier / invoice':'Supplier / invoice'}</th><th class="r">kg</th><th class="r">CBM</th><th class="r">${ta?'≈ m³ (kg×)':'≈ m³ (kg×)'}${LOX()}</th><th>${ta?'Purity':'Purity'}</th><th class="r">${ta?'நிரப்பியது':'Filled'}</th><th></th></tr></thead><tbody>${L.map((p,i)=>{const pu=purityOf(p);const nx=L[i-1];const fl=(S.D.fills||[]).filter(r=>(r.br||'DPI')===p.br&&(r.d+' '+fillTime(r))>=(p.d+' '+(p.tm||'00:00'))&&(!nx||(r.d+' '+fillTime(r))<(nx.d+' '+(nx.tm||'00:00'))));
+        return `<tr><td class="mono"><b>${esc(p.bn||'')}</b></td><td class="num">${fmtD(p.d)}${p.tm?' '+esc(p.tm):''}</td><td>${esc(p.sup||'')}<div class="small muted">${esc(p.inv||'')}${p.veh?' · '+esc(p.veh):''}</div></td><td class="r num">${f2(p.kg)}</td><td class="r num">${f2(p.cbm)}</td><td class="r num">${p.kg?f2(p.kg*LOX()):'—'}</td><td>${pu?`<b>${pu.v}%</b>${pu.src==='prev'?`<div class="small muted">${ta?'முந்தைய batch ':'from '}${esc(pu.p.bn||'')}</div>`:p.sb?`<div class="small muted">${esc(p.sb)}</div>`:''}`:`<span class="pill warn">${ta?'இல்லை':'none'}</span>`}</td><td class="r num">${fl.reduce((a,r)=>a+fillCount(r),0)} <span class="small muted">· ${f2(fl.reduce((a,r)=>a+fillM3(r),0))} m³</span></td>
+          <td style="white-space:nowrap"><button class="btn sm" data-act="certopen" data-v="${esc(p.id)}">📄 ${ta?'Certificate':'Certificate'}</button>${canPur()?` <button class="btn sm ghost" data-act="puredit" data-v="${esc(p.id)}">${ic('edit')}</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`:`<div class="empty"><b>${ta?'இன்னும் liquid வாங்குதல் இல்லை':'No liquid purchases yet'}</b>${ta?'Invoice, weighbridge சீட்டு, certificate விவரங்களைப் போட்டால் batch எண் தானாக வரும்.':'Enter the invoice, weighbridge slip and certificate — the batch number is made for you.'}</div>`}
+      <div class="small muted" style="margin-top:8px">${ta?'புதிய liquid tank-இல் இறக்கிய நேரம் முதல் புதிய batch. ஒவ்வொரு நிரப்பலும் அந்த நேரத்தில் tank-இல் இருந்த batch-இல் கணக்காகும். * = supplier certificate இல்லை — முந்தைய certificate உள்ள batch-இன் purity, குறிப்புடன்.':'A new batch starts when new liquid is unloaded. Each filling belongs to the batch in the tank at that time. * = no supplier certificate — the purity of the last certified batch is used, with a note.'}</div></div>`},
+  ledHtml(){const u=S.ui,fe=u.fe;const ta=LANG==='ta';const sz=SZM();const rs=(S.D.fills||[]).filter(r=>(r.br||'DPI')===fe.br&&r.d.slice(0,7)===u.flM);
+    const L={};rs.forEach(r=>{const k=r.party||'own:'+fe.br;const o=L[k]=L[k]||{A:0,B:0,C:0,D:0,duro:0,t:0,m3:0,e:0};o[r.size||'D']+=fillCount(r);if(r.duro)o.duro+=fillCount(r);o.t+=fillCount(r);o.m3+=fillM3(r);o.e++});
+    const keys=Object.keys(L).sort((a,b)=>(fillOurs({party:b})-fillOurs({party:a}))||dealerName(a).localeCompare(dealerName(b)));const sum=k=>keys.reduce((a,p)=>a+L[p][k],0);
+    return `<div class="panel"><div class="panel-head"><h3>${ta?'Party ledger':'Party ledger'} · ${esc(plant(fe.br).n)}</h3><span class="muted small">${u.flM}</span></div>
+      ${keys.length?`<div class="tbl-wrap"><table class="ledger"><thead><tr><th>Party</th>${['D','C','B','A'].map(k=>`<th class="r">${k}<div class="small muted" style="font-weight:400">${sz[k]} m³</div></th>`).join('')}<th class="r">Duro</th><th class="r">${ta?'மொத்தம்':'Total'}</th><th class="r">m³</th><th class="r">${ta?'பதிவுகள்':'Entries'}</th></tr></thead><tbody>${keys.map(k=>{const o=L[k];return `<tr class="${fillOurs({party:k})?'own':''}"><td><b class="mono">${esc(partyCode(k))}</b> ${esc(dealerName(k))}</td>${['D','C','B','A'].map(t=>`<td class="r num">${o[t]||'<span class="muted">0</span>'}</td>`).join('')}<td class="r num">${o.duro||'<span class="muted">0</span>'}</td><td class="r num"><b>${o.t}</b></td><td class="r num">${f2(o.m3)}</td><td class="r num">${o.e}</td></tr>`}).join('')}</tbody>
+      <tfoot><tr><td><b>${ta?'மொத்தம்':'Total'}</b></td>${['D','C','B','A'].map(t=>`<td class="r num"><b>${sum(t)}</b></td>`).join('')}<td class="r num"><b>${sum('duro')}</b></td><td class="r num"><b>${sum('t')}</b></td><td class="r num"><b>${f2(sum('m3'))}</b></td><td class="r num">${sum('e')}</td></tr></tfoot></table></div>`:`<div class="empty"><b>${ta?'இந்த மாதம் நிரப்பல் இல்லை':'No fillings this month'}</b></div>`}</div>`}
 };
 
 /* Mismatches */
@@ -3033,8 +3281,8 @@ function cylDrawer(id){
   if(!evs.length)body+=`<div class="empty"><b>Never sent out</b>No DC or MT has been recorded for this cylinder.</div>`;
   else{
     const list=evs.slice().reverse();
-    const lbl={DC:'DC · sent to',MT:'MT · back from',FS:'Sent for filling',FR:'Received full',FL:'🏭 Filled at factory'};
-    const col={DC:'var(--info)',MT:'var(--mt)',FS:'var(--warn)',FR:'var(--ok)',FL:'#EA580C'};
+    const lbl={DC:'DC · sent to',MT:'MT · back from',FS:'Sent for filling',FR:'Received full',FL:'🏭 Filled at factory',FD:'🏭 Filled for dealer'};
+    const col={DC:'var(--info)',MT:'var(--mt)',FS:'var(--warn)',FR:'var(--ok)',FL:'#EA580C',FD:'#B45309'};
     body+=list.map((e,i)=>`<div class="trip"><div style="display:flex;flex-direction:column;align-items:center"><div class="dot" style="background:${e.flag&&!e.vf?'var(--crit)':col[e.t]}"></div>${i<list.length-1?'<div class="line" style="flex:1"></div>':''}</div>
       <div class="body"><div><span style="color:${col[e.t]};font-weight:700">${lbl[e.t]}</span> <b>${e.ck?`<a href="#" data-act="opencust" data-v="${esc(e.ck)}">${esc(custName(e.ck))}</a>`:esc(e.pl||'')}</b></div>
       <div class="small muted">${fmtD(e.d)}${e.src==='old'?' · old Excel':''}${e.dc?' · #'+esc(e.dc):''}${e.vh?' · '+esc(e.vh):''}${e.dr?' · '+esc(e.dr):''}${e.rm?' · '+esc(e.rm):''}</div>
@@ -3058,7 +3306,7 @@ function custDrawer(ck){
     ${canInsp()&&(S.D.holding[ck]||[]).length?`<div><button class="btn sm" data-act="inspopen" data-v="${esc(ck)}">${ic('insp')}${LANG==='ta'?'இப்போது சரிபார்':'Inspect now'}</button></div>`:''}
     ${c.fu?`<div class="notice info">${ic('info')}<div>Last follow-up ${fmtDT(c.fu.at)} by <span data-name="${esc(c.fu.by)}">${esc(personName(c.fu.by))}</span>: ${esc(c.fu.note||'')}</div></div>`:''}
     <div class="row loc-row">${c.ph?`<a class="btn sm" href="tel:${esc(telOf(c.ph))}">📞 ${LANG==='ta'?'அழை':'Call'}</a>`:''}${mapUrl(c)?`<a class="btn sm" href="${esc(mapUrl(c))}" target="_blank" rel="noopener">🧭 ${c.loc?(LANG==='ta'?'வழி காட்டு':'Directions'):(LANG==='ta'?'Map-இல் தேடு':'Search map')}</a>`:''}${can('saveLoc')&&role()!=='viewer'?`<button class="btn sm" data-act="saveloc" data-v="${esc(ck)}">📍 ${c.loc?(LANG==='ta'?'இடத்தை மாற்று':'Update place'):(LANG==='ta'?'இந்த இடத்தைச் சேமி':'Save this place')}</button>`:''}${c.loc?`<span class="small muted">📍 ±${c.loc.acc||'?'} m · ${fmtDT(c.loc.at)} · <span data-name="${esc(c.loc.by)}">${esc(personName(c.loc.by))}</span></span>`:''}</div>
-    <div class="row">${canEnter()?`${can('editCust')?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button>`:''}<button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm wa" data-act="wamsg" data-v="${esc(ck)}">${ic('wa')}${LANG==='ta'?'WhatsApp நினைவூட்டல்':'WhatsApp reminder'}</button><button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button>${S.isOwner?`<button class="btn sm" data-act="mergeinto" data-v="${esc(ck)}">🔀 ${LANG==='ta'?'வேறு பெயருடன் இணை':'Merge into another'}</button>`:''}</div>
+    <div class="row">${canEnter()?`${can('editCust')?`<button class="btn sm" data-act="editcust" data-v="${esc(ck)}">${ic('edit')}Edit details</button>`:''}<button class="btn sm" data-act="logcall" data-v="${esc(ck)}">${ic('check')}Log follow-up</button>`:''}<button class="btn sm wa" data-act="wamsg" data-v="${esc(ck)}">${ic('wa')}${LANG==='ta'?'WhatsApp நினைவூட்டல்':'WhatsApp reminder'}</button><button class="btn sm" data-act="copymsg" data-v="${esc(ck)}">Copy reminder</button><button class="btn sm" data-act="stmt" data-v="${esc(ck)}">${ic('dl')}Statement (Excel)</button>${S.isOwner?`<button class="btn sm" data-act="mergeinto" data-v="${esc(ck)}">🔀 ${LANG==='ta'?'வேறு பெயருடன் இணை':'Merge into another'}</button>`:''}${canManage()?`<button class="btn sm ghost danger" data-act="delcust" data-v="${esc(ck)}">${ic('x')}${LANG==='ta'?'Customer நீக்கு':'Delete customer'}</button>`:''}</div>
     ${custHistory(ck,h)}`;
   return [head,body];
 }
@@ -3328,6 +3576,12 @@ const A={
     openDrawer({k:'form',render:()=>[`<h3>${esc(personName(r.uid))} · ${fmtD(r.d)}</h3>`,`<div class="attday">${['in','out'].map(k=>r[k]?`<div><div class="eyebrow">${k==='in'?(ta?'வருகை':'In'):(ta?'வெளியேறல்':'Out')} · <b>${hm(r[k].at)}</b></div>${r[k].ph?`<img src="${r[k].ph}" alt="">`:`<div class="muted small">${ta?'படம் இல்லை':'No photo'}</div>`}<div class="small">${mapLink(r[k].loc)}</div></div>`:`<div class="muted">${k==='out'?(ta?'Out பதிவில்லை':'No out'):''}</div>`).join('')}</div>`]})},
   dealers:()=>dealerPanel(false),
   shifts:()=>shiftPanel(),
+  plantset:()=>plantPanel(),purnew:()=>purPanel(null),puredit:el=>purPanel(el.dataset.v),certopen:el=>certPanel(el.dataset.v),
+  certrec:el=>{const r=(S.D.recs||[]).find(x=>x.rid===el.dataset.rid);if(!r)return;const ids=batchesForRec(r);const ta=LANG==='ta';
+    if(!ids.length){toast(ta?'இந்த DC-க்கு batch இல்லை — liquid வாங்குதலைப் பதியவும்':'No batch for this DC — record the liquid purchase first');return}
+    if(ids.length===1){certPanel(ids[0],{ck:r.ck,dc:r.dc,d:r.d});return}
+    openDrawer({k:'form',render:()=>[`<h3>📄 ${ta?'எந்த batch?':'Which batch?'}</h3>`,`<p class="muted">${ta?'இந்த DC-யின் சிலிண்டர்கள் வேறு வேறு batch-இல் நிரப்பப்பட்டவை.':'The cylinders of this DC were filled from different batches.'}</p>${ids.map(id=>`<button class="btn" style="width:100%;margin-bottom:6px;justify-content:space-between" data-act="certopen2" data-v="${esc(id)}" data-rid="${esc(r.rid)}"><b class="mono">${esc(S.lpur[id].bn||'')}</b><span class="small muted">${fmtD(S.lpur[id].d)} · ${esc(S.lpur[id].sup||'')}</span></button>`).join('')}`]})},
+  certopen2:el=>{const r=(S.D.recs||[]).find(x=>x.rid===el.dataset.rid)||{};certPanel(el.dataset.v,{ck:r.ck,dc:r.dc,d:r.d})},
   fldel:async el=>{if(!confirm(LANG==='ta'?'இந்த நிரப்பல் பதிவை நீக்கவா?':'Delete this filling entry?'))return;try{await S.db.doc('fill/'+el.dataset.doc).update({recs:{[el.dataset.rid]:{del:{by:S.uid,at:new Date().toISOString()}}}});toast(LANG==='ta'?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}},
   pendok:async()=>{try{await S.db.doc('settings/company').update({pendRemAt:todayISO()});S.company.pendRemAt=todayISO();VIEWS.dash.update()}catch(e){toast(dbErr(e))}},
   bigtext:()=>{BIG=!BIG;try{localStorage.setItem('cd-big',BIG?'1':'0')}catch(e){}document.body.classList.toggle('bigtext',BIG);closeDrawer();toast(BIG?(LANG==='ta'?'பெரிய எழுத்து':'Bigger text'):(LANG==='ta'?'சாதாரண எழுத்து':'Normal text'))},
@@ -3351,6 +3605,13 @@ const A={
   regbr:el=>{S.ui.regBr=el.dataset.v;const g=$('#g-br');if(g)g.value=el.dataset.v;VIEWS.reg.update()},
   entall:()=>{S.ui.entFrom='';S.ui.entTo='';const f=$('#e-from'),t=$('#e-to');if(f)f.value='';if(t)t.value='';VIEWS.entries.update()},
   mergeinto:el=>mergeIntoPanel(el.dataset.v),
+  openrec:el=>recDrawer(el.dataset.rid),
+  dupclear:()=>{const f=S.form;const de=dupEntry(f);if(!de)return;f.cy=f.cy.filter(c=>!de.same.includes(c));f.confirm=false;VIEWS.entry.update();const c=$('#f-cyl');c&&c.focus()},
+  mergeman:()=>{const ta=LANG==='ta';openDrawer({k:'form',render:()=>[`<h3>🔀 ${ta?'கையால் இணை — 1. தவறான / இரட்டைப் பெயர்':'Merge by hand — 1. the wrong / extra name'}</h3>`,
+    `<p class="muted" style="margin-top:0">${ta?'நீக்க வேண்டிய (தவறான) பெயரைத் தேர்வு செய்யவும். அடுத்து சரியான பெயரைக் கேட்கும்.':'Pick the name to remove (the wrong one). Next it asks for the correct name.'}</p><input class="inp" id="mm-q" placeholder="${ta?'பெயர் தேடு':'Search name'}" autocomplete="off"><div id="mm-list" style="margin-top:8px"></div>`],
+    after(){const draw=()=>{const q=$('#mm-q').value.trim().toLowerCase();$('#mm-list').innerHTML=Object.entries(S.cust).filter(([k,c])=>!q||c.n.toLowerCase().includes(q)).sort((a,b)=>a[1].n.localeCompare(b[1].n)).slice(0,40).map(([k,c])=>`<button type="button" class="btn" style="width:100%;justify-content:space-between;margin-bottom:6px" data-mf="${esc(k)}"><span><b>${esc(c.n)}</b> ${brTag(k)}</span><span class="small muted">${(S.D.holding[k]||[]).length} holding · ${(S.D.custMoves[k]||[]).length} moves</span></button>`).join('')};
+      $('#mm-q').addEventListener('input',draw);$('#mm-list').addEventListener('click',e=>{const b=e.target.closest('[data-mf]');if(b)mergeIntoPanel(b.dataset.mf)});draw();$('#mm-q').focus()}})},
+  delcust:(el,e)=>{e&&e.stopPropagation&&e.stopPropagation();delCust(el.dataset.v)},
   install:async()=>{if(!INSTALL){toast(LANG==='ta'?'Chrome மெனு (⋮) → “Add to Home screen / Install app”':'Chrome menu (⋮) → “Install app”');return}INSTALL.prompt();try{await INSTALL.userChoice}catch(e){}INSTALL=null;paintShell()},
   saveloc:el=>saveLoc(el.dataset.v),
   noloc:()=>{S.ui.askLoc=null;VIEWS.entry.update()},
@@ -3477,7 +3738,7 @@ function custForm(ck,stay){
     <div class="row"><div class="field"><label for="cu-dep">Deposit held (₹)</label><input class="inp num" type="number" min="0" id="cu-dep" value="${esc(c.dep??'')}"></div><div class="field"><label for="cu-rate">Own rent ₹/day</label><input class="inp num" type="number" min="0" step="0.5" id="cu-rate" value="${esc(c.rate??'')}" placeholder="default"></div><div class="field"><label for="cu-free">Own free days</label><input class="inp num" type="number" min="0" id="cu-free" value="${esc(c.free??'')}" placeholder="default"></div></div>
     <div class="field"><label for="cu-gst">Customer GSTIN</label><input class="inp mono" id="cu-gst" value="${esc(c.gst||'')}"></div>
     <div class="field"><label>Own refill price ₹ (blank = default)</label><div class="row">${RENT_GASES.map(g=>`<div class="field" style="flex:1 1 80px"><label for="cu-pr-${g}">${g}</label><input class="inp num" type="number" min="0" step="0.01" id="cu-pr-${g}" data-pr="${g}" value="${esc((c.pr||{})[g]??'')}"></div>`).join('')}</div></div>`,
-    async()=>{const n=$('#cu-n').value.replace(/\s+/g,' ').trim();if(!n){toast('Type the name');return}
+    async()=>{const n=$('#cu-n').value.replace(/\s+/g,' ').trim();if(!n){toast('Type the name');return}if(!nameOk(n)){toast(LANG==='ta'?'Customer பெயரில் எழுத்துகள் வேண்டும் — எண்கள் மட்டும் கூடாது':'A customer name needs letters — numbers alone are not allowed',4000);return}
       const body={n,t:$('#cu-t').value,br:$('#cu-br').value,town:$('#cu-town').value.replace(/\s+/g,' ').trim(),ph:$('#cu-ph').value.trim(),ad:$('#cu-ad').value.trim(),dep:$('#cu-dep').value,rate:$('#cu-rate').value,free:$('#cu-free').value,gst:$('#cu-gst').value.trim(),pr:Object.fromEntries($$('[data-pr]').map(i=>[i.dataset.pr,i.value]))};
       try{if(ck){await S.db.doc('cust/all').update({list:{[ck]:body}});toast('Saved');closeDrawer();if(S.D)delete S.D._cbr;if(stay){const ci=$('#f-cust');if(ci){ci.focus()}}else openDrawer({k:'cust',v:ck})}
         else{const k=slug(n);if(S.cust[k]){toast(n+' already exists');return}if(S.custDoc)await S.db.doc('cust/all').update({list:{[k]:Object.assign(body,{by:S.uid,at:new Date().toISOString()})}});else await S.db.doc('cust/all').set({list:{[k]:body}});toast('Added '+n);closeDrawer()}}catch(e){toast(dbErr(e))}},ck?'Save':'Add customer')}
