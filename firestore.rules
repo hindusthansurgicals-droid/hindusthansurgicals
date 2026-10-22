@@ -125,6 +125,11 @@ service cloud.firestore {
       allow read: if canRead();
       allow write: if canManage() || can('fill');
     }
+    // Documents & renewals and reminders (scans themselves live in Google Drive, only links here).
+    match /rdoc/{doc} {
+      allow read: if isOwner() || myRole() == 'manager' || can('docs');
+      allow write: if canManage() || can('docs');
+    }
     match /insp/{doc} {
       allow read: if canRead();
       allow write: if canManage() || (can('insp') && doc.matches('.*_' + request.auth.uid));
