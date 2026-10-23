@@ -4,11 +4,13 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='4.1.1';window.CD_BUILD='2026-10-21';
+window.CD_VERSION='4.2.0';window.CD_BUILD='2026-10-21';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
-  authDomain: "hindustha-surgicals.firebaseapp.com",
+  /* Sign-in pages served from the app's own address: phones (installed app, Safari, new Chrome)
+     block sign-in when it runs on another domain ("missing initial state"). */
+  authDomain: /\.web\.app$|\.firebaseapp\.com$/.test(location.hostname) ? location.hostname : "hindustha-surgicals.firebaseapp.com",
   projectId: "hindustha-surgicals",
   storageBucket: "hindustha-surgicals.firebasestorage.app",
   messagingSenderId: "1032226574990",
@@ -106,6 +108,8 @@ try{fs.settings({ignoreUndefinedProperties:true,merge:true})}catch(e){}
 const persist=fs.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 
 const db={collection:p=>query(fs.collection(p)),doc:p=>docRef(fs.doc(p))};
+/* coming back from a Google Drive permission page (redirect on phones): keep the key */
+auth.getRedirectResult().then(r=>{const t=r&&r.credential&&r.credential.accessToken;if(t&&r.user){try{sessionStorage.setItem('cd-drive',JSON.stringify({t,exp:Date.now()+50*60e3,uid:r.user.uid}));sessionStorage.removeItem('cd-drive-wait')}catch(e){}}}).catch(()=>{});
 
 /* ---------- sign-in screen ---------- */
 function signInScreen(msg){
@@ -214,7 +218,9 @@ window.FBC={
     try{const c=JSON.parse(sessionStorage.getItem('cd-drive')||'null');if(!force&&c&&c.exp>Date.now()&&c.uid===(auth.currentUser&&auth.currentUser.uid))return c.t}catch(e){}
     const u=auth.currentUser;if(!u)throw {code:'unauthenticated'};
     const p=new firebase.auth.GoogleAuthProvider();p.addScope('https://www.googleapis.com/auth/drive.file');p.setCustomParameters({login_hint:u.email||''});
-    const r=await u.reauthenticateWithPopup(p);const t=r&&r.credential&&r.credential.accessToken;if(!t)throw {code:'no-token'};
+    let r;try{r=await u.reauthenticateWithPopup(p)}
+    catch(e){if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/web-storage-unsupported')){try{sessionStorage.setItem('cd-drive-wait','1')}catch(x){}await u.reauthenticateWithRedirect(p);return new Promise(()=>{})}throw e}
+    const t=r&&r.credential&&r.credential.accessToken;if(!t)throw {code:'no-token'};
     try{sessionStorage.setItem('cd-drive',JSON.stringify({t,exp:Date.now()+50*60e3,uid:u.uid}))}catch(e){}
     return t},
   ownerEmails:()=>OWNER_EMAILS.slice(),

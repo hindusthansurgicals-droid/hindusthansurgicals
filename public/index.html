@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.1.1"><link rel="icon" href="icon.svg?v=4.1.1" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.1.1">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.2.0"><link rel="icon" href="icon.svg?v=4.2.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.2.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,34 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.qtiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px}
+.qtile{position:relative;padding-right:30px!important;display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--qc) 30%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--qc) 10%,var(--surface)),var(--surface));text-align:left;cursor:pointer;color:var(--ink);transition:transform .12s,box-shadow .12s}
+.qtile:hover{transform:translateY(-2px);box-shadow:0 8px 18px color-mix(in srgb,var(--qc) 18%,transparent)}
+.qtile .qi{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--qc);color:#fff;flex:none}.qtile .qi svg{width:22px;height:22px}
+.qtile .ql{display:flex;flex-direction:column;min-width:0}.qtile .ql b{font-size:15px}.qtile .ql small{color:var(--muted);font-size:12.5px}
+.qtile em{position:absolute;top:8px;right:10px;font-style:normal;background:#DC2626;color:#fff;border-radius:999px;padding:1px 8px;font-weight:700;font-size:12px}
+@media (max-width:600px){.qtiles{grid-template-columns:1fr 1fr;gap:8px}.qtile{padding:10px;gap:8px}.qtile .qi{width:34px;height:34px}.qtile .ql b{font-size:13.5px}}
+.sdate.bad{border-color:var(--crit)!important;background:var(--crit-bg)}
+.rn-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.rn-kpi{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);text-align:left}
+.rn-kpi span{font-size:13px;color:var(--muted)}.rn-kpi b{font:800 26px var(--f-display)}
+.rn-kpi.over b{color:#DC2626}.rn-kpi.soon b{color:#D97706}.rn-kpi.ok b{color:#16A34A}.rn-kpi.on{outline:2px solid var(--accent);outline-offset:-2px}
+.rn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}.rn-grid.one{grid-template-columns:1fr}
+@media (max-width:600px){.rn-grid{grid-template-columns:1fr}}
+.rn-card{background:var(--surface);border:1px solid var(--line);border-left:6px solid #16A34A;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.rn-card.soon{border-left-color:#F59E0B;background:linear-gradient(90deg,#FFFBEB,var(--surface) 40%)}.rn-card.over,.rn-card.bad{border-left-color:#DC2626;background:linear-gradient(90deg,#FEF2F2,var(--surface) 40%)}
+.rn-top{display:flex;align-items:center;gap:10px}.rn-ic{font-size:26px;line-height:1}.rn-t{font:700 16px var(--f-display);overflow-wrap:anywhere}.rn-sub{font-size:12.5px;color:var(--muted)}
+.rn-st{font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 9px;border-radius:999px;background:#DCFCE7;color:#166534;white-space:nowrap}
+.rn-card.soon .rn-st{background:#FEF3C7;color:#92400E}.rn-card.over .rn-st,.rn-card.bad .rn-st{background:#FEE2E2;color:#991B1B}
+.rn-mid{display:flex;gap:14px;align-items:center}.rn-big{display:flex;flex-direction:column;align-items:center;min-width:92px;padding:8px;border-radius:12px;background:var(--surface-2)}
+.rn-big b{font:800 30px/1 var(--f-display)}.rn-big span{font-size:11.5px;color:var(--muted);text-align:center;margin-top:4px}
+.rn-card.over .rn-big b,.rn-card.bad .rn-big b{color:#DC2626}.rn-card.soon .rn-big b{color:#D97706}.rn-card.ok .rn-big b{color:#16A34A}
+.rn-kv{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;flex:1;min-width:0}.rn-kv div{display:flex;flex-direction:column;min-width:0}.rn-kv span{font-size:11.5px;color:var(--muted)}.rn-kv b{font-size:14px;overflow-wrap:anywhere}
+.rn-act{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:10px}.rn-files{display:flex;gap:6px;flex-wrap:wrap}
+.tk-card{display:flex;align-items:center;gap:12px;padding:10px 6px;border-bottom:1px solid var(--line)}
+.tk-time{display:flex;flex-direction:column;align-items:center;min-width:74px;padding:6px;border-radius:10px;background:#F3E8FF;color:#6B21A8}.tk-time b{font:800 18px var(--f-display)}.tk-time span{font-size:11.5px}
+.tk-card.over .tk-time{background:#FEE2E2;color:#991B1B}.tk-card.today .tk-time{background:#FEF3C7;color:#92400E}.tk-card.done{opacity:.55}.tk-t{font-weight:700;font-size:15px}
+.bl-sec{margin-bottom:16px}
 .dd button svg{width:16px;height:16px;flex:none}
 @media (max-width:900px){#fab{display:none!important}}
 .docrow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
@@ -793,7 +821,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.1.1" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.2.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -813,7 +841,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.1.1"></script>
+<script src="fb.js?v=4.2.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -848,9 +876,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.1.1';
+const APP_VERSION=window.CD_VERSION||'4.2.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['4.2.0','2026-10-23',['Insurance & licences: its own page with clear cards — big “days left”, colour (red expired, orange renew soon, green valid), number, issued / expiry dates, scans, Renewed button','To-do reminders: a separate page; type the job, date and time in one line and press Enter','Dates: type 10-09-26 or 100926 — no month name, no Tab between day / month / year; a wrong year is flagged','Home page: big colourful buttons for New entry, Filling, Inspection, Insurance & licences, Reminders with counts']],
  ['4.1.1','2026-10-22',['Double entry check covers DC and MT together (same customer, same day, same cylinders); owner / manager can allow a real same-day return','Mismatches page lists double entries already saved','“+” sign for a new dealer is the right size']],
  ['4.1.0','2026-10-22',['Documents & renewals: insurance, vehicle papers, drug licence, fire certificate, PESO, PCB… with expiry; reminded before they run out','One-time or repeating reminders (eg. collect the bus parcel at 6 PM) — pop up at the time while the app is open','🔔 bell now shows customer reminders and documents together','Scans (photos → one PDF, or a PDF) are kept in your own Google Drive folder “HSAP Documents”, open on phone and computer; the owner and managers can open them']],
  ['4.0.0','2026-10-22',['New Filling register: two plants (Hindusthan Gases & Air Products · Dharmapuri, Adiyaman Gases · Krishnagiri), chosen from the staff branch','Tank reading each day: opening / closing liquid level and pressure, on / off time','Filling entry like the notebook: party short code → type letter A B C D → numbers; Duro mark; A = 1, B = 1.5, C = 3, D = 7 m³','Day summary page (party × size × count = m³, Medical and Duro totals) with print','Stock & loss: level used, m³ filled, m³ per level, overnight vapour loss','Liquid purchases: invoice, weighbridge (net kg), tank level, supplier certificate → our batch number','Purity certificate for any batch, and from any DC (the batch its cylinders were filled from); purity is the supplier’s, never made up','Our cylinders tracked by number: our own fillings → godown full; our rental cylinders filled for a dealer → noted in history; dealer cylinders → ledger only','Dealers have a short code; customers page: “Merge by hand”','DC / MT: the same date, customer and cylinder numbers cannot be saved twice — a red warning shows the entry already saved']],
@@ -948,7 +977,7 @@ const TA={
  'Full Excel (all details)':'முழு Excel (எல்லா விவரங்களும்)',
  'Cylinder register (old Excel layout)':'சிலிண்டர் பதிவேடு (பழைய Excel அமைப்பு)',
  'Import old files':'பழைய file இறக்குமதி',
- 'Dashboard':'முகப்பு','Documents & renewals':'ஆவணங்கள் & renewal','New entry':'புதிய பதிவு','Entries':'பதிவுகள்','Registers':'பதிவேடுகள்','Cylinders':'சிலிண்டர்கள்','Customers':'வாடிக்கையாளர்கள்','Follow-up':'பின்தொடர்வு','Filling register':'நிரப்பல் பதிவேடு','Physical inspection':'நேரடி சரிபார்ப்பு','Attendance & logins':'வருகை & login','Reminders':'நினைவூட்டல்','Mismatches':'பொருந்தாதவை','Billing':'பில்லிங்','Purchases & sales':'வாங்கல் & விற்பனை','Analysis':'பகுப்பாய்வு','Reports':'அறிக்கைகள்','Settings':'அமைப்புகள்','Help':'உதவி',
+ 'Dashboard':'முகப்பு','Insurance & licences':'காப்பீடு & உரிமங்கள்','To-do reminders':'நினைவூட்டல் (வேலை)','New entry':'புதிய பதிவு','Entries':'பதிவுகள்','Registers':'பதிவேடுகள்','Cylinders':'சிலிண்டர்கள்','Customers':'வாடிக்கையாளர்கள்','Follow-up':'பின்தொடர்வு','Filling register':'நிரப்பல் பதிவேடு','Physical inspection':'நேரடி சரிபார்ப்பு','Attendance & logins':'வருகை & login','Reminders':'நினைவூட்டல்','Mismatches':'பொருந்தாதவை','Billing':'பில்லிங்','Purchases & sales':'வாங்கல் & விற்பனை','Analysis':'பகுப்பாய்வு','Reports':'அறிக்கைகள்','Settings':'அமைப்புகள்','Help':'உதவி',
  'Today at a glance':'இன்றைய நிலை','Dashboard — Today’s Summary':'டாஷ்போர்டு — இன்றைய சுருக்கம்','With customers':'வாடிக்கையாளரிடம்','Godown · full':'குடோன் · நிரம்பியது','Godown · empty':'குடோன் · காலி','At filling':'நிரப்ப சென்றது','Out over 90 days':'90 நாளுக்கு மேல்','Missing':'காணவில்லை','Today':'இன்று','How long with customers':'வாடிக்கையாளரிடம் எத்தனை நாள்','Cylinders by gas':'வாயு வாரியாக சிலிண்டர்கள்','Customers holding the most cylinders':'அதிக சிலிண்டர் வைத்திருப்பவர்கள்',
  'Branch':'கிளை','Customer':'வாடிக்கையாளர்','Holding':'வைத்திருப்பது','Over 90 days':'90 நாளுக்கு மேல்','Last movement':'கடைசி நகர்வு','Gas':'வாயு','Out':'வெளியே','Full':'நிரம்பியது','Empty':'காலி','Filling':'நிரப்புதல்','Total':'மொத்தம்','Status':'நிலை','Since':'முதல்','Days':'நாட்கள்','Date':'தேதி','Remarks':'குறிப்பு','Driver':'ஓட்டுநர்','Vehicle no.':'வாகன எண்','Cylinder numbers':'சிலிண்டர் எண்கள்','Filling plant / supplier':'நிரப்பும் இடம் / சப்ளையர்',
  'Full to customer':'Full அனுப்புதல்','Empty from customer':'காலி திரும்புதல்','Send for filling':'நிரப்ப அனுப்பு','Received full':'நிரம்பி வந்தது','Save entry':'பதிவை சேமி','Save changes':'மாற்றங்களை சேமி','Cancel edit':'திருத்தத்தை ரத்து செய்','Check before saving':'சேமிக்கும் முன் சரிபார்க்கவும்','Your entries today':'இன்றைய உங்கள் பதிவுகள்','Nothing yet today':'இன்று இன்னும் எதுவும் இல்லை',
@@ -977,7 +1006,9 @@ const ICON={
   fill:'<path d="M3 21V10l5 3V10l5 3V7l5 3v11z"/><path d="M18 21V4h3v17"/><path d="M7 17h2M12 17h2"/>',
   insp:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 12l2 2 4-4"/>',
   att:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><circle cx="18" cy="15" r="4"/><path d="M18 13v2l1.5 1"/>',
-  docs:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h4"/>',
+  shield:'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  alarm:'<circle cx="12" cy="13" r="7"/><path d="M12 10v3l2 2"/><path d="M5 4L3 6M19 4l2 2"/>',
+  qdocs:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h4"/>',
   wa:'<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c.3 1.6 1.4 3.2 3 4l1.2-1 1.8.8-.4 1.6c-3 .2-6.2-2.8-6.4-6l1.6-.4.8 1.8z"/>',
   cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   dash:'<path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 4v4h6V4z"/>',
@@ -1023,7 +1054,7 @@ function role(){if(S.isOwner)return 'owner';const r=S.roles[S.uid];return r&&r.r
 /* What each person may do. Owner: everything. Others start from their role's defaults;
    the owner can switch each item on or off per person (Settings → People → Permissions). */
 const PERMS=[
- ['Pages','பக்கங்கள்',[['fill','Filling register','நிரப்பல் பதிவேடு'],['insp','Physical inspection','நேரடி சரிபார்ப்பு'],['att','Attendance & logins','வருகை & login'],['docs','Documents & renewals','ஆவணங்கள் & renewal'],['dash','Dashboard','டாஷ்போர்டு'],['entries','Entries list','பதிவுகள் பட்டியல்'],['reg','Registers','பதிவேடுகள்'],['cyl','Cylinders','சிலிண்டர்கள்'],['cust','Customers','வாடிக்கையாளர்கள்'],['fu','Follow-up','பின்தொடர்வு'],['mism','Mismatches','பொருந்தாதவை'],['bill','Billing','பில்'],['trade','Purchases & sales','வாங்கல் / விற்றல்'],['ana','Analysis','பகுப்பாய்வு'],['rep','Reports','அறிக்கைகள்']]],
+ ['Pages','பக்கங்கள்',[['fill','Filling register','நிரப்பல் பதிவேடு'],['insp','Physical inspection','நேரடி சரிபார்ப்பு'],['att','Attendance & logins','வருகை & login'],['docs','Insurance & licences','காப்பீடு & உரிமங்கள்'],['tasks','To-do reminders','நினைவூட்டல் (வேலை)'],['dash','Dashboard','டாஷ்போர்டு'],['entries','Entries list','பதிவுகள் பட்டியல்'],['reg','Registers','பதிவேடுகள்'],['cyl','Cylinders','சிலிண்டர்கள்'],['cust','Customers','வாடிக்கையாளர்கள்'],['fu','Follow-up','பின்தொடர்வு'],['mism','Mismatches','பொருந்தாதவை'],['bill','Billing','பில்'],['trade','Purchases & sales','வாங்கல் / விற்றல்'],['ana','Analysis','பகுப்பாய்வு'],['rep','Reports','அறிக்கைகள்']]],
  ['Work','வேலை',[['entry','Make new DC / MT entries','புதிய DC / MT பதிவு போடலாம்'],['editOwn','Edit / delete own entries made today','தான் இன்று போட்ட பதிவைத் திருத்த / நீக்க'],['editAny','Edit / delete anyone’s entries, any day','எல்லோர் பதிவையும் எந்த நாளும் திருத்த / நீக்க'],['otherBr','Enter for other branches','மற்ற கிளைக்கும் பதிவு போட'],['newCust','Add new customers','புதிய வாடிக்கையாளர் சேர்க்க'],['editCust','Edit customer details','வாடிக்கையாளர் விவரம் மாற்ற'],['saveLoc','Save customer place (GPS)','வாடிக்கையாளர் இடம் (GPS) சேமிக்க'],['money','See money (dues, deposit, rent, rates)','பணம் பார்க்க (நிலுவை, டெபாசிட், வாடகை)'],['export','Download Excel / reports','Excel / அறிக்கை download']]]];
 const PERM_KEYS=PERMS.flatMap(g=>g[2].map(x=>x[0]));
 const PAGE_KEYS=PERMS[0][2].map(x=>x[0]);
@@ -1218,10 +1249,10 @@ function dbErr(e){
 /* Staff see only what they use every day. */
 const STAFF_NAV=['entry','entries','cust','cyl','help'];
 /* colour and group for each menu item (pro look) */
-const NAV_C={docs:'#BE123C',fill:'#EA580C',insp:'#0891B2',att:'#7C3AED',dash:'#2563EB',entry:'#16A34A',entries:'#0EA5E9',reg:'#7C3AED',cyl:'#0D9488',cust:'#EA580C',fu:'#DB2777',mism:'#DC2626',bill:'#CA8A04',trade:'#4F46E5',ana:'#9333EA',rep:'#0891B2',settings:'#475569',oldimp:'#65A30D',help:'#64748B'};
+const NAV_C={docs:'#BE123C',tasks:'#9333EA',fill:'#EA580C',insp:'#0891B2',att:'#7C3AED',dash:'#2563EB',entry:'#16A34A',entries:'#0EA5E9',reg:'#7C3AED',cyl:'#0D9488',cust:'#EA580C',fu:'#DB2777',mism:'#DC2626',bill:'#CA8A04',trade:'#4F46E5',ana:'#9333EA',rep:'#0891B2',settings:'#475569',oldimp:'#65A30D',help:'#64748B'};
 const NAV_SEC={dash:['Daily work','தினசரி வேலை'],cyl:['Stock & customers','சிலிண்டர் & வாடிக்கையாளர்'],bill:['Accounts','கணக்கு'],settings:['System','அமைப்பு']};
 const navIc=(k,i)=>`<i class="nic" style="--c:${NAV_C[k]||'#64748B'}">${ic(i)}</i>`;
-const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['fill','Filling register','fill'],['reg','Registers','book'],['insp','Physical inspection','insp'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Reminders','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['att','Attendance & logins','att'],['docs','Documents & renewals','docs'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
+const NAV=[['dash','Dashboard','dash'],['entry','New entry','entry'],['entries','Entries','list'],['fill','Filling register','fill'],['reg','Registers','book'],['insp','Physical inspection','insp'],['cyl','Cylinders','cyl'],['cust','Customers','cust'],['fu','Reminders','phone'],['mism','Mismatches','warn'],['bill','Billing','bill'],['trade','Purchases & sales','truck'],['ana','Analysis','chart'],['rep','Reports','rep'],['att','Attendance & logins','att'],['docs','Insurance & licences','shield'],['tasks','To-do reminders','alarm'],['settings','Settings','set'],['oldimp','Import old files','rep'],['help','Help','help']];
 function paintBrand(){$('#co-name').textContent=S.company.name||'Cylinder Desk';$('#co-sub').innerHTML=`<b style="color:var(--accent);text-transform:none;letter-spacing:0">v${esc(APP_VERSION)}</b> · Cylinder tracking · `+esc((S.company.branches||[]).map(brName).join(' · '))}
 function navOk(k){const r=role();
   if(!r)return false;
@@ -1256,7 +1287,7 @@ function paintShell(){try{paintAttCard()}catch(e){}
   (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}${!navOk('dash')&&navOk('insp')?`<button data-act="nav" data-v="insp" class="${S.view==='insp'?'on':''}">${ic('insp')}<span>${LANG==='ta'?'சரிபார்ப்பு':'Inspect'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
-  const dueN=(r&&S.D&&navOk('fu')?Object.keys(S.D.holding).filter(remDue).length:0)+(r&&navOk('docs')?docsDue().length:0);
+  const dueN=(r&&S.D&&navOk('fu')?Object.keys(S.D.holding).filter(remDue).length:0)+(r&&navOk('docs')?renDue().length:0)+(r&&navOk('tasks')?taskDue().length:0);
   const attBtn=needsAtt()&&ATT.checked?(!ATT.today||!ATT.today.in?`<button class="btn sm attbtn in" data-act="attin">🟢 ${LANG==='ta'?'வருகை':'In'}</button>`:!ATT.today.out?`<button class="btn sm attbtn" data-act="attout">🔴 ${LANG==='ta'?'வெளியேறு':'Out'}</button>`:''):'';
   $('#who').innerHTML=attBtn+(r&&(navOk('fu')||navOk('docs'))&&S.D?`<button class="btn sm bell${dueN?' has':''}" data-act="fudue" title="${LANG==='ta'?'நினைவூட்டல்கள்: customers, ஆவணங்கள்':'Reminders: customers, documents'}">🔔${dueN?`<b>${dueN}</b>`:''}</button>`:'')+(r?`<button class="btn sm gs-btn" data-act="gsearch" aria-label="Search">${ic('search')}</button>`:'')+`<button class="btn sm skin-btn" data-act="skin" title="${LANG==='ta'?'மெனு நிறம்: வெளிர் / இருண்ட':'Menu colour: light / dark'}">${SKIN==='light'?'🌙':'☀️'}</button>`+(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
   paintSync();
@@ -1668,7 +1699,11 @@ const cylGo=(st,extra)=>dgo('cyl',Object.assign({cylQ:'',cylGas:'all',cylSt:st||
 const entGo=(extra)=>dgo('entries',Object.assign({entFrom:S.D.today,entTo:S.D.today,entBr:S.ui.dashBr||'all',entType:'all',entQ:''},extra||{}));
 const fuGo=(mn,mx)=>dgo('fu',{fuMin:String(mn),fuMax:mx==null?'':String(mx),fuDue:false,fuFrom:'',fuTo:'',fuQ:'',fuBr:S.ui.dashBr||'all'});
 VIEWS.dash={
-  mount(){return `<div class="page-head"><div><h2>Dashboard — Today’s Summary</h2><p id="dash-sub"></p></div><div class="actions">${navOk('insp')?`<button class="btn" data-act="nav" data-v="insp">${ic('insp')}${LANG==='ta'?'நேரடி சரிபார்ப்பு':'Physical inspection'}</button>`:''}${navOk('fill')?`<button class="btn" data-act="nav" data-v="fill">${ic('fill')}${LANG==='ta'?'நிரப்பல்':'Filling'}</button>`:''}<div class="seg" id="dash-br"></div>${canEnter()?`<button class="btn primary" data-act="nav" data-v="entry">${ic('plus')}New entry</button>`:''}</div></div><div id="dash-body"></div>`},
+  mount(){return `<div class="page-head"><div><h2>Dashboard — Today’s Summary</h2><p id="dash-sub"></p></div><div class="actions"><div class="seg" id="dash-br"></div></div></div><div class="qtiles" id="dash-tiles"></div><div id="dash-body"></div>`},
+  tiles(){const ta=LANG==='ta';const el=$('#dash-tiles');if(!el)return;const rd=navOk('docs')?renDue().length:0,td=navOk('tasks')?taskDue().length:0;
+    const T=[canEnter()&&['entry','entry','#16A34A',ta?'புதிய பதிவு':'New entry',ta?'DC / MT':'DC / MT',0],navOk('fill')&&['fill','fill','#EA580C',ta?'நிரப்பல்':'Filling',ta?'பதிவேடு':'register',0],navOk('insp')&&['insp','insp','#0891B2',ta?'நேரடி சரிபார்ப்பு':'Inspection',ta?'customer இடத்தில்':'at customer',0],
+      navOk('docs')&&['docs','shield','#BE123C',ta?'காப்பீடு & உரிமம்':'Insurance & licences',rd?(ta?rd+' renew செய்ய':rd+' to renew'):(ta?'எல்லாம் சரி':'all fine'),rd],navOk('tasks')&&['tasks','alarm','#9333EA',ta?'நினைவூட்டல்':'Reminders',td?(ta?td+' இப்போது':td+' due now'):(ta?'இல்லை':'none due'),td]].filter(Boolean);
+    el.innerHTML=T.map(([v,i,c,l,sub,n])=>`<button class="qtile" data-act="nav" data-v="${v}" style="--qc:${c}"><span class="qi">${ic(i)}</span><span class="ql"><b>${esc(l)}</b><small>${esc(sub)}</small></span>${n?`<em>${n}</em>`:''}</button>`).join('')},
   after(){this.update()},
   update(){
     const D=S.D,br=S.ui.dashBr;
@@ -1700,8 +1735,8 @@ VIEWS.dash={
       ${brs.map(b=>{const rs=allToday.filter(r=>r.br===b);return `<tr class="click" ${entGo({entBr:b})}><td>${esc(brName(b))}</td><td class="r num"><a href="#" ${entGo({entBr:b,entType:'DC'})}>${sumT(rs,'DC')}</a></td><td class="r num"><a href="#" ${entGo({entBr:b,entType:'MT'})}>${sumT(rs,'MT')}</a></td><td class="r num">${sumT(rs,'FS')}</td><td class="r num">${sumT(rs,'FR')}</td><td class="r num">${todayMism.filter(x=>x.br===b).length||'<span class="muted">0</span>'}</td></tr>`}).join('')}</tbody></table></div>
       ${Object.keys(staff).length?`<div class="chips" style="margin-top:12px">${Object.entries(staff).map(([id,s])=>`<a href="#" class="pill unused" ${entGo({entBr:'all'})}><span data-name="${esc(id)}">${esc(personName(id))}</span> · ${s.n} entries · ${s.c} cyl</a>`).join('')}</div>`:`<div class="small muted" style="margin-top:10px">No entries yet today.</div>`}`;
     const sm=canManage()?daySummary():null;
-    const dDue=navOk('docs')?docsDue():[];
-    $('#dash-body').innerHTML=`<div class="att-slot">${attCard()}</div>${dDue.length?`<div class="notice crit docdue">${ic('warn')}<div style="flex:1"><b>📑 ${LANG==='ta'?'ஆவணம் / நினைவூட்டல் கவனிக்க':'Documents / reminders need attention'} · ${dDue.length}</b><div class="small" style="margin-top:4px">${dDue.slice(0,4).map(d=>esc(d.t)+(d.kind==='task'?' ⏰ '+esc(d.at.slice(11,16)):' — '+fmtD(d.exp))).join(' · ')}</div></div><button class="btn sm" data-act="fudue">${LANG==='ta'?'பார்':'Open'}</button></div>`:''}${!S.isOwner&&!canEnter()?whyBox('entry',LANG==='ta'?'DC / MT பதிவு':'DC / MT entry'):''}
+    this.tiles();const dDue=(navOk('docs')?renDue():[]).concat(navOk('tasks')?taskDue():[]);
+    $('#dash-body').innerHTML=`<div class="att-slot">${attCard()}</div>${dDue.length?`<div class="notice crit docdue">${ic('warn')}<div style="flex:1"><b>🛡️⏰ ${LANG==='ta'?'Renew / நினைவூட்டல் கவனிக்க':'Renewals / reminders need attention'} · ${dDue.length}</b><div class="small" style="margin-top:4px">${dDue.slice(0,4).map(d=>esc(d.t)+(d.kind==='task'?' ⏰ '+esc(d.at.slice(11,16)):' — '+(docState(d).k==='bad'?(LANG==='ta'?'தேதி தவறு':'wrong date'):fmtD(d.exp)))).join(' · ')}</div></div><button class="btn sm" data-act="fudue">${LANG==='ta'?'பார்':'Open'}</button></div>`:''}${!S.isOwner&&!canEnter()?whyBox('entry',LANG==='ta'?'DC / MT பதிவு':'DC / MT entry'):''}
     ${sm?`<div class="panel daysum"><div class="panel-head"><h3>${LANG==='ta'?'இன்றைய சுருக்கம்':'Today’s summary'}</h3><span class="muted small">${fmtD(S.D.today)}</span><span style="margin-left:auto;display:flex;gap:6px"><button class="btn sm wa" data-act="wasum">${ic('wa')}${LANG==='ta'?'WhatsApp-இல் அனுப்பு':'Send on WhatsApp'}</button><button class="btn sm" data-act="copysum">${LANG==='ta'?'நகலெடு':'Copy'}</button></span></div><div class="kv">${sm.lines.map(([a,b],i)=>`<div class="click" ${[entGo({entType:'DC',entBr:'all'}),entGo({entType:'MT',entBr:'all'}),entGo({entBr:'all'}),dgo('mism'),fuGo(91)][i]||''}><span>${esc(a)}</span><b style="font-size:14px">${esc(b)}</b></div>`).join('')}</div></div>`:''}
     ${open?`<div class="notice crit">${ic('warn')}<div><b>${open} cylinder ${open===1?'movement needs':'movements need'} checking.</b> A cylinder came back from the wrong customer or an entry is missing. <button class="btn sm" data-act="nav" data-v="mism" style="margin-left:6px">Open mismatches</button></div></div>`:''}
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
@@ -2943,12 +2978,12 @@ VIEWS.fill={
    the app keeps only the link. */
 const DOC_CATS=[['ins','Insurance','காப்பீடு'],['veh','Vehicle RC / FC / permit / tax','வாகன RC / FC / permit / வரி'],['dl','Drug licence','மருந்து உரிமம் (Drug licence)'],['fire','Fire NOC / certificate','தீயணைப்பு சான்று'],['peso','PESO licence','PESO உரிமம்'],['pcb','Pollution (PCB) consent','மாசுக் கட்டுப்பாடு (PCB)'],['trade','Trade licence','வர்த்தக உரிமம்'],['test','Testing / calibration','சோதனை / அளவுத்திருத்தம்'],['other','Other','மற்றவை']];
 const catName=k=>{const c=DOC_CATS.find(x=>x[0]===k)||DOC_CATS[DOC_CATS.length-1];return LANG==='ta'?c[2]:c[1]};
-const canDocs=()=>S.isOwner||(canManage())||(role()&&!viewOnly()&&can('docs'));
+const canDocs=()=>S.isOwner||(canManage())||(role()&&!viewOnly()&&(can('docs')||can('tasks')));
 const docList=()=>Object.entries(S.rdoc||{}).map(([id,d])=>Object.assign({id},d)).filter(d=>!d.del);
 const daysTo=d=>{if(!d)return null;const a=new Date(todayISO()+'T00:00:00'),b=new Date(d+'T00:00:00');return Math.round((b-a)/864e5)};
 const nowLocal=()=>{const n=new Date();return todayISO()+'T'+pad(n.getHours())+':'+pad(n.getMinutes())};
 function docState(d){if(d.kind==='task'){if(d.done)return {k:'done'};const at=d.at||'';return at<=nowLocal()?{k:'over'}:at.slice(0,10)===todayISO()?{k:'today'}:{k:'later'}}
-  const n=daysTo(d.exp);if(n==null)return {k:'none'};if(n<0)return {k:'over',n};if(n<=(+d.lead||30))return {k:'soon',n};return {k:'ok',n}}
+  if(d.exp&&+d.exp.slice(0,4)<2000)return {k:'bad'};const n=daysTo(d.exp);if(n==null)return {k:'none'};if(n<0)return {k:'over',n};if(n<=(+d.lead||30))return {k:'soon',n};return {k:'ok',n}}
 const docsDue=()=>docList().filter(d=>{const s=docState(d).k;return s==='over'||s==='soon'||s==='today'});
 /* ---- Google Drive ---- */
 const DRIVE_ENABLE='https://console.cloud.google.com/apis/library/drive.googleapis.com?project='+encodeURIComponent((window.firebaseConfig&&firebaseConfig.projectId)||'hindustha-surgicals');
@@ -2994,84 +3029,136 @@ async function attachScan(id,files,btn){const ta=LANG==='ta';const d=S.rdoc[id];
 const scanBtn=id=>`<label class="btn sm scanbtn">📷 ${LANG==='ta'?'Scan / கோப்பு சேர்':'Scan / add file'}<input type="file" accept="image/*,application/pdf" multiple hidden data-scan="${esc(id)}"></label>`;
 const fileLinks=d=>(d.files||[]).map(f=>`<a class="pill info" href="${esc(f.link)}" target="_blank" rel="noopener" title="${esc(f.name||'')}">📎 ${esc((f.name||'file').split(' — ').pop())}</a>`).join(' ');
 document.addEventListener('change',e=>{const i=e.target.closest&&e.target.closest('[data-scan]');if(!i)return;attachScan(i.dataset.scan,i.files,i.closest('.scanbtn'));i.value=''});
+/* ---- quick date box: type 10-09-26 or 100926 → 10-09-2026 (no month names, no Tab between parts) ---- */
+function sdParse(v){v=String(v||'').trim();if(!v)return '';let d,m,y,x;
+  if((x=v.match(/^(\d{1,2})[-\/. ](\d{1,2})[-\/. ](\d{2}|\d{4})$/))){d=+x[1];m=+x[2];y=+x[3]}
+  else if(/^\d{6}$/.test(v)||/^\d{8}$/.test(v)){d=+v.slice(0,2);m=+v.slice(2,4);y=+v.slice(4)}
+  else if((x=v.match(/^(\d{4})-(\d{2})-(\d{2})$/))){y=+x[1];m=+x[2];d=+x[3]}else return null;
+  if(y<100)y+=2000;if(y<2000||y>2100||m<1||m>12||d<1)return null;const dt=new Date(y,m-1,d);if(dt.getMonth()!==m-1)return null;return y+'-'+pad(m)+'-'+pad(d)}
+const sdInput=(id,iso,req)=>`<input class="inp mono sdate" id="${id}" inputmode="numeric" autocomplete="off" placeholder="dd-mm-yy" value="${esc(iso?fmtD(iso):'')}" ${req?'data-req="1"':''}>`;
+const sdGet=id=>{const e=document.getElementById(id);return e?sdParse(e.value):null};
+function sdBind(root){(root||document).querySelectorAll('.sdate').forEach(i=>{if(i._sd)return;i._sd=1;
+  i.addEventListener('input',e=>{i.classList.remove('bad');if(e.inputType&&e.inputType.startsWith('delete'))return;if(/[\/. ]/.test(i.value))return;const v=i.value.replace(/\D/g,'').slice(0,8);
+    let o=v.slice(0,2);if(v.length>=2)o+='-';if(v.length>2)o+=v.slice(2,4);if(v.length>=4)o+='-';if(v.length>4)o+=v.slice(4);i.value=o});
+  if(i.value&&sdParse(i.value)===null)i.classList.add('bad');
+  i.addEventListener('blur',()=>{const r=sdParse(i.value);i.classList.toggle('bad',r===null||(!r&&!!i.dataset.req));if(r)i.value=fmtD(r)})})}
+const CAT_IC={ins:'🛡️',veh:'🚚',dl:'💊',fire:'🧯',peso:'⚠️',pcb:'🌿',trade:'🏪',test:'🔧',other:'📄'};
 /* ---- forms ---- */
 function docForm(id,kind){const ta=LANG==='ta';const d=id?Object.assign({},S.rdoc[id]):{kind:kind||'renew',cat:'ins',t:'',ent:'',no:'',iss:'',exp:'',lead:30,who:'',note:'',at:'',rep:'none'};const task=d.kind==='task';
-  openDrawer({k:'form',render:()=>[`<h3>${task?'⏰ '+(id?(ta?'நினைவூட்டல் — திருத்து':'Reminder — edit'):(ta?'புதிய நினைவூட்டல்':'New reminder')):'📑 '+(id?(ta?'ஆவணம் — திருத்து':'Document — edit'):(ta?'புதிய ஆவணம் / renewal':'New document / renewal'))}</h3>`,
+  const nx=new Date(Date.now()+60*60e3);const defT=pad(nx.getHours())+':00';
+  openDrawer({k:'form',render:()=>[`<h3>${task?'⏰ '+(id?(ta?'நினைவூட்டல் — திருத்து':'Reminder — edit'):(ta?'புதிய நினைவூட்டல்':'New reminder')):(CAT_IC[d.cat]||'📄')+' '+(id?(ta?'காப்பீடு / உரிமம் — திருத்து':'Insurance / licence — edit'):(ta?'புதிய காப்பீடு / உரிமம்':'New insurance / licence'))}</h3>`,
     `<form id="dc-form" autocomplete="off">${task?`
-      <div class="field"><label for="dc-t">${ta?'என்ன செய்ய வேண்டும்':'What to do'} *</label><input class="inp" id="dc-t" value="${esc(d.t)}" placeholder="${ta?'எ.கா. Bus parcel வாங்கவும் — KPN office':'eg. Collect bus parcel — KPN office'}" required></div>
-      <div class="row" style="margin-top:8px"><div class="field" style="flex:0 1 170px"><label for="dc-ad">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="dc-ad" value="${esc((d.at||'').slice(0,10)||todayISO())}" required></div>
-        <div class="field" style="flex:0 1 130px"><label for="dc-at">${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="dc-at" value="${esc((d.at||'').slice(11,16)||'18:00')}" required></div>
+      <div class="field"><label for="dc-t">${ta?'என்ன செய்ய வேண்டும்':'What to do'} *</label><input class="inp" id="dc-t" value="${esc(d.t)}" placeholder="${ta?'எ.கா. Bus parcel வாங்கவும் — KPN office':'eg. Collect bus parcel — KPN office'}"></div>
+      <div class="row" style="margin-top:8px"><div class="field" style="flex:0 1 160px"><label for="dc-ad">${ta?'தேதி':'Date'}</label>${sdInput('dc-ad',(d.at||'').slice(0,10)||todayISO(),1)}</div>
+        <div class="field" style="flex:0 1 130px"><label for="dc-at">${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="dc-at" value="${esc((d.at||'').slice(11,16)||defT)}"></div>
         <div class="field" style="flex:0 1 170px"><label for="dc-rep">${ta?'மீண்டும்':'Repeat'}</label><select class="inp" id="dc-rep">${[['none',ta?'ஒருமுறை':'Once'],['daily',ta?'தினமும்':'Every day'],['weekly',ta?'வாரம்தோறும்':'Every week'],['monthly',ta?'மாதம்தோறும்':'Every month']].map(([k,l])=>`<option value="${k}" ${d.rep===k?'selected':''}>${l}</option>`).join('')}</select></div></div>`
-    :`<div class="row"><div class="field" style="flex:0 1 230px"><label for="dc-cat">${ta?'வகை':'Type'}</label><select class="inp" id="dc-cat">${DOC_CATS.map(([k])=>`<option value="${k}" ${d.cat===k?'selected':''}>${esc(catName(k))}</option>`).join('')}</select></div>
-        <div class="field" style="flex:1 1 240px"><label for="dc-t">${ta?'பெயர்':'Name'} *</label><input class="inp" id="dc-t" value="${esc(d.t)}" placeholder="${ta?'எ.கா. TN29 AB 1234 insurance':'eg. TN29 AB 1234 insurance'}" required></div></div>
+    :`<div class="row"><div class="field" style="flex:0 1 230px"><label for="dc-cat">${ta?'வகை':'Type'}</label><select class="inp" id="dc-cat">${DOC_CATS.map(([k])=>`<option value="${k}" ${d.cat===k?'selected':''}>${CAT_IC[k]} ${esc(catName(k))}</option>`).join('')}</select></div>
+        <div class="field" style="flex:1 1 240px"><label for="dc-t">${ta?'பெயர்':'Name'} *</label><input class="inp" id="dc-t" value="${esc(d.t)}" placeholder="${ta?'எ.கா. TN29 AB 1234 காப்பீடு':'eg. TN29 AB 1234 insurance'}"></div></div>
       <div class="row" style="margin-top:8px"><div class="field" style="flex:1 1 200px"><label for="dc-ent">${ta?'யாருக்கு / எதற்கு':'For (company / vehicle / person)'}</label><input class="inp" id="dc-ent" list="dc-ents" value="${esc(d.ent||'')}"><datalist id="dc-ents">${[...new Set(S.company.branches.map(b=>plant(b).n).concat(docList().map(x=>x.ent).filter(Boolean)))].map(x=>`<option value="${esc(x)}">`).join('')}</datalist></div>
         <div class="field" style="flex:1 1 160px"><label for="dc-no">${ta?'எண் / policy எண்':'Number / policy no.'}</label><input class="inp mono" id="dc-no" value="${esc(d.no||'')}"></div></div>
-      <div class="row" style="margin-top:8px"><div class="field" style="flex:0 1 160px"><label for="dc-iss">${ta?'வழங்கிய தேதி':'Issued on'}</label><input type="date" class="inp" id="dc-iss" value="${esc(d.iss||'')}"></div>
-        <div class="field" style="flex:0 1 160px"><label for="dc-exp">${ta?'காலாவதி தேதி':'Expires on'} *</label><input type="date" class="inp" id="dc-exp" value="${esc(d.exp||'')}" required></div>
+      <div class="row" style="margin-top:8px"><div class="field" style="flex:0 1 150px"><label for="dc-iss">${ta?'வழங்கிய தேதி':'Issued on'}</label>${sdInput('dc-iss',d.iss)}</div>
+        <div class="field" style="flex:0 1 150px"><label for="dc-exp">${ta?'காலாவதி தேதி':'Expires on'} *</label>${sdInput('dc-exp',d.exp,1)}</div>
         <div class="field" style="flex:0 1 170px"><label for="dc-lead">${ta?'எத்தனை நாள் முன் நினைவூட்ட':'Remind days before'}</label><select class="inp" id="dc-lead">${[7,15,30,45,60,90].map(n=>`<option value="${n}" ${+d.lead===n?'selected':''}>${n} ${ta?'நாள்':'days'}</option>`).join('')}</select></div>
-        <div class="field" style="flex:1 1 160px"><label for="dc-who">${ta?'பொறுப்பு':'Who handles it'}</label><input class="inp" id="dc-who" value="${esc(d.who||'')}"></div></div>`}
+        <div class="field" style="flex:1 1 160px"><label for="dc-who">${ta?'பொறுப்பு':'Who handles it'}</label><input class="inp" id="dc-who" value="${esc(d.who||'')}"></div></div>
+      <div class="small muted" style="margin-top:4px">${ta?'தேதி: 10-09-26 அல்லது 100926 என்று type செய்தால் போதும்':'Dates: just type 10-09-26 or 100926'}</div>`}
       <div class="field" style="margin-top:8px"><label for="dc-note">${ta?'குறிப்பு':'Note'}</label><input class="inp" id="dc-note" value="${esc(d.note||'')}"></div>
       <div class="row" style="margin-top:12px"><button class="btn primary">${ic('check')}${ta?'சேமி':'Save'}</button>${id?`<button class="btn ghost danger" type="button" id="dc-del">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}</div></form>
     ${id&&!task?`<div class="panel" style="margin-top:12px"><div class="eyebrow">📎 ${ta?'Scan / கோப்புகள் (Google Drive)':'Scans / files (Google Drive)'}</div><div style="margin:8px 0">${fileLinks(d)||`<span class="muted small">${ta?'இன்னும் கோப்பு இல்லை':'No files yet'}</span>`}</div>${scanBtn(id)}</div>
       ${(d.hist||[]).length?`<div class="small muted" style="margin-top:10px">${ta?'முந்தைய காலாவதிகள்':'Earlier expiries'}: ${(d.hist||[]).map(h=>fmtD(h.exp)).join(', ')}</div>`:''}`:''}`],
-    after(){const g=k=>{const e=$('#dc-'+k);return e?e.value.trim():''};
+    after(){sdBind($('#dc-form'));const g=k=>{const e=$('#dc-'+k);return e?e.value.trim():''};
       const del=$('#dc-del');if(del)del.onclick=async()=>{if(!confirm(ta?'இதை நீக்கவா?':'Delete this?'))return;try{await S.db.doc('rdoc/'+id).update({del:{by:S.uid,at:new Date().toISOString()}});closeDrawer();toast(ta?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}};
-      $('#dc-form').addEventListener('submit',async e=>{e.preventDefault();
-        const v=task?{kind:'task',t:g('t'),at:g('ad')+'T'+g('at'),rep:g('rep'),note:g('note'),done:false}:{kind:'renew',cat:g('cat'),t:g('t'),ent:g('ent'),no:g('no'),iss:g('iss'),exp:g('exp'),lead:+g('lead')||30,who:g('who'),note:g('note')};
-        if(!v.t){toast(ta?'பெயர் போடவும்':'Type a name');return}if(!task&&!v.exp){toast(ta?'காலாவதி தேதி போடவும்':'Enter the expiry date');return}
+      $('#dc-form').addEventListener('submit',async e=>{e.preventDefault();let v;
+        if(task){const ad=sdGet('dc-ad');if(!ad){toast(ta?'தேதி சரியில்லை (எ.கா. 23-10-26)':'Check the date (eg. 23-10-26)');$('#dc-ad').focus();return}v={kind:'task',t:g('t'),at:ad+'T'+(g('at')||'09:00'),rep:g('rep'),note:g('note'),done:false}}
+        else{const exp=sdGet('dc-exp'),iss=sdGet('dc-iss');if(!exp){toast(ta?'காலாவதி தேதி சரியில்லை (எ.கா. 17-10-27)':'Check the expiry date (eg. 17-10-27)');$('#dc-exp').focus();return}
+          if(iss===null){toast(ta?'வழங்கிய தேதி சரியில்லை':'Check the issued date');$('#dc-iss').focus();return}
+          v={kind:'renew',cat:g('cat'),t:g('t'),ent:g('ent'),no:g('no'),iss:iss||'',exp,lead:+g('lead')||30,who:g('who'),note:g('note')}}
+        if(!v.t){toast(ta?'பெயர் போடவும்':'Type a name');$('#dc-t').focus();return}
         const nid=id||('r'+uidGen());if(!id){v.by=S.uid;v.cr=new Date().toISOString()}
         try{await S.db.doc('rdoc/'+nid).update(v);toast(ta?'சேமிக்கப்பட்டது':'Saved');if(!id&&!task){closeDrawer();docForm(nid)}else closeDrawer()}catch(err){toast(dbErr(err))}});
       const t=$('#dc-t');t&&t.focus()}});
 }
-/* renewed: new expiry, old one kept in history, optional new scan */
 function renewForm(id){const ta=LANG==='ta';const d=S.rdoc[id];if(!d)return;
-  const sug=d.exp&&d.iss?(()=>{const a=new Date(d.iss),b=new Date(d.exp);const n=new Date(d.exp);n.setTime(n.getTime()+(b-a));return n.toISOString().slice(0,10)})():d.exp?(()=>{const n=new Date(d.exp);n.setFullYear(n.getFullYear()+1);return n.toISOString().slice(0,10)})():'';
+  const sug=d.exp&&d.iss&&d.iss<d.exp?(()=>{const a=new Date(d.iss),b=new Date(d.exp);const n=new Date(d.exp);n.setTime(n.getTime()+(b-a));return n.toISOString().slice(0,10)})():d.exp?(()=>{const n=new Date(d.exp);n.setFullYear(Math.max(n.getFullYear(),new Date().getFullYear()-1)+1);return n.toISOString().slice(0,10)})():'';
   openDrawer({k:'form',dlg:1,render:()=>[`<h3>✅ ${ta?'Renew செய்யப்பட்டது':'Renewed'} · ${esc(d.t)}</h3>`,
     `<p class="muted" style="margin-top:0">${ta?'பழைய காலாவதி':'Old expiry'}: <b>${fmtD(d.exp)}</b></p>
-     <form id="rn-form"><div class="row"><div class="field" style="flex:0 1 180px"><label for="rn-exp">${ta?'புதிய காலாவதி தேதி':'New expiry date'}</label><input type="date" class="inp" id="rn-exp" value="${esc(sug)}" required></div>
+     <form id="rn-form"><div class="row"><div class="field" style="flex:0 1 170px"><label for="rn-exp">${ta?'புதிய காலாவதி தேதி':'New expiry date'}</label>${sdInput('rn-exp',sug,1)}</div>
        <div class="field" style="flex:1 1 180px"><label for="rn-no">${ta?'புதிய எண் (மாறினால்)':'New number (if changed)'}</label><input class="inp mono" id="rn-no" value="${esc(d.no||'')}"></div></div>
        <div class="row" style="margin-top:12px"><button class="btn primary">${ic('check')}${ta?'சேமி':'Save'}</button></div></form>
      <div style="margin-top:12px">${scanBtn(id)} <span class="small muted">${ta?'புதிய சான்றை scan செய்து சேர்க்கலாம்':'Add the scan of the new certificate'}</span></div>`],
-    after(){$('#rn-form').addEventListener('submit',async e=>{e.preventDefault();const exp=$('#rn-exp').value;if(!exp)return;
+    after(){sdBind($('#rn-form'));$('#rn-form').addEventListener('submit',async e=>{e.preventDefault();const exp=sdGet('rn-exp');if(!exp){toast(ta?'தேதி சரியில்லை':'Check the date');return}
       try{await S.db.doc('rdoc/'+id).update({exp,no:$('#rn-no').value.trim(),iss:d.exp||'',hist:(d.hist||[]).concat([{exp:d.exp,no:d.no||'',by:S.uid,at:new Date().toISOString()}]),renAt:new Date().toISOString()});toast(ta?'புதிய தேதி சேமிக்கப்பட்டது':'New date saved');closeDrawer()}catch(err){toast(dbErr(err))}})}});
 }
+/* ---- cards ---- */
+const renDue=()=>docList().filter(d=>d.kind!=='task'&&['over','soon','bad'].includes(docState(d).k));
+const taskDue=()=>docList().filter(d=>d.kind==='task'&&['over','today'].includes(docState(d).k));
+function renCard(d){const ta=LANG==='ta';const st=docState(d);const n=st.n;
+  const big=st.k==='bad'?`<b>?</b><span>${ta?'தேதி தவறு — ✎ அழுத்தித் திருத்தவும்':'wrong date — press ✎ to fix'}</span>`:st.k==='over'?`<b>${-n}</b><span>${ta?'நாள் முன் காலாவதி':'days ago — expired'}</span>`:st.k==='none'?`<b>—</b><span></span>`:`<b>${n}</b><span>${n===0?(ta?'இன்று காலாவதி':'expires today'):(ta?'நாள் மீதம்':'days left')}</span>`;
+  const lbl=st.k==='bad'?(ta?'தேதி தவறு':'CHECK DATE'):st.k==='over'?(ta?'காலாவதி ஆனது':'EXPIRED'):st.k==='soon'?(ta?'விரைவில் renew':'RENEW SOON'):(ta?'செல்லுபடி':'VALID');
+  return `<div class="rn-card ${st.k}"><div class="rn-top"><span class="rn-ic">${CAT_IC[d.cat]||'📄'}</span><div style="flex:1;min-width:0"><div class="rn-t">${esc(d.t)}</div><div class="rn-sub">${esc(catName(d.cat))}${d.ent?' · '+esc(d.ent):''}</div></div><span class="rn-st">${lbl}</span></div>
+    <div class="rn-mid"><div class="rn-big">${big}</div><div class="rn-kv"><div><span>${ta?'காலாவதி':'Expires'}</span><b>${fmtD(d.exp)}</b></div>${d.iss?`<div><span>${ta?'வழங்கியது':'Issued'}</span><b>${fmtD(d.iss)}</b></div>`:''}${d.no?`<div><span>${ta?'எண்':'Number'}</span><b class="mono">${esc(d.no)}</b></div>`:''}${d.who?`<div><span>${ta?'பொறுப்பு':'Handles'}</span><b>${esc(d.who)}</b></div>`:''}</div></div>
+    ${d.note?`<div class="small muted">📝 ${esc(d.note)}</div>`:''}
+    <div class="rn-act"><div class="rn-files">${fileLinks(d)||`<span class="small muted">${ta?'Scan இல்லை':'No scan'}</span>`}</div>
+      ${canDocs()?`<div class="row" style="gap:6px;flex-wrap:nowrap">${scanBtn(d.id)}<button class="btn sm ok" data-act="docrenew" data-v="${esc(d.id)}">✅ ${ta?'Renew ஆனது':'Renewed'}</button><button class="btn sm ghost" data-act="docedit" data-v="${esc(d.id)}" title="${ta?'திருத்து':'Edit'}">${ic('edit')}</button></div>`:''}</div></div>`}
+function taskCard(d){const ta=LANG==='ta';const st=docState(d);const dd=d.at.slice(0,10);const tm=d.at.slice(11,16);
+  const day=dd===todayISO()?(ta?'இன்று':'Today'):daysTo(dd)===1?(ta?'நாளை':'Tomorrow'):fmtD(dd);
+  return `<div class="tk-card ${st.k}"><div class="tk-time"><b>${esc(tm)}</b><span>${day}</span></div><div style="flex:1;min-width:0"><div class="tk-t">${esc(d.t)}</div><div class="small muted">${d.rep&&d.rep!=='none'?'🔁 '+({daily:ta?'தினமும்':'every day',weekly:ta?'வாரம்தோறும்':'every week',monthly:ta?'மாதம்தோறும்':'every month'}[d.rep]||'')+' · ':''}${st.k==='over'?`<span style="color:var(--crit);font-weight:600">${ta?'நேரம் கடந்தது':'Overdue'}</span>`:st.k==='done'?(ta?'முடிந்தது':'Done'):''}${d.note?' · '+esc(d.note):''}</div></div>
+    ${canDocs()?`<div class="row" style="gap:6px;flex-wrap:nowrap">${st.k!=='done'?`<button class="btn sm ok" data-act="taskdone" data-v="${esc(d.id)}">✓ ${ta?'முடிந்தது':'Done'}</button>`:''}<button class="btn sm ghost" data-act="docedit" data-v="${esc(d.id)}">${ic('edit')}</button></div>`:''}</div>`}
+/* ---- bell ---- */
+function bellPanel(){const ta=LANG==='ta';const R=navOk('docs')?renDue():[],T=navOk('tasks')?taskDue():[];
+  const cn=navOk('fu')&&S.D?Object.keys(S.D.holding).filter(remDue).length:0;
+  openDrawer({k:'form',render:()=>[`<h3>🔔 ${ta?'நினைவூட்டல்கள்':'Reminders'}</h3>`,
+    `${navOk('docs')?`<div class="bl-sec"><div class="eyebrow">🛡️ ${ta?'காப்பீடு & உரிமம் renew':'Insurance & licences to renew'} · ${R.length}</div>${R.length?`<div class="rn-grid one">${R.map(renCard).join('')}</div>`:`<div class="muted small">${ta?'எதுவும் இல்லை':'Nothing due'}</div>`}<button class="btn sm" data-act="nav" data-v="docs" style="margin-top:8px">${ta?'எல்லாம் பார்':'See all'}</button></div>`:''}
+     ${navOk('tasks')?`<div class="bl-sec"><div class="eyebrow">⏰ ${ta?'நினைவூட்டல்கள்':'Reminders'} · ${T.length}</div>${T.length?T.map(taskCard).join(''):`<div class="muted small">${ta?'எதுவும் இல்லை':'Nothing due'}</div>`}<button class="btn sm" data-act="nav" data-v="tasks" style="margin-top:8px">${ta?'எல்லாம் பார்':'See all'}</button></div>`:''}
+     ${navOk('fu')?`<div class="bl-sec"><div class="eyebrow">📞 ${ta?'Customer நினைவூட்டல்':'Customers to remind'} · ${cn}</div><button class="btn sm" data-act="fudue2">${ta?'பட்டியலைத் திற':'Open the list'}</button></div>`:''}`]})}
+/* ---- pages ---- */
+VIEWS.docs={
+  mount(){const ta=LANG==='ta';const u=S.ui;if(!u.rnF)u.rnF='all';if(u.rnC==null)u.rnC='';
+    return `<div class="page-head"><div><h2>Insurance & licences</h2><p>${ta?'காப்பீடு, வாகன ஆவணம், drug licence, fire NOC… காலாவதிக்கு முன் 🔔 மணியிலும் dashboard-இலும் நினைவூட்டும்.':'Insurance, vehicle papers, drug licence, fire NOC… reminded on the 🔔 bell and the dashboard before they expire.'}</p></div>
+      ${canDocs()?`<div class="actions"><button class="btn primary" data-act="docnew">${ic('plus')}${ta?'புதியது சேர்':'Add new'}</button></div>`:''}</div>
+      <div id="rn-kpi" class="rn-kpis"></div>
+      <div class="panel"><div class="row" style="align-items:flex-end"><div class="field search"><label for="rn-q">${ta?'தேடு':'Search'}</label><div class="rel">${ic('search')}<input class="inp" id="rn-q" value="${esc(u.rnQ||'')}" placeholder="${ta?'பெயர், வண்டி எண், policy எண்':'Name, vehicle no., policy no.'}"></div></div>
+        <div class="field" style="flex:0 1 230px"><label for="rn-c">${ta?'வகை':'Type'}</label><select class="inp" id="rn-c"><option value="">${ta?'எல்லாம்':'All types'}</option>${DOC_CATS.map(([k])=>`<option value="${k}" ${u.rnC===k?'selected':''}>${CAT_IC[k]} ${esc(catName(k))}</option>`).join('')}</select></div></div></div>
+      <div id="rn-list" class="rn-grid"></div>
+      <div class="small muted" style="margin-top:10px">${ta?'Scan: “📷” அழுத்தி phone camera-வில் படம் எடுக்கலாம் அல்லது PDF சேர்க்கலாம் — உங்கள் Google Drive-இல் “HSAP Documents” folder-இல் சேமிக்கப்படும்.':'Scan: press “📷” to take photos with the phone camera or add a PDF — saved in your Google Drive folder “HSAP Documents”.'}</div>`},
+  after(){const u=S.ui;$('#rn-q').addEventListener('input',e=>{u.rnQ=e.target.value;this.update()});$('#rn-c').addEventListener('change',e=>{u.rnC=e.target.value;this.update()});
+    $('#rn-kpi').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;u.rnF=b.dataset.f;this.update()});this.update()},
+  update(){const ta=LANG==='ta';const u=S.ui;const el=$('#rn-list');if(!el)return;const all=docList().filter(d=>d.kind!=='task');
+    const k=d=>docState(d).k;const n={over:all.filter(d=>k(d)==='over'||k(d)==='bad').length,soon:all.filter(d=>k(d)==='soon').length,ok:all.filter(d=>k(d)==='ok').length,all:all.length};
+    $('#rn-kpi').innerHTML=[['over','🔴',ta?'காலாவதி ஆனவை':'Expired'],['soon','🟠',ta?'விரைவில் renew':'Renew soon'],['ok','🟢',ta?'செல்லுபடி':'Valid'],['all','📁',ta?'மொத்தம்':'All']].map(([f,i,l])=>`<button class="rn-kpi ${f} ${u.rnF===f?'on':''}" data-f="${f}"><span>${i} ${l}</span><b>${n[f]}</b></button>`).join('');
+    const q=(u.rnQ||'').trim().toLowerCase();const ord={bad:0,over:0,soon:1,ok:2,none:3};
+    const L=all.filter(d=>(u.rnF==='all'||k(d)===u.rnF||(u.rnF==='over'&&k(d)==='bad'))&&(!u.rnC||d.cat===u.rnC)&&(!q||[d.t,d.ent,d.no,d.note].join(' ').toLowerCase().includes(q))).sort((a,b)=>ord[k(a)]-ord[k(b)]||(a.exp||'').localeCompare(b.exp||''));
+    el.innerHTML=L.length?L.map(renCard).join(''):`<div class="panel empty" style="grid-column:1/-1"><b>${all.length?(ta?'இந்த வடிகட்டியில் எதுவும் இல்லை':'Nothing in this filter'):(ta?'இன்னும் எதுவும் சேர்க்கவில்லை':'Nothing added yet')}</b>${all.length?'':(ta?'வண்டி insurance, drug licence, fire NOC… “புதியது சேர்” அழுத்தவும்.':'Press “Add new” for vehicle insurance, drug licence, fire NOC…')}</div>`}
+};
+VIEWS.tasks={
+  mount(){const ta=LANG==='ta';const nx=new Date(Date.now()+60*60e3);
+    return `<div class="page-head"><div><h2>To-do reminders</h2><p>${ta?'எந்த வேலையையும் நேரத்துடன் நினைவூட்ட — bus parcel, வங்கி, payment… நேரம் வந்ததும் app popup காட்டும், 🔔 மணியிலும் வரும்.':'Remind yourself of any job at a time — bus parcel, bank, payments… the app pops it up at the time and it shows on the 🔔 bell.'}</p></div></div>
+      ${canDocs()?`<div class="panel tk-add"><form id="tk-form" class="row" style="align-items:flex-end" autocomplete="off">
+        <div class="field" style="flex:1 1 280px"><label for="tk-t">${ta?'என்ன செய்ய வேண்டும்':'What to do'}</label><input class="inp" id="tk-t" placeholder="${ta?'எ.கா. Bus parcel வாங்கவும் — KPN office':'eg. Collect bus parcel — KPN office'}"></div>
+        <div class="field" style="flex:0 1 140px"><label for="tk-d">${ta?'தேதி':'Date'}</label>${sdInput('tk-d',todayISO(),1)}</div>
+        <div class="field" style="flex:0 1 120px"><label for="tk-tm">${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="tk-tm" value="${pad(nx.getHours())}:00"></div>
+        <div class="field" style="flex:0 1 150px"><label for="tk-r">${ta?'மீண்டும்':'Repeat'}</label><select class="inp" id="tk-r"><option value="none">${ta?'ஒருமுறை':'Once'}</option><option value="daily">${ta?'தினமும்':'Every day'}</option><option value="weekly">${ta?'வாரம்தோறும்':'Every week'}</option><option value="monthly">${ta?'மாதம்தோறும்':'Every month'}</option></select></div>
+        <button class="btn primary">${ic('plus')}${ta?'சேர்':'Add'}</button></form></div>`:''}
+      <div id="tk-kpi" class="rn-kpis"></div><div id="tk-list"></div>`},
+  after(){const ta=LANG==='ta';const f=$('#tk-form');if(f){sdBind(f);f.addEventListener('submit',async e=>{e.preventDefault();const t=$('#tk-t').value.trim();const d=sdGet('tk-d');
+      if(!t){$('#tk-t').focus();return}if(!d){toast(ta?'தேதி சரியில்லை (எ.கா. 23-10-26)':'Check the date (eg. 23-10-26)');$('#tk-d').focus();return}
+      try{await S.db.doc('rdoc/r'+uidGen()).update({kind:'task',t,at:d+'T'+($('#tk-tm').value||'09:00'),rep:$('#tk-r').value,done:false,by:S.uid,cr:new Date().toISOString()});$('#tk-t').value='';$('#tk-t').focus();toast(ta?'நினைவூட்டல் சேர்க்கப்பட்டது':'Reminder added')}catch(err){toast(dbErr(err))}})}
+    this.update()},
+  update(){const ta=LANG==='ta';const el=$('#tk-list');if(!el)return;const all=docList().filter(d=>d.kind==='task');const k=d=>docState(d).k;
+    const tom=(()=>{const x=new Date();x.setDate(x.getDate()+1);return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate())})();
+    const G=[['over',ta?'நேரம் கடந்தவை':'Overdue',d=>k(d)==='over'],['today',ta?'இன்று':'Today',d=>k(d)==='today'],['tom',ta?'நாளை':'Tomorrow',d=>k(d)==='later'&&d.at.slice(0,10)===tom],['later',ta?'பிறகு':'Later',d=>k(d)==='later'&&d.at.slice(0,10)>tom],['done',ta?'முடிந்தவை':'Done',d=>k(d)==='done']];
+    $('#tk-kpi').innerHTML=G.slice(0,4).map(([g,l,fn])=>`<div class="rn-kpi ${g==='over'?'over':g==='today'?'soon':'ok'}"><span>${l}</span><b>${all.filter(fn).length}</b></div>`).join('');
+    el.innerHTML=G.map(([g,l,fn])=>{let L=all.filter(fn).sort((a,b)=>a.at.localeCompare(b.at));if(g==='done')L=L.sort((a,b)=>(b.doneAt||'').localeCompare(a.doneAt||'')).slice(0,10);return L.length?`<div class="panel"><div class="panel-head"><h3>${l} · ${L.length}</h3></div>${L.map(taskCard).join('')}</div>`:''}).join('')||`<div class="panel empty"><b>${ta?'நினைவூட்டல் இல்லை':'No reminders'}</b>${ta?'மேலே type செய்து “சேர்” அழுத்தவும்.':'Type above and press “Add”.'}</div>`}
+};
+
 async function taskDone(id){const ta=LANG==='ta';const d=S.rdoc[id];if(!d)return;let v;
   if(d.rep&&d.rep!=='none'){const n=new Date(d.at);do{if(d.rep==='daily')n.setDate(n.getDate()+1);else if(d.rep==='weekly')n.setDate(n.getDate()+7);else n.setMonth(n.getMonth()+1)}while(n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())<todayISO());
     v={at:n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())+'T'+d.at.slice(11,16),last:new Date().toISOString(),lastBy:S.uid}}
   else v={done:true,doneAt:new Date().toISOString(),doneBy:S.uid};
   try{await S.db.doc('rdoc/'+id).update(v);toast(ta?'முடிந்தது ✓':'Done ✓')}catch(e){toast(dbErr(e))}}
-/* ---- bell: customers due + documents / reminders ---- */
-function docRow(d,small){const ta=LANG==='ta';const st=docState(d);
-  const badge=d.kind==='task'?(st.k==='done'?`<span class="pill ok">${ta?'முடிந்தது':'done'}</span>`:`<span class="pill ${st.k==='over'?'crit':st.k==='today'?'warn':'info'}">⏰ ${fmtD(d.at.slice(0,10))} ${esc(d.at.slice(11,16))}${d.rep&&d.rep!=='none'?' 🔁':''}</span>`)
-    :st.k==='over'?`<span class="pill crit">${ta?'காலாவதி ஆனது':'Expired'} · ${-st.n}${ta?' நாள் முன்':'d ago'}</span>`:st.k==='soon'?`<span class="pill warn">${st.n===0?(ta?'இன்று':'today'):st.n+(ta?' நாள் மீதம்':' days left')}</span>`:`<span class="pill unused">${st.n} ${ta?'நாள்':'days'}</span>`;
-  const acts=canDocs()?(d.kind==='task'?(st.k!=='done'?`<button class="btn sm ok" data-act="taskdone" data-v="${esc(d.id)}">✓ ${ta?'முடிந்தது':'Done'}</button>`:''):`<button class="btn sm ok" data-act="docrenew" data-v="${esc(d.id)}">✅ ${ta?'Renew ஆனது':'Renewed'}</button>`):'';
-  return `<div class="docrow ${st.k}"><div style="flex:1;min-width:0"><b>${esc(d.t)}</b> ${d.kind==='task'?'':`<span class="small muted">${esc(catName(d.cat))}${d.ent?' · '+esc(d.ent):''}${d.no?' · '+esc(d.no):''}</span>`}
-    <div class="small" style="margin-top:3px">${badge} ${d.kind==='task'?'':`<span class="muted">${ta?'காலாவதி':'expires'} ${fmtD(d.exp)}</span>`} ${small?'':fileLinks(d)}${d.note?` <span class="muted">· ${esc(d.note)}</span>`:''}</div></div>
-    <div class="row" style="gap:6px;flex-wrap:nowrap">${acts}${canDocs()?`<button class="btn sm ghost" data-act="docedit" data-v="${esc(d.id)}" title="${ta?'திருத்து':'Edit'}">${ic('edit')}</button>`:''}</div></div>`}
-function bellPanel(){const ta=LANG==='ta';const due=navOk('docs')?docsDue().sort((a,b)=>(docState(a).k==='over'?0:1)-(docState(b).k==='over'?0:1)):[];
-  const cn=navOk('fu')&&S.D?Object.keys(S.D.holding).filter(remDue).length:0;
-  openDrawer({k:'form',render:()=>[`<h3>🔔 ${ta?'நினைவூட்டல்கள்':'Reminders'}</h3>`,
-    `${navOk('docs')?`<div class="eyebrow">📑 ${ta?'ஆவணங்கள் & நினைவூட்டல்கள்':'Documents & reminders'} · ${due.length}</div>${due.length?due.map(d=>docRow(d,true)).join(''):`<div class="muted small" style="margin:6px 0 12px">${ta?'இப்போது எதுவும் இல்லை':'Nothing due now'}</div>`}
-      <div class="row" style="margin:6px 0 16px"><button class="btn sm" data-act="nav" data-v="docs">${ta?'எல்லா ஆவணங்களும்':'All documents'}</button></div>`:''}
-     ${navOk('fu')?`<div class="eyebrow">📞 ${ta?'Customer நினைவூட்டல்':'Customers to remind'} · ${cn}</div><div class="row" style="margin-top:6px"><button class="btn sm" data-act="fudue2">${ta?'பட்டியலைத் திற':'Open the list'}</button></div>`:''}`]})}
 /* at the time of a reminder, show it while the app is open */
-setInterval(()=>{if(!S.D||!navOk||!navOk('docs')||S.drawer)return;const n=nowLocal();let seen={};try{seen=JSON.parse(sessionStorage.getItem('cd-taskseen')||'{}')}catch(e){}
+setInterval(()=>{if(!S.D||!navOk||!navOk('tasks')||S.drawer)return;const n=nowLocal();let seen={};try{seen=JSON.parse(sessionStorage.getItem('cd-taskseen')||'{}')}catch(e){}
   const d=docList().find(x=>x.kind==='task'&&!x.done&&x.at<=n&&x.at>=n.slice(0,10)&&!seen[x.id+x.at]);if(!d)return;seen[d.id+d.at]=1;try{sessionStorage.setItem('cd-taskseen',JSON.stringify(seen))}catch(e){}
   const ta=LANG==='ta';openDrawer({k:'form',dlg:1,render:()=>[`<h3>⏰ ${ta?'நினைவூட்டல்':'Reminder'}</h3>`,`<p style="font-size:18px"><b>${esc(d.t)}</b></p><p class="muted">${fmtD(d.at.slice(0,10))} ${esc(d.at.slice(11,16))}${d.note?' · '+esc(d.note):''}</p><div class="row"><button class="btn primary" data-act="taskdone" data-v="${esc(d.id)}">✓ ${ta?'முடிந்தது':'Done'}</button><button class="btn" data-act="closedrawer">${ta?'பிறகு':'Later'}</button></div>`]})},30e3);
-VIEWS.docs={
-  mount(){const ta=LANG==='ta';return `<div class="page-head"><div><h2>Documents & renewals</h2><p>${ta?'Licence, insurance, சான்றுகள் — காலாவதிக்கு முன் 🔔 மணியில் நினைவூட்டும். Scan கோப்புகள் உங்கள் Google Drive-இல் (“HSAP Documents” folder) — phone-இலும் திறக்கலாம்.':'Licences, insurance and certificates — the 🔔 bell reminds you before they expire. Scans go to your own Google Drive (folder “HSAP Documents”) and open on the phone too.'}</p></div>
-    ${canDocs()?`<div class="actions"><button class="btn primary" data-act="docnew">${ic('plus')}${ta?'ஆவணம் / renewal':'Document / renewal'}</button><button class="btn" data-act="tasknew">⏰ ${ta?'நினைவூட்டல்':'Reminder'}</button></div>`:''}</div>
-    <div id="dc-body"></div>`},
-  after(){this.update()},
-  update(){const ta=LANG==='ta';const el=$('#dc-body');if(!el)return;const L=docList();
-    const ren=L.filter(d=>d.kind!=='task').sort((a,b)=>(a.exp||'9').localeCompare(b.exp||'9'));const tasks=L.filter(d=>d.kind==='task').sort((a,b)=>(a.done-b.done)||(a.at||'').localeCompare(b.at||''));
-    const due=docsDue();
-    el.innerHTML=`${due.length?`<div class="panel"><div class="panel-head"><h3>🔔 ${ta?'இப்போது கவனிக்க':'Needs attention now'} · ${due.length}</h3></div>${due.map(d=>docRow(d)).join('')}</div>`:''}
-      <div class="panel"><div class="panel-head"><h3>📑 ${ta?'ஆவணங்கள் & renewal':'Documents & renewals'} · ${ren.length}</h3></div>${ren.length?ren.map(d=>docRow(d)).join(''):`<div class="empty"><b>${ta?'இன்னும் ஆவணம் இல்லை':'No documents yet'}</b>${ta?'Insurance, drug licence, fire certificate… சேர்க்கவும்.':'Add insurance, drug licence, fire certificate…'}</div>`}</div>
-      <div class="panel"><div class="panel-head"><h3>⏰ ${ta?'நினைவூட்டல்கள்':'Reminders'} · ${tasks.filter(t=>!t.done).length}</h3></div>${tasks.length?tasks.slice(0,60).map(d=>docRow(d)).join(''):`<div class="empty"><b>${ta?'நினைவூட்டல் இல்லை':'No reminders'}</b>${ta?'எ.கா. “நாளை 6 PM bus parcel வாங்கவும்”':'eg. “Collect the bus parcel tomorrow at 6 PM”'}</div>`}</div>
-      <div class="small muted">${ta?'முதல் முறை scan சேர்க்கும்போது Google கணக்கு Drive அனுமதி கேட்கும் — அனுமதித்தால் “HSAP Documents” folder உருவாகும். Owner மற்றும் managers-க்கு அந்தக் கோப்பைத் திறக்கும் அனுமதி தானாகக் கொடுக்கப்படும்.':'The first scan asks your Google account for Drive permission and makes the folder “HSAP Documents”. The owner and managers can open the files.'}</div>`}
-};
-
 /* Mismatches */
 VIEWS.mism={
   mount(){return `<div class="page-head"><div><h2>Mismatches</h2><p>Entries that do not match where the cylinder should be. Fix the entry if it was typed wrong, or verify it after checking with the customer.</p></div><div class="actions">${S.isOwner&&datelessList().length?`<button class="btn" data-act="dlopen">${ic('cal')}${LANG==='ta'?'தேதி இல்லாத பழைய பதிவுகள்':'Old entries without date'} · ${datelessList().length}</button>`:''}<div class="seg" id="m-seg"></div></div></div>
