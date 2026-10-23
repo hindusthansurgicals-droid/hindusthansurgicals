@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>html{scroll-padding-top:env(safe-area-inset-top,0px)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>HSAP Cylinder Desk</title>
-<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.2.0"><link rel="icon" href="icon.svg?v=4.2.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.2.0">
+<meta name="theme-color" content="#0E6B5A"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Cylinder Desk"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.3.0"><link rel="icon" href="icon.svg?v=4.3.0" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png?v=4.3.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -243,6 +243,12 @@ tbody tr.click:hover td{background:var(--surface-2)}
 .brtag.b{background:var(--surface-2);color:var(--muted)}
 .datebox{position:relative;display:flex;align-items:center}
 .tabbar{display:none}
+.filechip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 10px;background:var(--info-bg);max-width:100%}
+.filechip a{color:var(--info);font-size:13px;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filechip button{border:0;background:#fff;color:var(--crit);border-radius:999px;width:24px;height:24px;cursor:pointer;flex:none}
+body.uploading .scanbtn{opacity:.5;pointer-events:none}
+.readbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px;margin-bottom:10px;border:2px dashed #93C5FD;border-radius:12px;background:#EFF6FF}
+.readbtn{background:#2563EB!important;color:#fff!important;border-color:#2563EB!important;cursor:pointer}
+.inp.autofill{background:#FEF9C3!important;border-color:#EAB308!important}
 .qtiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px}
 .qtile{position:relative;padding-right:30px!important;display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--qc) 30%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--qc) 10%,var(--surface)),var(--surface));text-align:left;cursor:pointer;color:var(--ink);transition:transform .12s,box-shadow .12s}
 .qtile:hover{transform:translateY(-2px);box-shadow:0 8px 18px color-mix(in srgb,var(--qc) 18%,transparent)}
@@ -821,7 +827,7 @@ img,video,canvas{max-width:100%}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.2.0" alt=""></div>
+      <div class="brand-mark" aria-hidden="true"><img src="icon.svg?v=4.3.0" alt=""></div>
       <div style="min-width:0"><h1 id="co-name">Cylinder Desk</h1><small id="co-sub">Cylinder tracking</small></div>
     </div>
     <div class="gsearch" id="gs-wrap" hidden><span class="gs-ic"></span><input id="gq" class="inp" autocomplete="off"><div id="gq-dd" class="gq-dd" hidden></div></div>
@@ -841,7 +847,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.2.0"></script>
+<script src="fb.js?v=4.3.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -876,9 +882,10 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.2.0';
+const APP_VERSION=window.CD_VERSION||'4.3.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
+ ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
  ['4.2.0','2026-10-23',['Insurance & licences: its own page with clear cards — big “days left”, colour (red expired, orange renew soon, green valid), number, issued / expiry dates, scans, Renewed button','To-do reminders: a separate page; type the job, date and time in one line and press Enter','Dates: type 10-09-26 or 100926 — no month name, no Tab between day / month / year; a wrong year is flagged','Home page: big colourful buttons for New entry, Filling, Inspection, Insurance & licences, Reminders with counts']],
  ['4.1.1','2026-10-22',['Double entry check covers DC and MT together (same customer, same day, same cylinders); owner / manager can allow a real same-day return','Mismatches page lists double entries already saved','“+” sign for a new dealer is the right size']],
  ['4.1.0','2026-10-22',['Documents & renewals: insurance, vehicle papers, drug licence, fire certificate, PESO, PCB… with expiry; reminded before they run out','One-time or repeating reminders (eg. collect the bus parcel at 6 PM) — pop up at the time while the app is open','🔔 bell now shows customer reminders and documents together','Scans (photos → one PDF, or a PDF) are kept in your own Google Drive folder “HSAP Documents”, open on phone and computer; the owner and managers can open them']],
@@ -3020,13 +3027,20 @@ async function scansToBlob(files,title){const imgs=[...files].filter(f=>/^image\
       return {blob:p.output('blob'),ext:'pdf'}}
     return {blob:imgs[0],ext:(imgs[0].type.split('/')[1]||'jpg')}}
   return {blob:files[0],ext:(files[0].name.split('.').pop()||'bin')}}
-async function attachScan(id,files,btn){const ta=LANG==='ta';const d=S.rdoc[id];if(!d||!files||!files.length)return;
+async function attachScan(id,files,btn,rec){const ta=LANG==='ta';const d=S.rdoc[id]||rec;if(!d||!files||!files.length)return;
+  if(S._up){toast(ta?'முந்தைய கோப்பு சேமிக்கப்படுகிறது — காத்திருக்கவும்':'The previous file is still saving — please wait');return}S._up=true;document.body.classList.add('uploading');
   const old=btn?btn.innerHTML:'';if(btn){btn.disabled=true;btn.innerHTML='⏳ '+(ta?'Drive-இல் சேமிக்கிறது…':'Saving to Drive…')}
   try{const {blob,ext}=await scansToBlob(files,d.t);const nm=(d.t||'document').replace(/[\\/:*?"<>|]+/g,' ').trim()+' — '+(d.exp||todayISO())+'.'+ext;
     const f=await driveUpload(blob,nm);f.at=new Date().toISOString();f.by=S.uid;
-    await S.db.doc('rdoc/'+id).update({files:(d.files||[]).concat([f])});toast(ta?'Scan Google Drive-இல் சேமிக்கப்பட்டது':'Scan saved to Google Drive')}
-  catch(e){toast(e&&e.code?driveErr(e):dbErr(e),7000)}finally{if(btn){btn.disabled=false;btn.innerHTML=old}}}
+    await S.db.doc('rdoc/'+id).update({files:(((S.rdoc[id]||d).files)||[]).concat([f])});toast(ta?'Scan Google Drive-இல் சேமிக்கப்பட்டது':'Scan saved to Google Drive')}
+  catch(e){toast(e&&e.code?driveErr(e):dbErr(e),7000)}finally{S._up=false;document.body.classList.remove('uploading');if(btn){btn.disabled=false;btn.innerHTML=old}}}
 const scanBtn=id=>`<label class="btn sm scanbtn">📷 ${LANG==='ta'?'Scan / கோப்பு சேர்':'Scan / add file'}<input type="file" accept="image/*,application/pdf" multiple hidden data-scan="${esc(id)}"></label>`;
+async function delScan(id,idx){const ta=LANG==='ta';const d=S.rdoc[id];if(!d||!d.files||!d.files[idx])return;const f=d.files[idx];
+  if(!confirm((ta?'இந்தக் கோப்பை நீக்கவா?\n':'Remove this file?\n')+(f.name||'')))return;
+  try{await S.db.doc('rdoc/'+id).update({files:d.files.filter((x,i)=>i!==idx)});toast(ta?'கோப்பு நீக்கப்பட்டது':'File removed');
+    if(!window.__DRIVE_STUB&&f.id){try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+f.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({trashed:true})})}catch(e){}}
+    if(S.drawer&&S.drawer.k==='form'&&$('#dc-form')){closeDrawer();docForm(id)}}catch(e){toast(dbErr(e))}}
+const fileEdit=(d)=>(d.files||[]).map((f,i)=>`<span class="filechip"><a href="${esc(f.link)}" target="_blank" rel="noopener" title="${esc(f.name||'')}">📎 ${esc(f.name||'file')}</a><button type="button" data-act="fdel" data-v="${esc(d.id)}" data-i="${i}" title="${LANG==='ta'?'நீக்கு':'Remove'}">✕</button></span>`).join('');
 const fileLinks=d=>(d.files||[]).map(f=>`<a class="pill info" href="${esc(f.link)}" target="_blank" rel="noopener" title="${esc(f.name||'')}">📎 ${esc((f.name||'file').split(' — ').pop())}</a>`).join(' ');
 document.addEventListener('change',e=>{const i=e.target.closest&&e.target.closest('[data-scan]');if(!i)return;attachScan(i.dataset.scan,i.files,i.closest('.scanbtn'));i.value=''});
 /* ---- quick date box: type 10-09-26 or 100926 → 10-09-2026 (no month names, no Tab between parts) ---- */
@@ -3043,6 +3057,38 @@ function sdBind(root){(root||document).querySelectorAll('.sdate').forEach(i=>{if
   if(i.value&&sdParse(i.value)===null)i.classList.add('bad');
   i.addEventListener('blur',()=>{const r=sdParse(i.value);i.classList.toggle('bad',r===null||(!r&&!!i.dataset.req));if(r)i.value=fmtD(r)})})}
 const CAT_IC={ins:'🛡️',veh:'🚚',dl:'💊',fire:'🧯',peso:'⚠️',pcb:'🌿',trade:'🏪',test:'🔧',other:'📄'};
+/* ---- read a policy / licence from a PDF or photo and fill the form ---- */
+const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',PDFJS_W='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',TESS='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+const loadJs=(src,g)=>window[g]?Promise.resolve():new Promise((ok,bad)=>{const sc=document.createElement('script');sc.src=src;sc.onload=()=>ok();sc.onerror=()=>bad(new Error('load'));document.head.appendChild(sc)});
+async function ocr(src,say){await loadJs(TESS,'Tesseract');say&&say(LANG==='ta'?'படத்தில் உள்ள எழுத்தைப் படிக்கிறது… (முதல் முறை 20–40 வினாடி)':'Reading the text in the picture… (first time 20–40 s)');const r=await Tesseract.recognize(src,'eng');return (r&&r.data&&r.data.text)||''}
+async function fileText(file,say){if(window.__READ_STUB)return window.__READ_STUB(file);
+  if(file.type==='application/pdf'){await loadJs(PDFJS,'pdfjsLib');pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_W;const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let t='';
+    for(let i=1;i<=Math.min(pdf.numPages,4);i++){const pg=await pdf.getPage(i);const tc=await pg.getTextContent();let last=null;tc.items.forEach(it=>{const y=it.transform&&it.transform[5];t+=(last!=null&&Math.abs(y-last)>3?'\n':' ')+it.str;last=y});t+='\n'}
+    if(t.replace(/\s/g,'').length>80)return t;
+    let o='';for(let i=1;i<=Math.min(pdf.numPages,2);i++){const pg=await pdf.getPage(i);const vp=pg.getViewport({scale:2});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;o+=await ocr(c,say)+'\n'}return o}
+  return ocr(file,say)}
+const MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function docDates(t){const out=[];const add=(i,d,m,y)=>{y=+y;if(y<100)y+=2000;const iso=sdParse(pad(+d)+'-'+pad(+m)+'-'+y);if(iso)out.push({i,iso})};let x;
+  const r1=/\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4}|\d{2})\b/g;while((x=r1.exec(t)))add(x.index,x[1],x[2],x[3]);
+  const r2=/\b(\d{1,2})(?:st|nd|rd|th)?[\s\-\/]*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?[\s\-\/,]*(\d{4}|\d{2})\b/gi;while((x=r2.exec(t)))add(x.index,x[1],MON[x[2].toLowerCase().slice(0,3)],x[3]);
+  const r3=/\b(20\d\d)-(\d{2})-(\d{2})\b/g;while((x=r3.exec(t)))add(x.index,x[3],x[2],x[1]);
+  return out.sort((a,b)=>a.i-b.i)}
+const INSURERS=['ICICI Lombard','HDFC ERGO','Bajaj Allianz','Tata AIG','New India Assurance','United India','Oriental Insurance','National Insurance','Reliance General','SBI General','Go Digit','Digit','Acko','IFFCO Tokio','Cholamandalam','Royal Sundaram','Future Generali','Kotak','Liberty','Magma','Shriram','Universal Sompo','Zuno','Navi','Star Health','Raheja QBE'];
+function parseDoc(t){const T=String(t||'');const low=T.toLowerCase();const o={};
+  o.cat=/form[\s\-]*(20|21)|drug\s*licen|drugs and cosmetics/i.test(T)?'dl':/fire\s*(noc|service|licen|safety)|no objection certificate.*fire/i.test(T)?'fire':/\bpeso\b|petroleum\s*(and|&)\s*explosives|explosives/i.test(T)?'peso':/pollution\s*control|consent\s*to\s*(operate|establish)/i.test(T)?'pcb':/trade\s*licen/i.test(T)?'trade':/insurance|policy/i.test(T)?'ins':/fitness\s*certificate|permit|road\s*tax|registration\s*certificate/i.test(T)?'veh':'other';
+  const v=T.match(/\b([A-Z]{2})[\s\-]?(\d{1,2})[\s\-]?([A-Z]{1,3})[\s\-]?(\d{4})\b/);if(v)o.veh=v[1]+v[2]+' '+v[3]+' '+v[4];
+  const pn=T.match(/(?:policy|certificate|licen[cs]e|noc|cover\s*note|registration)\s*(?:no|number|#)\.?\s*[:\-]?\s*([A-Z0-9][A-Z0-9\/\-\.]{4,})/i);if(pn&&(!v||pn[1].replace(/\W/g,'')!==v[0].replace(/\W/g,'')))o.no=pn[1].replace(/[.\-\/]+$/,'');
+  o.insurer=INSURERS.find(n=>low.includes(n.toLowerCase()))||'';
+  const D=docDates(T);const kw=(i,re)=>re.test(T.slice(Math.max(0,i-60),i).toLowerCase());
+  const E=D.filter(d=>kw(d.i,/(to|till|upto|up to|expir|valid|end|due|ending)\W*[:\-]?\W*(\d{2}:\d{2}\W*(hrs|hours)?\W*(on|of)?\W*)?$/)||kw(d.i,/(expiry|valid (up)?to|valid till|date of expiry|end date|to date)/));
+  const Sx=D.filter(d=>kw(d.i,/(from|start|commenc|issue|issued|effective|inception|date of issue|grant)/));
+  const all=D.map(d=>d.iso);if(E.length)o.exp=E.map(d=>d.iso).sort().pop();else if(all.length)o.exp=all.slice().sort().pop();
+  const before=x=>x&&o.exp&&x<o.exp;const sx=Sx.map(d=>d.iso).filter(before).sort();if(sx.length)o.iss=sx[sx.length-1];
+  else if(o.exp){const yr=all.filter(before).sort();if(yr.length)o.iss=yr.reduce((a,b)=>Math.abs(daysTo2(b,o.exp)-365)<Math.abs(daysTo2(a,o.exp)-365)?b:a)}
+  if(/adiyaman/i.test(T))o.ent=plant('KGIRI').n;else if(/hindusthan/i.test(T))o.ent=plant('DPI').n;
+  o.t=o.cat==='ins'?((o.veh||'')+(o.veh?' — ':'')+(o.insurer||'Insurance')).trim():(catName(o.cat)+(o.no?' — '+o.no:''));
+  return o}
+const daysTo2=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
 /* ---- forms ---- */
 function docForm(id,kind){const ta=LANG==='ta';const d=id?Object.assign({},S.rdoc[id]):{kind:kind||'renew',cat:'ins',t:'',ent:'',no:'',iss:'',exp:'',lead:30,who:'',note:'',at:'',rep:'none'};const task=d.kind==='task';
   const nx=new Date(Date.now()+60*60e3);const defT=pad(nx.getHours())+':00';
@@ -3052,7 +3098,8 @@ function docForm(id,kind){const ta=LANG==='ta';const d=id?Object.assign({},S.rdo
       <div class="row" style="margin-top:8px"><div class="field" style="flex:0 1 160px"><label for="dc-ad">${ta?'தேதி':'Date'}</label>${sdInput('dc-ad',(d.at||'').slice(0,10)||todayISO(),1)}</div>
         <div class="field" style="flex:0 1 130px"><label for="dc-at">${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="dc-at" value="${esc((d.at||'').slice(11,16)||defT)}"></div>
         <div class="field" style="flex:0 1 170px"><label for="dc-rep">${ta?'மீண்டும்':'Repeat'}</label><select class="inp" id="dc-rep">${[['none',ta?'ஒருமுறை':'Once'],['daily',ta?'தினமும்':'Every day'],['weekly',ta?'வாரம்தோறும்':'Every week'],['monthly',ta?'மாதம்தோறும்':'Every month']].map(([k,l])=>`<option value="${k}" ${d.rep===k?'selected':''}>${l}</option>`).join('')}</select></div></div>`
-    :`<div class="row"><div class="field" style="flex:0 1 230px"><label for="dc-cat">${ta?'வகை':'Type'}</label><select class="inp" id="dc-cat">${DOC_CATS.map(([k])=>`<option value="${k}" ${d.cat===k?'selected':''}>${CAT_IC[k]} ${esc(catName(k))}</option>`).join('')}</select></div>
+    :`<div class="readbox"><label class="btn readbtn">📄 ${ta?'PDF / photo-விலிருந்து விவரம் எடு':'Fill from PDF / photo'}<input type="file" id="dc-read" accept="application/pdf,image/*" hidden></label><span class="small muted" id="dc-readst">${ta?'Policy / licence கோப்பைத் தேர்வு செய்தால் விவரங்கள் தானாக நிரம்பும் — சரிபார்த்து சேமிக்கவும். அந்தக் கோப்பும் Drive-இல் சேமிக்கப்படும்.':'Pick the policy / licence file — the details fill in by themselves; check and save. The file is saved to Drive too.'}</span></div>
+      <div class="row"><div class="field" style="flex:0 1 230px"><label for="dc-cat">${ta?'வகை':'Type'}</label><select class="inp" id="dc-cat">${DOC_CATS.map(([k])=>`<option value="${k}" ${d.cat===k?'selected':''}>${CAT_IC[k]} ${esc(catName(k))}</option>`).join('')}</select></div>
         <div class="field" style="flex:1 1 240px"><label for="dc-t">${ta?'பெயர்':'Name'} *</label><input class="inp" id="dc-t" value="${esc(d.t)}" placeholder="${ta?'எ.கா. TN29 AB 1234 காப்பீடு':'eg. TN29 AB 1234 insurance'}"></div></div>
       <div class="row" style="margin-top:8px"><div class="field" style="flex:1 1 200px"><label for="dc-ent">${ta?'யாருக்கு / எதற்கு':'For (company / vehicle / person)'}</label><input class="inp" id="dc-ent" list="dc-ents" value="${esc(d.ent||'')}"><datalist id="dc-ents">${[...new Set(S.company.branches.map(b=>plant(b).n).concat(docList().map(x=>x.ent).filter(Boolean)))].map(x=>`<option value="${esc(x)}">`).join('')}</datalist></div>
         <div class="field" style="flex:1 1 160px"><label for="dc-no">${ta?'எண் / policy எண்':'Number / policy no.'}</label><input class="inp mono" id="dc-no" value="${esc(d.no||'')}"></div></div>
@@ -3063,9 +3110,16 @@ function docForm(id,kind){const ta=LANG==='ta';const d=id?Object.assign({},S.rdo
       <div class="small muted" style="margin-top:4px">${ta?'தேதி: 10-09-26 அல்லது 100926 என்று type செய்தால் போதும்':'Dates: just type 10-09-26 or 100926'}</div>`}
       <div class="field" style="margin-top:8px"><label for="dc-note">${ta?'குறிப்பு':'Note'}</label><input class="inp" id="dc-note" value="${esc(d.note||'')}"></div>
       <div class="row" style="margin-top:12px"><button class="btn primary">${ic('check')}${ta?'சேமி':'Save'}</button>${id?`<button class="btn ghost danger" type="button" id="dc-del">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}</div></form>
-    ${id&&!task?`<div class="panel" style="margin-top:12px"><div class="eyebrow">📎 ${ta?'Scan / கோப்புகள் (Google Drive)':'Scans / files (Google Drive)'}</div><div style="margin:8px 0">${fileLinks(d)||`<span class="muted small">${ta?'இன்னும் கோப்பு இல்லை':'No files yet'}</span>`}</div>${scanBtn(id)}</div>
+    ${id&&!task?`<div class="panel" style="margin-top:12px"><div class="eyebrow">📎 ${ta?'Scan / கோப்புகள் (Google Drive)':'Scans / files (Google Drive)'}</div><div style="margin:8px 0;display:flex;flex-direction:column;gap:6px;align-items:flex-start">${fileEdit(Object.assign({id},d))||`<span class="muted small">${ta?'இன்னும் கோப்பு இல்லை':'No files yet'}</span>`}</div>${scanBtn(id)}</div>
       ${(d.hist||[]).length?`<div class="small muted" style="margin-top:10px">${ta?'முந்தைய காலாவதிகள்':'Earlier expiries'}: ${(d.hist||[]).map(h=>fmtD(h.exp)).join(', ')}</div>`:''}`:''}`],
-    after(){sdBind($('#dc-form'));const g=k=>{const e=$('#dc-'+k);return e?e.value.trim():''};
+    after(){sdBind($('#dc-form'));const g=k=>{const e=$('#dc-'+k);return e?e.value.trim():''};let readFiles=null;
+      const rd=$('#dc-read');if(rd)rd.addEventListener('change',async()=>{const f=rd.files[0];if(!f)return;const st=$('#dc-readst');const say=m=>{st.innerHTML='⏳ '+esc(m)};say(ta?'கோப்பைப் படிக்கிறது…':'Reading the file…');
+        try{const txt=await fileText(f,say);const o=parseDoc(txt);readFiles=[f];const set=(k,v,iso)=>{const e=$('#dc-'+k);if(!e||!v)return;e.value=iso?fmtD(v):v;e.classList.add('autofill');e.classList.remove('bad')};
+          if(o.cat){$('#dc-cat').value=o.cat;$('#dc-cat').classList.add('autofill')}set('t',o.t);set('ent',o.ent);set('no',o.no);set('iss',o.iss,1);set('exp',o.exp,1);
+          const got=['no','iss','exp'].filter(k=>o[k]).length;
+          st.innerHTML=got?`✅ <b>${ta?'விவரங்கள் நிரப்பப்பட்டன — மஞ்சள் பெட்டிகளைச் சரிபார்க்கவும்':'Details filled — check the yellow boxes'}</b>${o.exp?'':` · <span style="color:var(--crit)">${ta?'காலாவதித் தேதி கிடைக்கவில்லை — கையால் போடவும்':'expiry date not found — type it'}</span>`}`:`⚠ <span style="color:var(--warn)">${ta?'கோப்பிலிருந்து விவரம் படிக்க முடியவில்லை — கையால் நிரப்பவும். கோப்பு சேமிக்கும்போது Drive-இல் சேரும்.':'Could not read details — please fill by hand. The file is still saved to Drive.'}</span>`}
+        catch(e){readFiles=[f];st.innerHTML=`⚠ ${ta?'படிக்க முடியவில்லை (internet?) — கையால் நிரப்பவும். கோப்பு சேமிக்கும்போது Drive-இல் சேரும்.':'Could not read it (internet?) — fill by hand; the file is still saved to Drive.'}`}});
+      $$('#dc-form .inp').forEach(i=>i.addEventListener('input',()=>i.classList.remove('autofill')));
       const del=$('#dc-del');if(del)del.onclick=async()=>{if(!confirm(ta?'இதை நீக்கவா?':'Delete this?'))return;try{await S.db.doc('rdoc/'+id).update({del:{by:S.uid,at:new Date().toISOString()}});closeDrawer();toast(ta?'நீக்கப்பட்டது':'Deleted')}catch(e){toast(dbErr(e))}};
       $('#dc-form').addEventListener('submit',async e=>{e.preventDefault();let v;
         if(task){const ad=sdGet('dc-ad');if(!ad){toast(ta?'தேதி சரியில்லை (எ.கா. 23-10-26)':'Check the date (eg. 23-10-26)');$('#dc-ad').focus();return}v={kind:'task',t:g('t'),at:ad+'T'+(g('at')||'09:00'),rep:g('rep'),note:g('note'),done:false}}
@@ -3074,7 +3128,9 @@ function docForm(id,kind){const ta=LANG==='ta';const d=id?Object.assign({},S.rdo
           v={kind:'renew',cat:g('cat'),t:g('t'),ent:g('ent'),no:g('no'),iss:iss||'',exp,lead:+g('lead')||30,who:g('who'),note:g('note')}}
         if(!v.t){toast(ta?'பெயர் போடவும்':'Type a name');$('#dc-t').focus();return}
         const nid=id||('r'+uidGen());if(!id){v.by=S.uid;v.cr=new Date().toISOString()}
-        try{await S.db.doc('rdoc/'+nid).update(v);toast(ta?'சேமிக்கப்பட்டது':'Saved');if(!id&&!task){closeDrawer();docForm(nid)}else closeDrawer()}catch(err){toast(dbErr(err))}});
+        try{await S.db.doc('rdoc/'+nid).update(v);toast(ta?'சேமிக்கப்பட்டது':'Saved');const rf=readFiles;
+          if(rf){closeDrawer();await attachScan(nid,rf,null,Object.assign({files:(S.rdoc[nid]&&S.rdoc[nid].files)||d.files||[]},v));return}
+          if(!id&&!task){closeDrawer();docForm(nid)}else closeDrawer()}catch(err){toast(dbErr(err))}});
       const t=$('#dc-t');t&&t.focus()}});
 }
 function renewForm(id){const ta=LANG==='ta';const d=S.rdoc[id];if(!d)return;
@@ -3818,6 +3874,7 @@ const A={
     openDrawer({k:'form',render:()=>[`<h3>${esc(personName(r.uid))} · ${fmtD(r.d)}</h3>`,`<div class="attday">${['in','out'].map(k=>r[k]?`<div><div class="eyebrow">${k==='in'?(ta?'வருகை':'In'):(ta?'வெளியேறல்':'Out')} · <b>${hm(r[k].at)}</b></div>${r[k].ph?`<img src="${r[k].ph}" alt="">`:`<div class="muted small">${ta?'படம் இல்லை':'No photo'}</div>`}<div class="small">${mapLink(r[k].loc)}</div></div>`:`<div class="muted">${k==='out'?(ta?'Out பதிவில்லை':'No out'):''}</div>`).join('')}</div>`]})},
   dealers:()=>dealerPanel(false),
   shifts:()=>shiftPanel(),
+  fdel:el=>delScan(el.dataset.v,+el.dataset.i),
   plantset:()=>plantPanel(),purnew:()=>purPanel(null),puredit:el=>purPanel(el.dataset.v),certopen:el=>certPanel(el.dataset.v),
   certrec:el=>{const r=(S.D.recs||[]).find(x=>x.rid===el.dataset.rid);if(!r)return;const ids=batchesForRec(r);const ta=LANG==='ta';
     if(!ids.length){toast(ta?'இந்த DC-க்கு batch இல்லை — liquid வாங்குதலைப் பதியவும்':'No batch for this DC — record the liquid purchase first');return}
@@ -4028,7 +4085,7 @@ async function boot(){
   bootData();registerMember();watchMembers();
   paintShell();
 }
-if(window.__TEST)window.__T={NAV,VIEWS,go,outNudge,ATT,openDrawer,closeDrawer,BK,bkRun,S,dcPdf,saveLoc,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
+if(window.__TEST)window.__T={parseDoc,NAV,VIEWS,go,outNudge,ATT,openDrawer,closeDrawer,BK,bkRun,S,dcPdf,saveLoc,rentLines,parseTests,fuMessage,openRent,runReport,noCheck,gaps,words,setLang};
 boot();
 })();
 </script>
