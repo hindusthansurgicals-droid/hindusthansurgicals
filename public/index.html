@@ -1870,7 +1870,7 @@ function chipStatus(id,f){
     return ['ok',st.st==='filling'?'Coming back from filling':'Marked full']}
   return ['ok',''];
 }
-function datalistVals(field){const s=new Set();for(const r of S.D.recs.slice(0,600)){if(r[field])s.add(r[field])}if(field==='pl')(S.company.plants||[]).forEach(p=>s.add(p));return [...s].slice(0,40)}
+function datalistVals(field){const s=new Set();for(const r of S.D.recs.slice(0,600)){if(r[field])s.add(r[field])}if(field==='pl'){const fp=S.company.fillingPlants;const legacy=Array.isArray(S.company.plants)?S.company.plants:[];(Array.isArray(fp)?fp:legacy).forEach(p=>s.add(typeof p==='string'?p:(p&&p.n)||''))}return [...s].slice(0,40)}
 VIEWS.entry={
   mount(){
     if(!S.form)S.form=newForm();const f=S.form;
@@ -3461,7 +3461,7 @@ VIEWS.settings={
     <form class="panel" id="s-fill" style="display:flex;flex-direction:column;gap:12px"><h3>Filling</h3>
       <label class="check"><input type="checkbox" id="s-usefill" ${c.useFill?'checked':''}> Show FILL / FULL in New entry (send for filling, received full)</label>
       <label class="check"><input type="checkbox" id="s-track" ${c.trackFill?'checked':''}> Warn when a DC sends a cylinder that is not marked full</label>
-      <div class="field"><label for="s-plants">Filling plants / suppliers (one per line)</label><textarea class="inp" id="s-plants" placeholder="Own plant&#10;HS &amp; AP&#10;ADGS">${esc((c.plants||[]).join('\n'))}</textarea></div>
+      <div class="field"><label for="s-plants">Filling plants / suppliers (one per line)</label><textarea class="inp" id="s-plants" placeholder="Own plant&#10;HS &amp; AP&#10;ADGS">${esc((Array.isArray(c.fillingPlants)?c.fillingPlants:(Array.isArray(c.plants)?c.plants:[])).join('\n'))}</textarea></div>
       <div><button class="btn primary" type="submit">${ic('check')}Save filling</button></div></form>
     <form class="panel" id="s-rent" style="display:flex;flex-direction:column;gap:12px"><h3>Rent</h3>
       <div class="row"><div class="field"><label for="s-free">Free days</label><input class="inp num" type="number" min="0" id="s-free" value="${esc(R.free??30)}"></div>
@@ -3488,7 +3488,7 @@ VIEWS.settings={
     const saveCo=async patch=>{try{await S.db.doc('settings/company').set(Object.assign({},S.company,patch));toast('Saved')}catch(err){toast(dbErr(err))}};
     $('#s-co').addEventListener('submit',e=>{e.preventDefault();const bn=Object.assign({},S.company.branchNames);$$('[data-br]').forEach(i=>bn[i.dataset.br]=i.value.trim()||i.dataset.br);
       saveCo({name:$('#s-name').value.trim(),phone:$('#s-phone').value.trim(),gst:$('#s-gst').value.trim(),addr:$('#s-addr').value.trim(),branchNames:bn})});
-    $('#s-fill').addEventListener('submit',e=>{e.preventDefault();saveCo({useFill:$('#s-usefill').checked,trackFill:$('#s-track').checked,plants:$('#s-plants').value.split('\n').map(x=>x.trim()).filter(Boolean)})});
+    $('#s-fill').addEventListener('submit',e=>{e.preventDefault();saveCo({useFill:$('#s-usefill').checked,trackFill:$('#s-track').checked,fillingPlants:$('#s-plants').value.split('\n').map(x=>x.trim()).filter(Boolean)})});
     $('#s-rent').addEventListener('submit',e=>{e.preventDefault();const rates={};$$('[data-rate]').forEach(i=>{if(i.value!=='')rates[i.dataset.rate]=+i.value});saveCo({rent:{free:+$('#s-free').value||0,rates}})});
     $('#s-bill').addEventListener('submit',e=>{e.preventDefault();const price={},hsn={};$$('[data-bp]').forEach(i=>{if(i.value!=='')price[i.dataset.bp]=+i.value});$$('[data-bh]').forEach(i=>{if(i.value.trim())hsn[i.dataset.bh]=i.value.trim()});saveCo({bill:{prefix:$('#s-bpre').value.trim()||'INV',gst:$('#s-bgst').value,price,hsn}})});
     $('#s-fu').addEventListener('submit',e=>{e.preventDefault();saveCo({fuDays:+$('#s-fudays').value||30,fuMsg:$('#s-fumsg').value.trim()||DEFAULT_FU_MSG})});
