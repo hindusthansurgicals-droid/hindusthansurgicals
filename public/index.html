@@ -882,7 +882,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.3.0';
+const APP_VERSION=window.CD_VERSION||'4.3.4';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
