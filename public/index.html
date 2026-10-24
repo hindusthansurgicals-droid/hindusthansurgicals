@@ -847,7 +847,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.3.7"></script>
+<script src="fb.js?v=4.3.9"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -882,7 +882,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.3.7';
+const APP_VERSION=window.CD_VERSION||'4.3.9';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
@@ -1683,9 +1683,55 @@ function syncPanel(){
       <li>${canFolder()?T2('Choose a folder once: backups are written there silently with the date and time in the name (eg. Cylinder desk auto 20-10-2026 15-30.json). Automatic copies and one file per day (Cylinder desk daily 20-10-2026.json) are kept for 10 days, then deleted by themselves. Files you save by hand are never deleted.','ஒருமுறை folder தேர்வு செய்யுங்கள்: backup-கள் தேதி, நேரத்துடன் தானாகச் சேமிக்கப்படும் (உதா. Cylinder desk auto 20-10-2026 15-30.json). Automatic நகல்களும் நாளுக்கு ஒரு file-உம் (Cylinder desk daily 20-10-2026.json) 10 நாள் வைக்கப்பட்டு, பிறகு தானாக நீக்கப்படும். நீங்களே சேமித்த file-கள் நீக்கப்படாது.'):T2('On this device backups download as files; you get a reminder every 10 minutes.','இந்த device-இல் backup file-ஆக download ஆகும்; 30 நிமிடத்துக்கு ஒருமுறை நினைவூட்டல் வரும்.')}</li>
       <li>${T2('Pick a folder inside Google Drive (Drive for desktop) and every backup is also copied to the cloud.','Google Drive (Drive for desktop) உள்ளே ஒரு folder-ஐத் தேர்வு செய்தால், ஒவ்வொரு backup-உம் cloud-க்கும் போகும்.')}</li>
       <li>${T2('After the browser restarts, click “Backup due” once to allow the folder again.','Browser மீண்டும் திறந்த பின், “Backup தேவை” என்பதை ஒருமுறை அழுத்தி folder அனுமதி கொடுங்கள்.')}</li>
-      <li>${T2('To restore: open','திரும்பப் பெற:')} <a href="import.html" target="_blank">import.html</a> ${T2('and load the backup file.','திறந்து backup file-ஐ ஏற்றுங்கள்.')}</li></ul></div>`:''}`;
+      <li>${T2('To restore a backup file use the “Restore from backup file” box below (owner only).','Backup file-ஐத் திரும்பப் பெற, கீழே உள்ள “Backup file-இலிருந்து மீட்டெடு” பெட்டியைப் பயன்படுத்துங்கள் (Owner மட்டும்).')}</li></ul></div>`:''}
+  ${S.isOwner?`<div class="panel"><div class="panel-head"><h3>♻ ${T2('Restore from backup file','Backup file-இலிருந்து மீட்டெடு')}</h3></div>
+    <p class="small muted" style="margin:0 0 10px">${T2('Pick a .json backup made by “Back up now” or the backup folder. The data in the file is written back; entries made after the backup are not removed. A copy of the current data is downloaded first.','“Back up now” அல்லது backup folder-இல் உருவான .json file-ஐத் தேர்வு செய்யுங்கள். File-இல் உள்ள தரவு திரும்ப எழுதப்படும்; backup-க்குப் பிறகு போட்ட பதிவுகள் நீக்கப்படாது. முதலில் தற்போதைய தரவின் நகல் download ஆகும்.')}</p>
+    <button class="btn" data-act="restore">♻ ${T2('Restore from backup file','Backup file-இலிருந்து மீட்டெடு')}</button></div>`:''}`;
   return [head,body];
 }
+function restorePanel(){
+  if(!S.isOwner){toast(T2('Only the owner can restore a backup.','Owner மட்டும் backup-ஐ மீட்டெடுக்க முடியும்.'));return}
+  let bundle=null;
+  openDrawer({k:'form',keep:true,render:()=>[`<h3>♻ ${T2('Restore from backup file','Backup file-இலிருந்து மீட்டெடு')}</h3>`,
+    `<p class="muted" style="margin-top:0">${T2('Choose the backup .json file. Nothing changes until you press Restore.','Backup .json file-ஐத் தேர்வு செய்யுங்கள். Restore அழுத்தும்வரை எதுவும் மாறாது.')}</p>
+     <input type="file" id="rs-file" accept=".json,application/json" class="inp">
+     <div id="rs-info" class="small" style="margin:10px 0"></div>
+     <label class="small" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" id="rs-roles"> ${T2('Also restore people &amp; roles (normally leave this off)','People &amp; roles-உம் மீட்டெடு (பொதுவாக off)')}</label>
+     <div class="row"><button class="btn primary" id="rs-go" disabled>♻ ${T2('Restore','மீட்டெடு')}</button><button class="btn" type="button" data-act="closedrawer">${T2('Cancel','ரத்து')}</button></div>
+     <div id="rs-log" class="small mono" style="margin-top:12px;max-height:260px;overflow:auto;white-space:pre-wrap"></div>`],
+    after(){
+      const log=(t,c)=>{const d=document.createElement('div');if(c)d.style.color=c==='err'?'var(--crit)':'var(--ok)';d.textContent=t;$('#rs-log').appendChild(d);$('#rs-log').scrollTop=1e9};
+      $('#rs-file').onchange=async e=>{const f=e.target.files[0];bundle=null;$('#rs-go').disabled=true;$('#rs-info').textContent='';if(!f)return;
+        try{const b=JSON.parse(await f.text());
+          if(!b||typeof b!=='object'||Array.isArray(b))throw new Error('not a backup');
+          const cols=Object.keys(b).filter(k=>!k.startsWith('_')&&b[k]&&typeof b[k]==='object');
+          if(!cols.some(k=>['cust','cyl','log','hist'].includes(k)))throw new Error(T2('no cylinder / customer data inside','உள்ளே சிலிண்டர் / customer தரவு இல்லை'));
+          const n=cols.reduce((a,k)=>a+Object.keys(b[k]).length,0);bundle=b;
+          $('#rs-info').innerHTML=(b._backup?`${T2('Backup made','Backup எடுத்தது')} <b>${esc(new Date(b._backup.at).toLocaleString('en-IN'))}</b> · v${esc(b._backup.version||'?')}<br>`:'')+`<b>${n}</b> ${T2('records in','பதிவுகள்:')} ${esc(cols.filter(k=>!['members','profiles'].includes(k)).join(', '))}`;
+          $('#rs-go').disabled=false}
+        catch(err){$('#rs-info').innerHTML=`<span style="color:var(--crit)">${T2('This is not a valid backup file: ','இது சரியான backup file அல்ல: ')}${esc(err.message)}</span>`}};
+      $('#rs-go').onclick=async()=>{if(!bundle)return;
+        if(!confirm(T2('Restore this backup now?\n\nData in the file is written back over the current data. A copy of the current data downloads first.','இந்த backup-ஐ இப்போது மீட்டெடுக்கவா?\n\nFile-இல் உள்ள தரவு தற்போதைய தரவின் மேல் எழுதப்படும். முதலில் தற்போதைய தரவின் நகல் download ஆகும்.')))return;
+        $('#rs-go').disabled=true;$('#rs-file').disabled=true;
+        const db=S.db;let done=0,fail=0;
+        try{
+          try{const cur=await FBC.backupAll();bkDownload('Cylinder desk before-restore '+stamp()+'.json',JSON.stringify(cur));log('✓ '+T2('Current data saved to Downloads','தற்போதைய தரவு Downloads-இல் சேமிக்கப்பட்டது'),'ok')}
+          catch(err){if(!confirm(T2('Could not save a copy of the current data. Restore anyway?','தற்போதைய தரவின் நகலைச் சேமிக்க முடியவில்லை. அப்படியே மீட்டெடுக்கவா?'))){log('✗ '+T2('Cancelled','ரத்து'),'err');return}}
+          // documents created after the backup in these folders are removed so the app matches the file
+          for(const col of ['hist','cyl','reg']){if(!bundle[col])continue;
+            try{const q=await db.collection(col).get();for(const d of q.docs){if(!(d.id in bundle[col])&&(col!=='reg'||d.id.startsWith('imp_'))){await db.doc(col+'/'+d.id).delete();log('– '+col+'/'+d.id)}}}catch(err){log('✗ '+col+' — '+(err.code||err.message),'err')}}
+          const withRoles=$('#rs-roles').checked;
+          for(const [col,docs] of Object.entries(bundle)){
+            if(col.startsWith('_')||['members','profiles'].includes(col)||!docs||typeof docs!=='object')continue;
+            for(const [id,data] of Object.entries(docs)){
+              if(col==='settings'&&id==='roles'&&!withRoles)continue;
+              try{await db.doc(col+'/'+id).set(data);done++;if(done%25===0)log('… '+done)}
+              catch(err){fail++;log('✗ '+col+'/'+id+' — '+(err.code||err.message),'err')}}}
+          try{await FBC.waitForSync()}catch(e){}
+          if(fail)log(fail+' '+T2('failed — see above, then press Restore again.','தோல்வி — மேலே பாருங்கள், மீண்டும் Restore அழுத்துங்கள்.'),'err');
+          else{log(T2('Done. ','முடிந்தது. ')+done+' '+T2('records restored. Reloading…','பதிவுகள் மீட்கப்பட்டன. மீண்டும் load ஆகிறது…'),'ok');setTimeout(()=>location.reload(),2500)}
+        }finally{$('#rs-file').disabled=false;$('#rs-go').disabled=!fail}};
+    }})}
 function openSyncPanel(){openDrawer({k:'form',sync:true,render:syncPanel,after(){const a=$('#bk-auto');if(a)a.addEventListener('change',()=>{BK.auto=a.checked;try{localStorage.setItem('cd-bk-auto',a.checked?'1':'0')}catch(e){}})}})}
 
 let mounted=null;
@@ -2254,6 +2300,7 @@ async function saveEntry(){{const de=dupEntry(S.form);if(de&&!(de.cross&&S.form.
     mounted=null;refresh();setTimeout(()=>{const dd=$('#f-date');if(dd&&!isTouch()){dd.focus();dd.select()}},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
+const canRestoreRec=r=>!!r.del&&(canManage()||canEditRec(r));
 function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readOnly||(!S.isOwner&&viewOnly()))return false;if(can('editAny'))return true;return can('editOwn')&&r.by===S.uid&&madeToday(r)}
 /* One entry in full: each cylinder, where it is now, whether it came back */
 function recDrawer(rid){const r=(S.D.recs||[]).find(x=>x.rid===rid);if(!r)return;const ta=LANG==='ta';
@@ -2264,7 +2311,7 @@ function recDrawer(rid){const r=(S.D.recs||[]).find(x=>x.rid===rid);if(!r)return
     const g=(S.cyl[c]||{}).g||'';
     return `<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</button></td><td class="small">${esc(g)}</td><td class="small">${link}</td><td class="small">${st2(c)}</td><td class="small">${me.flag&&!me.vf?`<span style="color:var(--warn)">⚠ ${esc(me.flag)}</span>`:''}</td></tr>`}).join('');
   const kv=(a,b)=>b?`<div><span>${a}</span><b>${b}</b></div>`:'';
-  const acts=`<div class="row" style="margin-top:12px;gap:6px">${!r.del&&isCust(r.t)?`<button class="btn sm wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('wa')}WhatsApp</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('dl')}DC PDF</button><button class="btn sm" data-act="certrec" data-rid="${esc(r.rid)}">📄 ${LANG==='ta'?'Purity certificate':'Purity certificate'}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('edit')}${ta?'திருத்து':'Edit'}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}${isCust(r.t)&&r.ck?`<button class="btn sm ghost" data-act="opencust" data-v="${esc(r.ck)}">👥 ${ta?'Customer பக்கம்':'Customer page'}</button>`:''}</div>`;
+  const acts=`<div class="row" style="margin-top:12px;gap:6px">${!r.del&&isCust(r.t)?`<button class="btn sm wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('wa')}WhatsApp</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('dl')}DC PDF</button><button class="btn sm" data-act="certrec" data-rid="${esc(r.rid)}">📄 ${LANG==='ta'?'Purity certificate':'Purity certificate'}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('edit')}${ta?'திருத்து':'Edit'}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}">${ic('x')}${ta?'நீக்கு':'Delete'}</button>`:''}${isCust(r.t)&&r.ck?`<button class="btn sm ghost" data-act="opencust" data-v="${esc(r.ck)}">👥 ${ta?'Customer பக்கம்':'Customer page'}</button>`:''}${r.del&&canRestoreRec(r)?`<button class="btn sm primary" data-act="restorerec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Restore this deleted entry (same DC number)">↩ ${LANG==='ta'?'மீட்டெடு':'Restore'}</button>`:''}</div>`;
   openDrawer({k:'form',rec:rid,render:()=>[`<h3><span class="tcol ${r.t.toLowerCase()} rd-t">${TSHORT[r.t]}</span> ${esc(recTitle(r))} ${r.dc?`<span class="muted mono">#${esc(r.dc)}</span>`:''}</h3>`,
     `<div class="kv">${kv(ta?'தேதி':'Date',fmtD(r.d))}${kv(ta?'கிளை':'Branch',esc(brName(r.br)))}${kv(ta?'சிலிண்டர்கள்':'Cylinders',r.cy.length+(ownN(r)?' + '+esc(ownTxt(r)):''))}${kv(ta?'பதிவு செய்தவர்':'Entered by',esc(personName(r.by))+' · '+fmtDT(r.at))}${r.ed?kv(ta?'மாற்றம்':'Edited',esc(r.ed.by?personName(r.ed.by):'')+(r.ed.at?' · '+fmtDT(r.ed.at):'')):''}${r.dcOld?kv(ta?'பழைய எண்':'Old number',esc(r.dcOld)):''}${r.sig?kv(ta?'கையெழுத்து':'Signature','✍ '+(ta?'உள்ளது':'yes')):''}${r.full?kv(ta?'நிலை':'Note',ta?'நிரம்பியபடி திரும்பியது':'Came back full'):''}${r.rm?kv(ta?'குறிப்பு':'Remarks',esc(r.rm)):''}${r.del?kv(ta?'நிலை':'Status',ta?'நீக்கப்பட்டது':'Deleted'):''}</div>
      ${isCust(r.t)&&r.cy.length?`<div style="margin-top:10px">${recFollow(r)}</div>`:''}
@@ -2282,7 +2329,7 @@ function entryCard(r){
   <button type="button" class="swipe-more" aria-label="More">⋯</button>
   <div class="chips">${ownN(r)?`<span class="pill info">${esc(ownTxt(r))}</span>`:''}${r.cy.map(c=>`<button class="cyl" data-act="opencyl" data-v="${esc(c)}" ${flags.includes(c)?'style="border-color:var(--warn);background:var(--warn-bg)"':''}>${esc(c)}</button>`).join('')}</div>
   <div class="meta"><span>📅 ${fmtD(r.d)} · ${esc(brName(r.br))}</span>${isCust(r.t)&&!r.del&&r.cy.length?`<span>${recFollow(r)}</span>`:''}${isCust(r.t)&&r.ck&&!r.del?`<a href="#" data-act="opencust" data-v="${esc(r.ck)}">👥 ${LANG==='ta'?'இப்போது அவரிடம்':'holding now'} <b>${(S.D.holding[r.ck]||[]).length}</b></a>`:''}<span title="${LANG==='ta'?'பதிவு செய்த நேரம்':'Entered at'}">🕐 ${fmtDT(r.at)}</span>${r.by&&r.by!==S.uid?`<span>👤 <span data-name="${esc(r.by)}">${esc(shortName(r.by))}</span></span>`:''}${r.vh?`<span class="mono">${esc(r.vh)}</span>`:''}${r.dr?`<span>Driver ${esc(r.dr)}</span>`:''}${r.sig?`<span class="pill ok">✍ ${LANG==='ta'?'கையெழுத்து உள்ளது':'signed'}</span>`:''}${r.full?`<span class="pill ok">${LANG==='ta'?'நிரம்பியபடி திரும்பியது':'Came back full'}</span>`:''}${r.ed?'<span>edited</span>':''}${r.rm?`<span>${esc(r.rm)}</span>`:''}${r.del?'<span>deleted</span>':''}</div></div>
-  <div class="acts" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'&&canEditRec(r)&&!r.sig?`<button class="btn sm ghost" data-act="sign" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="${LANG==='ta'?'கையெழுத்து':'Signature'}">✍</button>`:''}${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}</div></div>`;
+  <div class="acts" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">${!r.del&&r.t==='DC'&&canEditRec(r)&&!r.sig?`<button class="btn sm ghost" data-act="sign" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="${LANG==='ta'?'கையெழுத்து':'Signature'}">✍</button>`:''}${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Download DC">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button><button class="btn sm ghost danger" data-act="delrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Delete">${ic('x')}</button>`:''}${r.del&&canRestoreRec(r)?`<button class="btn sm ghost" data-act="restorerec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Restore this deleted entry (same DC number)">↩ ${LANG==='ta'?'மீட்டெடு':'Restore'}</button>`:''}</div></div>`;
 }
 
 VIEWS.entry.updateNo=function(){const f=S.form;if(f&&f.dcAuto&&!f.edit&&isCust(f.t)){const n=f.d?posNo(f.t,f.d):nextNo(f.t,f.br);const d=$('#f-dc');if(n!==f.dc){f.dc=n;if(d)d.value=n}}{const at=$('#f-dc-auto');if(at)at.hidden=!(f&&f.dcAuto)}const el=$('#f-no-info');if(!f||!el)return;const c=noCheck(f);
@@ -2314,7 +2361,7 @@ VIEWS.entries={
     const view=S.ui.entView||(()=>{try{return localStorage.getItem('cd-entview')}catch(e){return null}})()||(window.innerWidth>900?'table':'cards');
     html+=`<div class="seg" style="margin-bottom:10px"><button data-act="entview" data-v="table" aria-pressed="${view==='table'}">▦ ${ta?'அட்டவணை':'Table'}</button><button data-act="entview" data-v="cards" aria-pressed="${view!=='table'}">▤ ${ta?'அட்டைகள்':'Cards'}</button></div>`;
     if(view==='table'){
-      html+=`<div class="tbl-wrap"><table class="enttbl"><thead><tr><th>${ta?'தேதி':'Date'}</th><th></th><th>No.</th><th>Customer</th><th class="r">Cyl.</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>${ta?'நிலை':'Status'}</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.slice(0,600).map(r=>`<tr class="${r.del?'del':''}"><td class="num">${fmtD(r.d)}</td><td><span class="tpill ${r.t.toLowerCase()}">${TSHORT[r.t]}</span></td><td class="mono">${esc(r.dc||'')}</td><td><a href="#" data-act="opencust" data-v="${esc(r.ck)}"><b>${esc(recTitle(r))}</b></a> ${r.ck?brTag(r.ck):''}</td><td class="r num"><b>${r.cy.length}</b></td><td class="mono small" style="max-width:320px">${r.cy.map(c=>`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`).join(', ')}</td><td class="small">${r.del?'<span class="pill crit">deleted</span>':isCust(r.t)&&r.cy.length?recFollow(r):''}</td><td class="small muted">${fmtDT(r.at)}${r.by&&r.by!==S.uid?' · '+esc(shortName(r.by)):''}${r.ed?' · ✎':''}</td><td style="white-space:nowrap">${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`;
+      html+=`<div class="tbl-wrap"><table class="enttbl"><thead><tr><th>${ta?'தேதி':'Date'}</th><th></th><th>No.</th><th>Customer</th><th class="r">Cyl.</th><th>${ta?'சிலிண்டர்கள்':'Cylinders'}</th><th>${ta?'நிலை':'Status'}</th><th>${ta?'பதிவு':'Entered'}</th><th></th></tr></thead><tbody>${rs.slice(0,600).map(r=>`<tr class="${r.del?'del':''}"><td class="num">${fmtD(r.d)}</td><td><span class="tpill ${r.t.toLowerCase()}">${TSHORT[r.t]}</span></td><td class="mono">${esc(r.dc||'')}</td><td><a href="#" data-act="opencust" data-v="${esc(r.ck)}"><b>${esc(recTitle(r))}</b></a> ${r.ck?brTag(r.ck):''}</td><td class="r num"><b>${r.cy.length}</b></td><td class="mono small" style="max-width:320px">${r.cy.map(c=>`<a href="#" data-act="opencyl" data-v="${esc(c)}">${esc(c)}</a>`).join(', ')}</td><td class="small">${r.del?'<span class="pill crit">deleted</span>':isCust(r.t)&&r.cy.length?recFollow(r):''}</td><td class="small muted">${fmtDT(r.at)}${r.by&&r.by!==S.uid?' · '+esc(shortName(r.by)):''}${r.ed?' · ✎':''}</td><td style="white-space:nowrap">${!r.del&&isCust(r.t)?`<button class="btn sm ghost wa" data-act="wadc" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="WhatsApp">${ic('wa')}</button>`:''}${!r.del&&r.t==='DC'?`<button class="btn sm ghost" data-act="dcpdf" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="DC PDF">${ic('dl')}</button>`:''}${!r.del&&canEditRec(r)?`<button class="btn sm ghost" data-act="editrec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Edit">${ic('edit')}</button>`:''}${r.del&&canRestoreRec(r)?`<button class="btn sm " data-act="restorerec" data-doc="${esc(r.docId)}" data-rid="${esc(r.rid)}" title="Restore this deleted entry (same DC number)">↩ ${LANG==='ta'?'மீட்டெடு':'Restore'}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`;
       if(rs.length>600)html+=`<div class="muted small" style="padding-top:10px">Showing the latest 600. Narrow the dates to see more.</div>`;
       $('#e-list').innerHTML=html;return}
     rs.slice(0,400).forEach(r=>{if(r.d!==day){day=r.d;html+=`<div class="list-day">${fmtD(day)}</div>`}html+=entryCard(r)});
@@ -3571,6 +3618,7 @@ function openDrawer(d){if(!S.drawer)histPush({v:S.view,d:1});S.drawer=d;paintDra
 function closeDrawer(){if(S.drawer)HIST.stale=true;S.drawer=null;$('#drawer-root').innerHTML=''}
 function paintDrawer(){
   const d=S.drawer;if(!d)return;
+  if(d.keep&&$('#drawer-root .drawer'))return; /* restore window is not redrawn while it works */
   if(d.k==='form'&&$('#dform'))return; // do not wipe a form the user is typing in
   const keepScroll=$('.drawer-body')?$('.drawer-body').scrollTop:0;
   let head='',body='';
@@ -3966,6 +4014,7 @@ const A={
   cdmore:()=>{S.ui.cd.n+=200;paintDrawer()},
   datacheck:()=>dataCheck(),
   bknow:()=>bkRun('manual'),
+  restore:()=>restorePanel(),
   bkdir:()=>bkChooseDir(),
   quick:el=>{if(!S.form)S.form=newForm();const t=el.dataset.v;if(S.view!=='entry')go('entry');const b=document.querySelector(`[data-act="ftype"][data-v="${t}"]`);if(b&&S.form.t!==t)A.ftype(b);else if(!b){S.form.t=t}paintShell();setTimeout(()=>{const c=$('#f-cust');c&&c.focus()},60)},
   nav:el=>{if(el.dataset.v==='oldimp'){location.href='old-files.html';return}go(el.dataset.v)},
@@ -4008,6 +4057,9 @@ const A={
   delrec:el=>{const doc=S.logs[el.dataset.doc];const r=doc&&doc.recs[el.dataset.rid];if(!r)return;
     formDrawer('Delete this entry?',`<p>${esc(TLABEL[r.t])} · ${esc(recTitle(r))} · ${fmtD(r.d)} · ${r.cy.length} cylinder${r.cy.length===1?'':'s'}: <span class="mono">${esc(r.cy.join(', '))}</span></p><p class="muted">The entry is removed from stock and history. It stays in the audit trail as deleted.</p>`,
       async()=>{try{await patchRec(el.dataset.doc,el.dataset.rid,{del:{by:S.uid,at:new Date().toISOString()}});toast('Entry deleted');closeDrawer();if(isCust(r.t))autoReorder([r.t])}catch(e){toast(dbErr(e))}},'Delete entry')},
+  restorerec:el=>{const doc=S.logs[el.dataset.doc];const r=doc&&doc.recs[el.dataset.rid];if(!r||!r.del)return;if(!canRestoreRec(Object.assign({rid:el.dataset.rid,docId:el.dataset.doc},r))){toast(LANG==='ta'?'அனுமதி இல்லை':'Not allowed');return}
+    formDrawer(LANG==='ta'?'நீக்கிய பதிவை மீட்டெடுக்கவா?':'Restore this entry?',`<p>${esc(TLABEL[r.t])}${r.dc?' #'+esc(r.dc):''} · ${esc(recTitle(r))} · ${fmtD(r.d)} · ${r.cy.length} cylinder${r.cy.length===1?'':'s'}: <span class="mono">${esc(r.cy.join(', '))}</span></p><p class="muted">${LANG==='ta'?'பதிவு மீண்டும் stock-லும் history-யிலும் வரும். DC / MT எண் தேதி வரிசைப்படி அதே இடத்தில் (பழைய எண்ணே) திரும்பும்.':'The entry comes back into stock and history. Its DC / MT number returns to the same place in the date order (the same number it had).'}</p>${r.del&&r.del.by?`<p class="small muted">${LANG==='ta'?'நீக்கியவர்':'Deleted by'} ${esc(personName(r.del.by))} · ${fmtDT(r.del.at)}</p>`:''}`,
+      async()=>{try{await patchRec(el.dataset.doc,el.dataset.rid,{del:FBC.DEL,restored:{by:S.uid,at:new Date().toISOString()}});toast(LANG==='ta'?'பதிவு மீட்டெடுக்கப்பட்டது':'Entry restored');closeDrawer();if(isCust(r.t))autoReorder([r.t])}catch(e){toast(dbErr(e))}},LANG==='ta'?'மீட்டெடு':'Restore entry')},
   verify:el=>{const {doc,rid,cyl}=el.dataset;
     formDrawer('Verify '+cyl,`<p class="muted">Use this after you have checked with the customer or driver. The entry stays as it is and stops showing as a mismatch.</p><div class="field"><label for="v-note">What did you find?</label><textarea class="inp" id="v-note" required placeholder="eg. Customer confirmed they returned 1108 instead of 1100"></textarea></div>`,
       async()=>{const note=$('#v-note').value.trim();if(!note){toast('Write a short note first');return}try{await patchRec(doc,rid,{vf:{[cyl]:{by:S.uid,at:new Date().toISOString(),note}}});toast('Marked as verified');closeDrawer()}catch(e){toast(dbErr(e))}},'Verify')},
