@@ -847,7 +847,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.3.9"></script>
+<script src="fb.js?v=4.4.0"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -882,7 +882,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.3.9';
+const APP_VERSION=window.CD_VERSION||'4.4.0';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
@@ -1685,52 +1685,94 @@ function syncPanel(){
       <li>${T2('After the browser restarts, click “Backup due” once to allow the folder again.','Browser மீண்டும் திறந்த பின், “Backup தேவை” என்பதை ஒருமுறை அழுத்தி folder அனுமதி கொடுங்கள்.')}</li>
       <li>${T2('To restore a backup file use the “Restore from backup file” box below (owner only).','Backup file-ஐத் திரும்பப் பெற, கீழே உள்ள “Backup file-இலிருந்து மீட்டெடு” பெட்டியைப் பயன்படுத்துங்கள் (Owner மட்டும்).')}</li></ul></div>`:''}
   ${S.isOwner?`<div class="panel"><div class="panel-head"><h3>♻ ${T2('Restore from backup file','Backup file-இலிருந்து மீட்டெடு')}</h3></div>
-    <p class="small muted" style="margin:0 0 10px">${T2('Pick a .json backup made by “Back up now” or the backup folder. The data in the file is written back; entries made after the backup are not removed. A copy of the current data is downloaded first.','“Back up now” அல்லது backup folder-இல் உருவான .json file-ஐத் தேர்வு செய்யுங்கள். File-இல் உள்ள தரவு திரும்ப எழுதப்படும்; backup-க்குப் பிறகு போட்ட பதிவுகள் நீக்கப்படாது. முதலில் தற்போதைய தரவின் நகல் download ஆகும்.')}</p>
+    <p class="small muted" style="margin:0 0 10px">${T2('Safe by default: it only adds what is missing in the app and never changes or deletes existing data. A copy of the current data is downloaded first.','இயல்பாகப் பாதுகாப்பானது: app-இல் இல்லாததை மட்டும் சேர்க்கும்; இருக்கும் தரவை மாற்றாது, நீக்காது. முதலில் தற்போதைய தரவின் நகல் download ஆகும்.')}</p>
     <button class="btn" data-act="restore">♻ ${T2('Restore from backup file','Backup file-இலிருந்து மீட்டெடு')}</button></div>`:''}`;
   return [head,body];
 }
+/* ---- Restore from a backup file ----
+   SAFE (default): only adds what is MISSING from the app. Nothing that exists now is changed or removed.
+   REPLACE (advanced, typed confirmation): the file's data overwrites the app's data. A copy of the current data is ALWAYS downloaded first;
+   if that copy cannot be made, nothing is restored. */
 function restorePanel(){
   if(!S.isOwner){toast(T2('Only the owner can restore a backup.','Owner மட்டும் backup-ஐ மீட்டெடுக்க முடியும்.'));return}
-  let bundle=null;
+  const isP=v=>v&&typeof v==='object'&&!Array.isArray(v);
+  const missingDeep=(b,c)=>{ // parts of b that c does not have (never overwrites a value c has)
+    if(!isP(b)||!isP(c))return undefined;const out={};
+    for(const k of Object.keys(b)){
+      if(k==='del')continue; // a record that exists now is never deleted again by an older backup
+      if(!(k in c))out[k]=b[k];
+      else if(isP(b[k])&&isP(c[k])){const m=missingDeep(b[k],c[k]);if(m!==undefined)out[k]=m}}
+    return Object.keys(out).length?out:undefined};
+  const recCount=o=>{let n=0;for(const v of Object.values(o||{})){n+=isP(v)?Math.max(1,Object.keys(v).length):Array.isArray(v)?v.length:1}return n};
+  const COLN={cust:['Customers','வாடிக்கையாளர்கள்'],cyl:['Cylinders','சிலிண்டர்கள்'],log:['DC / MT entries','DC / MT பதிவுகள்'],hist:['Old Excel history','பழைய Excel history'],bill:['Invoices','இன்வாய்ஸ்கள்'],trade:['Purchases & sales','வாங்கல் / விற்றல்'],reg:['Cancelled numbers','ரத்து எண்கள்'],fill:['Filling register','நிரப்பல் பதிவேடு'],dealers:['Dealers','Dealers'],lpur:['Liquid purchases','Liquid வாங்கல்'],pday:['Tank readings','Tank அளவுகள்'],rdoc:['Documents & reminders','ஆவணங்கள் & நினைவூட்டல்'],insp:['Inspections','சரிபார்ப்புகள்'],att:['Attendance','வருகை'],logins:['Logins','Login-கள்'],loc:['Location trail','இடப் பதிவு'],settings:['Settings','Settings']};
+  let bundle=null,plan=null;
   openDrawer({k:'form',keep:true,render:()=>[`<h3>♻ ${T2('Restore from backup file','Backup file-இலிருந்து மீட்டெடு')}</h3>`,
-    `<p class="muted" style="margin-top:0">${T2('Choose the backup .json file. Nothing changes until you press Restore.','Backup .json file-ஐத் தேர்வு செய்யுங்கள். Restore அழுத்தும்வரை எதுவும் மாறாது.')}</p>
+    `<div class="notice ok" style="margin-bottom:10px">🛡 <div>${T2('<b>Safe restore</b>: only adds what is <b>missing</b> in the app. Nothing that exists now is changed or deleted. A copy of today’s data is downloaded first.','<b>பாதுகாப்பான மீட்பு</b>: app-இல் <b>இல்லாதவற்றை</b> மட்டும் சேர்க்கும். இப்போது உள்ளவை மாறாது, நீக்கப்படாது. முதலில் இன்றைய தரவின் நகல் download ஆகும்.')}</div></div>
      <input type="file" id="rs-file" accept=".json,application/json" class="inp">
      <div id="rs-info" class="small" style="margin:10px 0"></div>
-     <label class="small" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" id="rs-roles"> ${T2('Also restore people &amp; roles (normally leave this off)','People &amp; roles-உம் மீட்டெடு (பொதுவாக off)')}</label>
-     <div class="row"><button class="btn primary" id="rs-go" disabled>♻ ${T2('Restore','மீட்டெடு')}</button><button class="btn" type="button" data-act="closedrawer">${T2('Cancel','ரத்து')}</button></div>
-     <div id="rs-log" class="small mono" style="margin-top:12px;max-height:260px;overflow:auto;white-space:pre-wrap"></div>`],
+     <div id="rs-plan"></div>
+     <div class="row" style="margin-top:10px"><button class="btn primary" id="rs-go" disabled>🛡 ${T2('Add the missing data','இல்லாத தரவைச் சேர்')}</button><button class="btn" type="button" data-act="closedrawer">${T2('Close','மூடு')}</button></div>
+     <details style="margin-top:16px"><summary class="small" style="cursor:pointer;color:var(--crit)">${T2('Advanced: replace everything with the file (overwrites newer data)','Advanced: file-இன் தரவால் எல்லாவற்றையும் மாற்று (புதிய தரவை அழிக்கும்)')}</summary>
+       <div class="notice crit" style="margin:8px 0">⚠ <div>${T2('Customers, cylinders, dealers, invoices and the entries of every day in the file are <b>overwritten</b>. Anything added after the backup is <b>lost</b> (it stays only in the copy downloaded first). Use this only when the app’s data is damaged.','File-இல் உள்ள customers, cylinders, dealers, invoices, ஒவ்வொரு நாள் பதிவுகளும் <b>மேலெழுதப்படும்</b>. Backup-க்குப் பிறகு சேர்த்தவை <b>இழக்கப்படும்</b> (முதலில் download ஆன நகலில் மட்டும் இருக்கும்). தரவு சேதமானால் மட்டும் பயன்படுத்துங்கள்.')}</div></div>
+       <label class="small" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" id="rs-roles"> ${T2('Also restore people &amp; roles','People &amp; roles-உம்')}</label>
+       <div class="field"><label for="rs-type">${T2('Type REPLACE to allow it','அனுமதிக்க REPLACE என type செய்யுங்கள்')}</label><input class="inp mono" id="rs-type" autocomplete="off" placeholder="REPLACE"></div>
+       <button class="btn" id="rs-rep" disabled style="color:var(--crit)">${T2('Replace everything','எல்லாவற்றையும் மாற்று')}</button></details>
+     <div id="rs-log" class="small mono" style="margin-top:12px;max-height:240px;overflow:auto;white-space:pre-wrap"></div>`],
     after(){
       const log=(t,c)=>{const d=document.createElement('div');if(c)d.style.color=c==='err'?'var(--crit)':'var(--ok)';d.textContent=t;$('#rs-log').appendChild(d);$('#rs-log').scrollTop=1e9};
-      $('#rs-file').onchange=async e=>{const f=e.target.files[0];bundle=null;$('#rs-go').disabled=true;$('#rs-info').textContent='';if(!f)return;
+      const SKIP=['members','profiles','audit'];
+      const docsOf=(withRoles)=>{const out=[];for(const [col,docs] of Object.entries(bundle)){if(col.startsWith('_')||SKIP.includes(col)||!isP(docs))continue;
+        for(const [id,data] of Object.entries(docs)){if(col==='settings'&&id==='roles'&&!withRoles)continue;out.push({col,id,data})}}return out};
+      const safeCopy=async()=>{try{const cur=await FBC.backupAll();bkDownload('Cylinder desk before-restore '+stamp()+'.json',JSON.stringify(cur));log('✓ '+T2('Copy of current data saved to Downloads','தற்போதைய தரவின் நகல் Downloads-இல் சேமிக்கப்பட்டது'),'ok');return true}
+        catch(err){log('✗ '+T2('Could not save a copy of the current data — nothing was restored.','தற்போதைய தரவின் நகலைச் சேமிக்க முடியவில்லை — எதுவும் மீட்கப்படவில்லை.'),'err');return false}};
+      const lock=on=>{$('#rs-file').disabled=on;$('#rs-go').disabled=on||!plan||!plan.some(p=>p.on&&p.n>0);$('#rs-rep').disabled=on||!bundle||$('#rs-type').value.trim()!=='REPLACE'};
+      const drawPlan=()=>{
+        const by={};plan.forEach(p=>{const g=by[p.col]=by[p.col]||{n:0,docs:0,names:[],on:true};g.n+=p.n;if(p.n)g.docs++;g.names.push(...(p.names||[]))});
+        $('#rs-plan').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th></th><th>${T2('What','என்ன')}</th><th class="r">${T2('Missing in the app','app-இல் இல்லாதவை')}</th></tr></thead><tbody>${Object.entries(by).map(([col,g])=>`<tr><td><input type="checkbox" data-rc="${esc(col)}" ${g.n?'checked':'disabled'}></td><td>${esc(T2(...(COLN[col]||[col,col])))}${g.names.length?`<div class="small muted">${esc(g.names.slice(0,8).join(', '))}${g.names.length>8?' …':''}</div>`:''}</td><td class="r num">${g.n?'<b>'+g.n+'</b>':'<span class="muted">0 ✓</span>'}</td></tr>`).join('')}</tbody></table></div>
+          <p class="small muted" style="margin:8px 0 0">${T2('Untick anything you do not want back (for example a customer you merged or deleted on purpose).','வேண்டாதவற்றை untick செய்யுங்கள் (எ.கா. வேண்டுமென்றே இணைத்த / நீக்கிய customer).')}</p>`;
+        plan.forEach(p=>p.on=true);
+        $('#rs-plan').querySelectorAll('[data-rc]').forEach(cb=>cb.addEventListener('change',()=>{plan.filter(p=>p.col===cb.dataset.rc).forEach(p=>p.on=cb.checked);lock(false)}));
+        lock(false)};
+      $('#rs-file').onchange=async e=>{const f=e.target.files[0];bundle=null;plan=null;$('#rs-plan').innerHTML='';$('#rs-info').textContent='';lock(false);if(!f)return;
         try{const b=JSON.parse(await f.text());
-          if(!b||typeof b!=='object'||Array.isArray(b))throw new Error('not a backup');
-          const cols=Object.keys(b).filter(k=>!k.startsWith('_')&&b[k]&&typeof b[k]==='object');
+          if(!isP(b))throw new Error('not a backup');
+          const cols=Object.keys(b).filter(k=>!k.startsWith('_')&&isP(b[k]));
           if(!cols.some(k=>['cust','cyl','log','hist'].includes(k)))throw new Error(T2('no cylinder / customer data inside','உள்ளே சிலிண்டர் / customer தரவு இல்லை'));
-          const n=cols.reduce((a,k)=>a+Object.keys(b[k]).length,0);bundle=b;
-          $('#rs-info').innerHTML=(b._backup?`${T2('Backup made','Backup எடுத்தது')} <b>${esc(new Date(b._backup.at).toLocaleString('en-IN'))}</b> · v${esc(b._backup.version||'?')}<br>`:'')+`<b>${n}</b> ${T2('records in','பதிவுகள்:')} ${esc(cols.filter(k=>!['members','profiles'].includes(k)).join(', '))}`;
-          $('#rs-go').disabled=false}
-        catch(err){$('#rs-info').innerHTML=`<span style="color:var(--crit)">${T2('This is not a valid backup file: ','இது சரியான backup file அல்ல: ')}${esc(err.message)}</span>`}};
-      $('#rs-go').onclick=async()=>{if(!bundle)return;
-        if(!confirm(T2('Restore this backup now?\n\nData in the file is written back over the current data. A copy of the current data downloads first.','இந்த backup-ஐ இப்போது மீட்டெடுக்கவா?\n\nFile-இல் உள்ள தரவு தற்போதைய தரவின் மேல் எழுதப்படும். முதலில் தற்போதைய தரவின் நகல் download ஆகும்.')))return;
-        $('#rs-go').disabled=true;$('#rs-file').disabled=true;
-        const db=S.db;let done=0,fail=0;
-        try{
-          try{const cur=await FBC.backupAll();bkDownload('Cylinder desk before-restore '+stamp()+'.json',JSON.stringify(cur));log('✓ '+T2('Current data saved to Downloads','தற்போதைய தரவு Downloads-இல் சேமிக்கப்பட்டது'),'ok')}
-          catch(err){if(!confirm(T2('Could not save a copy of the current data. Restore anyway?','தற்போதைய தரவின் நகலைச் சேமிக்க முடியவில்லை. அப்படியே மீட்டெடுக்கவா?'))){log('✗ '+T2('Cancelled','ரத்து'),'err');return}}
-          // documents created after the backup in these folders are removed so the app matches the file
+          bundle=b;
+          $('#rs-info').innerHTML=(b._backup?`${T2('Backup made','Backup எடுத்தது')} <b>${esc(new Date(b._backup.at).toLocaleString('en-IN'))}</b> · v${esc(b._backup.version||'?')}<br>`:'')+T2('Comparing with the data in the app…','App-இல் உள்ள தரவுடன் ஒப்பிடுகிறது…');
+          lock(true);plan=[];
+          for(const d of docsOf(false)){
+            let cur;try{cur=await S.db.doc(d.col+'/'+d.id).get();cur=cur.exists?cur.data():undefined}catch(err){throw new Error(d.col+'/'+d.id+' — '+(err.code||err.message))}
+            if(cur===undefined)plan.push({...d,kind:'new',add:d.data,n:recCount(d.data),names:d.col==='cust'?Object.values(d.data.list||{}).map(x=>x&&x.n).filter(Boolean):[]});
+            else if(d.col==='hist')plan.push({...d,kind:'same',add:null,n:0});
+            else{const add=missingDeep(d.data,cur);plan.push({...d,kind:add?'merge':'same',add,n:add?recCount(add):0,names:d.col==='cust'&&add&&add.list?Object.values(add.list).map(x=>x&&x.n).filter(Boolean):[]})}}
+          $('#rs-info').innerHTML=(b._backup?`${T2('Backup made','Backup எடுத்தது')} <b>${esc(new Date(b._backup.at).toLocaleString('en-IN'))}</b> · v${esc(b._backup.version||'?')}`:'');
+          drawPlan()}
+        catch(err){bundle=null;plan=null;lock(false);$('#rs-info').innerHTML=`<span style="color:var(--crit)">${T2('This is not a valid backup file: ','இது சரியான backup file அல்ல: ')}${esc(err.message)}</span>`}};
+      /* SAFE: add what is missing */
+      $('#rs-go').onclick=async()=>{const todo=plan.filter(p=>p.on&&p.n>0);if(!todo.length)return;
+        const total=todo.reduce((a,p)=>a+p.n,0);
+        if(!confirm(T2(`Add ${total} missing records from the backup?\n\nNothing that exists now will be changed or deleted.`,`Backup-இலிருந்து இல்லாத ${total} பதிவுகளைச் சேர்க்கவா?\n\nஇப்போது உள்ளவை மாறாது, நீக்கப்படாது.`)))return;
+        lock(true);let done=0,fail=0;
+        try{if(!await safeCopy())return;
+          for(const p of todo){try{if(p.kind==='new')await S.db.doc(p.col+'/'+p.id).set(p.data);else await S.db.doc(p.col+'/'+p.id).update(p.add);done+=p.n;log('✓ '+p.col+'/'+p.id+' · '+p.n)}catch(err){fail++;log('✗ '+p.col+'/'+p.id+' — '+(err.code||err.message),'err')}}
+          try{await FBC.waitForSync()}catch(e){}
+          if(fail)log(fail+' '+T2('failed — see above.','தோல்வி — மேலே பாருங்கள்.'),'err');
+          else{log(T2('Done. ','முடிந்தது. ')+done+' '+T2('records added. Reloading…','பதிவுகள் சேர்க்கப்பட்டன. மீண்டும் load ஆகிறது…'),'ok');setTimeout(()=>location.reload(),2500)}
+        }finally{lock(false)}};
+      /* REPLACE: overwrite with the file */
+      $('#rs-type').addEventListener('input',()=>lock(false));
+      $('#rs-rep').onclick=async()=>{if(!bundle||$('#rs-type').value.trim()!=='REPLACE')return;
+        if(!confirm(T2('LAST CHECK\n\nThe file’s data will OVERWRITE the app’s data. Anything added after the backup is lost (kept only in the copy downloaded first).\n\nContinue?','கடைசி சரிபார்ப்பு\n\nFile-இன் தரவு app-இன் தரவின் மேல் எழுதப்படும். Backup-க்குப் பிறகு சேர்த்தவை இழக்கப்படும் (முதலில் download ஆன நகலில் மட்டும் இருக்கும்).\n\nதொடரவா?')))return;
+        lock(true);let done=0,fail=0;const db=S.db;
+        try{if(!await safeCopy())return;
           for(const col of ['hist','cyl','reg']){if(!bundle[col])continue;
             try{const q=await db.collection(col).get();for(const d of q.docs){if(!(d.id in bundle[col])&&(col!=='reg'||d.id.startsWith('imp_'))){await db.doc(col+'/'+d.id).delete();log('– '+col+'/'+d.id)}}}catch(err){log('✗ '+col+' — '+(err.code||err.message),'err')}}
-          const withRoles=$('#rs-roles').checked;
-          for(const [col,docs] of Object.entries(bundle)){
-            if(col.startsWith('_')||['members','profiles'].includes(col)||!docs||typeof docs!=='object')continue;
-            for(const [id,data] of Object.entries(docs)){
-              if(col==='settings'&&id==='roles'&&!withRoles)continue;
-              try{await db.doc(col+'/'+id).set(data);done++;if(done%25===0)log('… '+done)}
-              catch(err){fail++;log('✗ '+col+'/'+id+' — '+(err.code||err.message),'err')}}}
+          for(const d of docsOf($('#rs-roles').checked)){try{await db.doc(d.col+'/'+d.id).set(d.data);done++;if(done%25===0)log('… '+done)}catch(err){fail++;log('✗ '+d.col+'/'+d.id+' — '+(err.code||err.message),'err')}}
           try{await FBC.waitForSync()}catch(e){}
-          if(fail)log(fail+' '+T2('failed — see above, then press Restore again.','தோல்வி — மேலே பாருங்கள், மீண்டும் Restore அழுத்துங்கள்.'),'err');
-          else{log(T2('Done. ','முடிந்தது. ')+done+' '+T2('records restored. Reloading…','பதிவுகள் மீட்கப்பட்டன. மீண்டும் load ஆகிறது…'),'ok');setTimeout(()=>location.reload(),2500)}
-        }finally{$('#rs-file').disabled=false;$('#rs-go').disabled=!fail}};
+          if(fail)log(fail+' '+T2('failed — see above.','தோல்வி — மேலே பாருங்கள்.'),'err');
+          else{log(T2('Done. ','முடிந்தது. ')+done+' '+T2('documents replaced. Reloading…','documents மாற்றப்பட்டன. மீண்டும் load ஆகிறது…'),'ok');setTimeout(()=>location.reload(),2500)}
+        }finally{lock(false)}};
     }})}
 function openSyncPanel(){openDrawer({k:'form',sync:true,render:syncPanel,after(){const a=$('#bk-auto');if(a)a.addEventListener('change',()=>{BK.auto=a.checked;try{localStorage.setItem('cd-bk-auto',a.checked?'1':'0')}catch(e){}})}})}
 
