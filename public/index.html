@@ -1134,6 +1134,11 @@ function derive(){
   for(const [id,evsRaw] of Object.entries(tl)){
     /* Same-day DC / MT entered in any order: put them in the order that makes sense.
        If the cylinder is out (DC open) the MT goes first, if it is in godown the DC goes first. */
+    /* One line by date: old Excel entries and new entries are merged and sorted by date, whatever order they were typed in.
+       (Entries with no date keep their place.) */
+    {const slots=[];evsRaw.forEach((e,ix)=>{if(e.d)slots.push(ix)});
+     const sorted=slots.map(ix=>evsRaw[ix]).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
+     slots.forEach((ix,k)=>{evsRaw[ix]=sorted[k]})}
     const evs=[];
     {let i=0,open=false;
      while(i<evsRaw.length){
@@ -1148,6 +1153,7 @@ function derive(){
        }
        i=j;
      }}
+    tl[id]=evs;   /* keep the corrected order for the Journey and every other screen */
     let prev=null,lastCk='',lastPl='';
     const fillsAfter=d=>evs.filter(x=>x.t==='FL'&&x.d&&d&&x.d>=d).map(x=>x.d);
     for(const ev of evs){
