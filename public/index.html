@@ -1131,7 +1131,23 @@ function derive(){
   /* A factory filling shows the cylinder is back with us. DC / MT paper from far branches comes late,
      so anything that does not match before a filling waits as "entry pending" (45 days) instead of a mismatch. */
   const PEND_DAYS=45;const pend=[];
-  for(const [id,evs] of Object.entries(tl)){
+  for(const [id,evsRaw] of Object.entries(tl)){
+    /* Same-day DC / MT entered in any order: put them in the order that makes sense.
+       If the cylinder is out (DC open) the MT goes first, if it is in godown the DC goes first. */
+    const evs=[];
+    {let i=0,open=false;
+     while(i<evsRaw.length){
+       const e0=evsRaw[i];
+       if(!e0.d||(e0.t!=='DC'&&e0.t!=='MT')){evs.push(e0);open=e0.t==='DC'||e0.t==='FS';i++;continue}
+       let j=i;while(j<evsRaw.length&&evsRaw[j].d===e0.d&&(evsRaw[j].t==='DC'||evsRaw[j].t==='MT'))j++;
+       const grp=evsRaw.slice(i,j);
+       while(grp.length){
+         const want=open?'MT':'DC';
+         let k=grp.findIndex(x=>x.t===want);if(k<0)k=0;
+         const e=grp.splice(k,1)[0];evs.push(e);open=e.t==='DC';
+       }
+       i=j;
+     }}
     let prev=null,lastCk='',lastPl='';
     const fillsAfter=d=>evs.filter(x=>x.t==='FL'&&x.d&&d&&x.d>=d).map(x=>x.d);
     for(const ev of evs){
@@ -2173,12 +2189,13 @@ VIEWS.entry={
 };
 /* same type, same date, same customer (or plant) and the same cylinder numbers already saved = duplicate */
 function oldDups(){const out=[];const by={};for(const r of S.D.recs){if(r.del||!isCust(r.t)||!r.ck)continue;(by[r.d+'|'+r.ck]=by[r.d+'|'+r.ck]||[]).push(r)}
-  for(const L of Object.values(by)){for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const same=(L[i].cy||[]).filter(c=>(L[j].cy||[]).includes(c));if(same.length)out.push([L[i],L[j],same])}}
+  for(const L of Object.values(by)){for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){if(L[i].t!==L[j].t)continue;const same=(L[i].cy||[]).filter(c=>(L[j].cy||[]).includes(c));if(same.length)out.push([L[i],L[j],same])}}
   return out.sort((x,y)=>x[0].d<y[0].d?1:-1)}
 function dupEntry(f){if(!f||!f.cy||!f.cy.length||!f.d||!S.D)return null;const cust=isCust(f.t);const who=cust?f.ck:(f.pl||'').trim().toLowerCase();if(!who)return null;const er=f.edit&&f.edit.rid;
   /* DC and MT count together: the same cylinders to and from the same customer on the same day is almost always a double entry */
   for(const r of S.D.recs){if(r.del||r.rid===er||r.d!==f.d)continue;if(cust?(!isCust(r.t)||r.ck!==f.ck):(r.t!==f.t||(r.pl||'').trim().toLowerCase()!==who))continue;
-    const same=f.cy.filter(c=>(r.cy||[]).includes(c));if(same.length)return {r,same,cross:r.t!==f.t}}return null}
+    if(r.t!==f.t)continue;   /* DC and MT on the same day are allowed: it can go out and come back the same day */
+    const same=f.cy.filter(c=>(r.cy||[]).includes(c));if(same.length)return {r,same,cross:false}}return null}
 function blinkCust(){const el=$('#f-cust');if(!el)return;el.classList.remove('needfill');void el.offsetWidth;el.classList.add('needfill');el.focus();
   const info=$('#f-cust-info');if(info)info.innerHTML=`<span style="color:var(--crit);font-weight:600">${LANG==='ta'?'Customer பெயர் போடவும்':'Type the customer name'}</span>`}
 /* a customer name needs at least two letters (English or Tamil) — numbers alone are not a name */
@@ -2220,7 +2237,7 @@ async function saveEntry(){{const de=dupEntry(S.form);if(de&&!(de.cross&&S.form.
     if(isCust(S.form.t)){const nn=Math.max(+nextNo(S.form.t,S.form.br)||0,isNum(body.dc)&&body.t===S.form.t?+body.dc+1:0);S.form.dc=nn?fmtNo(nn):'';S.form.dcAuto=!!nn}
     if(cust&&isTouch()&&can('saveLoc')&&S.cust[body.ck]&&!S.cust[body.ck].loc)S.ui.askLoc=body.ck;
     toast((LANG==='ta'?'சேமிக்கப்பட்டது: ':'Saved: ')+TLABEL[body.t]+(body.dc?' #'+body.dc:'')+' · '+recTitle(body)+' · '+(body.cy.length?body.cy.length+(LANG==='ta'?' சிலிண்டர்':' cylinder'+(body.cy.length===1?'':'s')):'')+(ownN(body)?(body.cy.length?' + ':'')+ownTxt(body):''));
-    mounted=null;refresh();setTimeout(()=>{const c=isTouch()?null:(isCust(S.form.t)?$('#f-cust'):$('#f-pl'));(c||$('#f-date'))&&!isTouch()&&(c||$('#f-date')).focus()},50);
+    mounted=null;refresh();setTimeout(()=>{const dd=$('#f-date');if(dd&&!isTouch()){dd.focus();dd.select()}},50);
   }catch(e){f.busy=false;toast(dbErr(e),4500);VIEWS.entry.updateSave()}
 }
 function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readOnly||(!S.isOwner&&viewOnly()))return false;if(can('editAny'))return true;return can('editOwn')&&r.by===S.uid&&madeToday(r)}
