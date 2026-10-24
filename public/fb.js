@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='4.3.4';window.CD_BUILD='2026-10-21';
+window.CD_VERSION='4.3.6';window.CD_BUILD='2026-10-21';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 /* The owner of the business. Must match firestore.rules. */
-const OWNER_EMAILS = ['hindusthansurgicals@gmail.com'];
+const OWNER_EMAILS = ['hindusthansurgicals@gmail.com', 'skmobilesdpi@gmail.com'];
 
 /* ---------- value encoding ----------
    Firestore cannot store an array directly inside another array, which the old

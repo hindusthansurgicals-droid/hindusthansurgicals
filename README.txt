@@ -47,7 +47,7 @@ https://hindustha-surgicals.web.app
 • Staff: அவர்கள் தங்கள் Google கணக்கில் sign-in செய்தால் "Waiting for the owner" என்று வரும்.
   நீங்கள் Settings-இல் அவர்களுக்கு role (Manager / Staff / Viewer) மற்றும் branch கொடுத்தவுடன்
   அவர்கள் பக்கம் தானாகத் திறக்கும்.
-• Owner = hindusthansurgicals@gmail.com மட்டுமே (firestore.rules, public/fb.js இரண்டிலும் உள்ளது).
+• Owner = hindusthansurgicals@gmail.com மற்றும் skmobilesdpi@gmail.com (firestore.rules, public/fb.js இரண்டிலும் உள்ளது).
 
 
 கவனிக்க

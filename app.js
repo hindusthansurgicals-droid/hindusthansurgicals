@@ -31,7 +31,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.3.4';
+const APP_VERSION=window.CD_VERSION||'4.3.6';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
@@ -220,7 +220,8 @@ const PRESET={manager:Object.fromEntries(PERM_KEYS.map(k=>[k,true])),
 function permsFor(uid){const r=S.roles[uid]||{};const base=PRESET[r.role]||{};const o={};PERM_KEYS.forEach(k=>{o[k]=!!(r.perm&&k in r.perm?r.perm[k]:base[k])});return o}
 const WORK_KEYS=['entry','editOwn','editAny','otherBr','newCust','editCust','saveLoc'];
 const viewOnly=uid=>{const r=S.roles[uid||S.uid];return !!(r&&r.viewOnly)};
-function can(k){if(S.isOwner)return true;if(!role())return false;if(viewOnly()){if(WORK_KEYS.includes(k))return false;if(PAGE_KEYS.includes(k))return true}return permsFor(S.uid)[k]}
+const otherBrToday=()=>{const r=S.roles[S.uid];return !!(r&&r.otherBrUntil&&r.otherBrUntil>=todayISO())};   /* owner allowed other-branch work up to this date */
+function can(k){if(S.isOwner)return true;if(!role())return false;if(k==='otherBr'&&!viewOnly()&&otherBrToday())return true;if(viewOnly()){if(WORK_KEYS.includes(k))return false;if(PAGE_KEYS.includes(k))return true}return permsFor(S.uid)[k]}
 const canManage=()=>role()==='owner'||(role()==='manager'&&!viewOnly());
 /* Plain reason why this person cannot do a piece of work, or '' when they can */
 function whyNot(k){const ta=LANG==='ta';if(S.isOwner)return '';const r=role();
@@ -563,8 +564,9 @@ function permPanel(id){
   openDrawer({k:'form',render:()=>[`<h3>${ta?'அனுமதிகள்':'Permissions'} · ${esc(nm)}</h3>`,
     `<p class="muted" style="margin-top:0">Role: <b>${esc(r.role||'—')}</b>. ${ta?'சாம்பல் குறி = role-இன் இயல்பு. மாற்றியவை தடிமனாகத் தெரியும்.':'Ticks start from the role’s defaults; changed items show in bold.'}</p>
      <form id="pm-form">${PERMS.map(([g,gt,items])=>`<h4 style="margin:14px 0 6px">${ta?gt:g}</h4><div class="permgrid">${items.map(([k,en,tl])=>`<label class="check${!!base[k]!==pm[k]?' changed':''}"><input type="checkbox" data-pm="${k}" ${pm[k]?'checked':''}> ${esc(ta?tl:en)}</label>`).join('')}</div>`).join('')}
+     <div class="field" style="margin-top:14px"><label for="pm-until">${ta?'மற்ற கிளையில் வேலை — இந்த தேதி வரை மட்டும் அனுமதி':'Other-branch work allowed until (date)'}</label><input type="date" class="inp" id="pm-until" value="${esc(r.otherBrUntil||'')}"><div class="small muted">${ta?'காலியாக விட்டால் இந்த தனி அனுமதி இல்லை. அந்த தேதி முடிந்ததும் தானாக நின்றுவிடும்.':'Leave empty for none. It switches off by itself after that day.'}</div></div>
      <div class="row" style="margin-top:16px"><button class="btn primary" type="submit">${ic('check')}${ta?'சேமி':'Save'}</button><button class="btn" type="button" id="pm-reset">${ta?'Role இயல்புக்குத் திரும்பு':'Back to role defaults'}</button><button class="btn" type="button" data-act="closedrawer">${ta?'ரத்து':'Cancel'}</button></div></form>`],
-    after(){const save=async perm=>{try{await S.db.doc('settings/roles').update({users:{[id]:{perm}}});toast(ta?'அனுமதிகள் சேமிக்கப்பட்டன':'Permissions saved');closeDrawer()}catch(e){toast(dbErr(e))}};
+    after(){const save=async perm=>{try{await S.db.doc('settings/roles').update({users:{[id]:{perm,otherBrUntil:($('#pm-until')&&$('#pm-until').value)||''}}});toast(ta?'அனுமதிகள் சேமிக்கப்பட்டன':'Permissions saved');closeDrawer()}catch(e){toast(dbErr(e))}};
       $('#pm-form').addEventListener('submit',e=>{e.preventDefault();const o={};$$('[data-pm]').forEach(x=>{o[x.dataset.pm]=x.checked});save(o)});
       $('#pm-reset').onclick=()=>save(window.FBC&&FBC.DEL?FBC.DEL:null)}});
 }
@@ -1923,7 +1925,7 @@ function purPanel(id){const ta=LANG==='ta';const P=id?Object.assign({},S.lpur[id
   const F=(k,l,a='')=>`<div class="field" ${a}><label for="pu-${k}">${l}</label><input class="inp" id="pu-${k}" value="${esc(P[k]??'')}"></div>`;
   openDrawer({k:'form',render:()=>[`<h3>🛢 ${id?(ta?'Liquid வாங்குதல் — திருத்து':'Liquid purchase — edit'):(ta?'புதிய liquid வாங்குதல்':'New liquid purchase')}${P.bn?` · <span class="mono">${esc(P.bn)}</span>`:''}</h3>`,
     `<form id="pu-form" autocomplete="off"><div class="row">
-       <div class="field" style="flex:0 1 170px"><label for="pu-br">${ta?'Plant':'Plant'}</label><select class="inp" id="pu-br">${S.company.branches.map(b=>`<option value="${b}" ${P.br===b?'selected':''}>${esc(plant(b).n)}</option>`).join('')}</select></div>
+       <div class="field" style="flex:0 1 170px"><label for="pu-br">${ta?'Plant':'Plant'}</label><select class="inp" id="pu-br" ${can('otherBr')?'':'disabled title="Only your branch"'}>${S.company.branches.map(b=>`<option value="${b}" ${P.br===b?'selected':''}>${esc(plant(b).n)}</option>`).join('')}</select></div>
        <div class="field" style="flex:0 1 160px"><label for="pu-d">${ta?'Tank-இல் இறக்கிய தேதி':'Unloaded on'}</label><input type="date" class="inp" id="pu-d" value="${esc(P.d)}"></div>
        <div class="field" style="flex:0 1 120px"><label for="pu-tm">${ta?'நேரம்':'Time'}</label><input type="time" class="inp" id="pu-tm" value="${esc(P.tm||'')}"></div>
        <div class="field" style="flex:1 1 220px"><label for="pu-sup">${ta?'Supplier':'Supplier'}</label><input class="inp" id="pu-sup" list="pu-sups" value="${esc(P.sup)}"><datalist id="pu-sups">${sups.map(x=>`<option value="${esc(x)}">`).join('')}</datalist></div></div>
@@ -1989,13 +1991,14 @@ function certPanel(pid,opt){opt=opt||{};const ta=LANG==='ta';const p=S.lpur[pid]
 VIEWS.fill={
   mount(){const u=S.ui;const ta=LANG==='ta';if(!u.flTab)u.flTab='entry';
     if(!u.fe)u.fe={br:role()==='staff'||role()==='manager'?myBranch():S.company.branches[0],d:todayISO(),party:'',pq:'',size:'D',duro:false,cy:[],n:'',ours:{}};
+    if(!can('otherBr'))u.fe.br=myBranch();   /* staff work in their own branch unless the owner allows other branches */
     if(!u.flM)u.flM=todayISO().slice(0,7);
     const tabs=[['entry',ta?'இன்றைய நிரப்பல்':'Filling'],['sum',ta?'நாள் சுருக்கம்':'Day summary'],['stock',ta?'Stock & இழப்பு':'Stock & loss'],['pur',ta?'வாங்குதல் & batch':'Purchases & batches'],['led',ta?'Party ledger':'Party ledger']];
     return `<div class="page-head"><div><h2>Filling register</h2><p>${ta?'Liquid வாங்குதல் → batch → தினசரி நிரப்பல் → stock, இழப்பு, certificate. நம் சிலிண்டர் எண்கள் மட்டும் சிலிண்டர் பட்டியலில் கணக்கு; dealer சிலிண்டர்கள் ledger-இல் மட்டும்.':'Liquid purchase → batch → daily filling → stock, loss and certificates. Only our own cylinder numbers count in the cylinder list; dealer cylinders stay in the ledger.'}</p></div>
       <div class="actions"><button class="btn" data-act="dealers">🏢 Dealers · ${Object.values(S.dealers||{}).filter(v=>!v.del).length}</button>${canManage()?`<button class="btn" data-act="plantset">⚙ ${ta?'Plant அமைப்பு':'Plant settings'}</button>`:''}</div></div>
     <div class="panel fl-top"><div class="seg" id="fl-tabs">${tabs.map(([k,l])=>`<button data-t="${k}" aria-pressed="${u.flTab===k}">${l}</button>`).join('')}</div>
       <div class="row" style="align-items:flex-end;margin-top:10px">
-        <div class="field" style="flex:0 1 260px"><label for="fl-br">${ta?'Plant':'Plant'}</label><select class="inp" id="fl-br">${S.company.branches.map(b=>`<option value="${b}" ${u.fe.br===b?'selected':''}>${esc(plant(b).n)} · ${esc(plant(b).pl)}</option>`).join('')}</select></div>
+        <div class="field" style="flex:0 1 260px"><label for="fl-br">${ta?'Plant':'Plant'}</label><select class="inp" id="fl-br" ${can('otherBr')?'':'disabled title="Only your branch"'}>${S.company.branches.map(b=>`<option value="${b}" ${u.fe.br===b?'selected':''}>${esc(plant(b).n)} · ${esc(plant(b).pl)}</option>`).join('')}</select></div>
         ${u.flTab==='stock'||u.flTab==='led'?`<div class="field" style="flex:0 1 170px"><label for="fl-m">${ta?'மாதம்':'Month'}</label><input type="month" class="inp" id="fl-m" value="${esc(u.flM)}"></div>`:u.flTab==='pur'?'':`<div class="field" style="flex:0 1 170px"><label for="fl-d">${ta?'தேதி':'Date'}</label><input type="date" class="inp" id="fl-d" value="${esc(u.fe.d)}" max="${todayISO()}"></div>`}
         <div id="fl-batch" class="fl-batch"></div></div></div>
     <div id="fl-body"></div>`},
@@ -2466,7 +2469,7 @@ VIEWS.bill={
       <form class="panel" id="bn-form" style="display:flex;flex-direction:column;gap:12px"><div class="row">
         <div class="field"><label for="bn-cust">Customer with unbilled DCs</label><select class="inp" id="bn-cust"><option value="">${custs.length?'Choose…':'No unbilled DCs'}</option>${custs.map(k=>`<option value="${esc(k)}" ${u.bnCust===k?'selected':''}>${esc(custName(k))} · ${un[k].length} DC</option>`).join('')}</select></div>
         <div class="field" style="flex:0 1 160px"><label for="bn-date">Invoice date</label><input class="inp" type="date" id="bn-date" value="${todayISO()}"></div>
-        <div class="field" style="flex:0 1 140px"><label for="bn-br">Branch</label><select class="inp" id="bn-br">${S.company.branches.map(b=>`<option value="${esc(b)}" ${myBranch()===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
+        <div class="field" style="flex:0 1 140px"><label for="bn-br">Branch</label><select class="inp" id="bn-br" ${can('otherBr')?'':'disabled title="Only your branch"'}>${S.company.branches.map(b=>`<option value="${esc(b)}" ${myBranch()===b?'selected':''}>${esc(brName(b))}</option>`).join('')}</select></div>
         <div class="field" style="flex:0 1 110px"><label for="bn-gst">GST %</label><input class="inp num" type="number" min="0" step="0.5" id="bn-gst" value="${esc(B.gst)}"></div></div>
         <div id="bn-dcs"></div><div id="bn-lines"></div>
         <div class="row" style="align-items:center"><button class="btn primary" type="submit" id="bn-save">${ic('check')}Create invoice</button><span class="small muted" id="bn-sum"></span></div></form>`;
