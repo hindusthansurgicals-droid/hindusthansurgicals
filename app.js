@@ -31,7 +31,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.3.6';
+const APP_VERSION=window.CD_VERSION||'4.3.7';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
@@ -235,6 +235,12 @@ const canEnter=()=>['owner','manager','staff'].includes(role())&&!S.readOnly&&!(
 const madeToday=r=>!!r.at&&new Date(r.at).toDateString()===new Date().toDateString();
 const canView=()=>!!role();
 const myBranch=()=>{const r=S.roles[S.uid];return (r&&r.br)||S.company.branches[0]||'DPI'};
+/* A person registered to one branch (and without the "other branch" permission) sees only that branch's data. Owners and managers see everything. */
+const scopeBr=()=>{if(S.isOwner)return '';const r=S.roles&&S.roles[S.uid];if(!r||!r.br||can('otherBr'))return '';return r.br};
+const inScRec=r=>{const b=scopeBr();return !b||!r.br||r.br===b};
+const inScCyl=s=>{const b=scopeBr();return !b||!s||!s.b||s.b===b};
+const inScCust=ck=>{const b=scopeBr();if(!b)return true;const x=custBr(ck).br;return !x||x===b||x==='BOTH'};
+const inScMism=m=>{const b=scopeBr();return !b||m.br===b||inScCyl(S.D&&S.D.state[m.id])};
 const brName=b=>(S.company.branchNames||{})[b]||b;
 const custName=ck=>(S.cust[ck]&&S.cust[ck].n)||ck||'—';
 /* a person's name without the email part ("ravi ravi (ravi@gmail.com)" → "ravi") */
@@ -443,8 +449,8 @@ function navOk(k){const r=role();
 /* one search for the whole app: cylinder numbers and customer names */
 function gFind(q){q=String(q||'').trim();if(!q)return [];const ql=q.toLowerCase(),qc=normCyl(q);const out=[];
   if(qc&&S.cyl[qc])out.push({k:'cyl',v:qc,exact:1});
-  for(const id of Object.keys(S.cyl)){if(out.length>=8)break;if(id!==qc&&String(id).toLowerCase().startsWith(ql))out.push({k:'cyl',v:id})}
-  const cs=Object.entries(S.cust).filter(([k,c])=>c.n.toLowerCase().includes(ql)).sort((a,b)=>(a[1].n.toLowerCase().startsWith(ql)?0:1)-(b[1].n.toLowerCase().startsWith(ql)?0:1)).slice(0,8);
+  for(const id of Object.keys(S.cyl)){if(out.length>=8)break;if(id!==qc&&inScCyl(S.cyl[id])&&String(id).toLowerCase().startsWith(ql))out.push({k:'cyl',v:id})}
+  const cs=Object.entries(S.cust).filter(([k,c])=>inScCust(k)&&c.n.toLowerCase().includes(ql)).sort((a,b)=>(a[1].n.toLowerCase().startsWith(ql)?0:1)-(b[1].n.toLowerCase().startsWith(ql)?0:1)).slice(0,8);
   cs.forEach(([k])=>out.push({k:'cust',v:k}));return out.slice(0,14)}
 function gRow(x,i){const ta=LANG==='ta';if(x.k==='cyl'){const st=S.D.state[x.v]||{};const g=(S.cyl[x.v]||{}).g||'';
     return `<button type="button" data-gi="${i}" class="${i===0?'on':''}"><span class="mono" style="font-weight:700">${esc(x.v)}</span> <span class="small muted">${esc(g)}</span><span class="small" style="margin-left:auto">${st.st==='out'?esc(custName(st.ck))+' · '+(st.days??'')+(ta?' நாள்':'d'):esc(STATUS[st.st]?STATUS[st.st][0]:'')}</span></button>`}
@@ -460,13 +466,13 @@ function gBind(inp,dd){let res=[],sel=0;
 function paintShell(){try{paintAttCard()}catch(e){}
   paintBrand();
   const r=role();
-  const open=S.D?S.D.mism.filter(m=>!m.vf).length:0;
+  const open=S.D?S.D.mism.filter(m=>!m.vf&&inScMism(m)).length:0;
   document.body.classList.toggle('no-editcust',!can('editCust'));document.body.classList.toggle('no-money',!can('money'));
   $('#rail').innerHTML=NAV.filter(([k])=>navOk(k)).map(([k,l,i])=>(NAV_SEC[k]?`<div class="navsec">${LANG==='ta'?NAV_SEC[k][1]:NAV_SEC[k][0]}</div>`:'')+`<button data-act="nav" data-v="${k}" ${S.view===k?'aria-current="page"':''}>${navIc(k,i)}<span>${l}</span>${k==='mism'&&open?`<span class="badge num">${open}</span>`:''}</button>`).join('')+
   (r?`<div class="tabbar">${navOk('dash')?`<button data-act="nav" data-v="dash" class="${S.view==='dash'?'on':''}">${ic('dash')}<span>${LANG==='ta'?'டாஷ்போர்டு':'Dashboard'}</span></button>`:''}${(canEnter()?[['DC','DC',LANG==='ta'?'Full அனுப்பு':'Full out'],['MT','MT',LANG==='ta'?'காலி வந்தது':'Empty in']]:[]).map(([t,l,sub])=>`<button data-act="quick" data-v="${t}" class="${S.view==='entry'&&S.form&&S.form.t===t?'on':''}"><b>${l}</b><span>${sub}</span></button>`).join('')}${navOk('cust')?`<button data-act="nav" data-v="cust" class="${S.view==='cust'?'on':''}">${ic('cust')}<span>${LANG==='ta'?'வாடிக்கையாளர்':'Customers'}</span></button>`:''}${navOk('cyl')?`<button data-act="nav" data-v="cyl" class="${S.view==='cyl'?'on':''}">${ic('cyl')}<span>${LANG==='ta'?'சிலிண்டர்':'Cylinders'}</span></button>`:''}${!navOk('dash')&&navOk('insp')?`<button data-act="nav" data-v="insp" class="${S.view==='insp'?'on':''}">${ic('insp')}<span>${LANG==='ta'?'சரிபார்ப்பு':'Inspect'}</span></button>`:''}</div>`:'')+
   (r?`<div class="rail-foot">Version ${APP_VERSION}<br>Old data up to ${S.hist?fmtD(S.hist.meta.asOf):'—'}.</div>`:'');
   const me=S.me;
-  const dueN=(r&&S.D&&navOk('fu')?Object.keys(S.D.holding).filter(remDue).length:0)+(r&&navOk('docs')?renDue().length:0)+(r&&navOk('tasks')?taskDue().length:0);
+  const dueN=(r&&S.D&&navOk('fu')?Object.keys(S.D.holding).filter(ck=>remDue(ck)&&inScCust(ck)).length:0)+(r&&navOk('docs')?renDue().length:0)+(r&&navOk('tasks')?taskDue().length:0);
   const attBtn=needsAtt()&&ATT.checked?(!ATT.today||!ATT.today.in?`<button class="btn sm attbtn in" data-act="attin">🟢 ${LANG==='ta'?'வருகை':'In'}</button>`:!ATT.today.out?`<button class="btn sm attbtn" data-act="attout">🔴 ${LANG==='ta'?'வெளியேறு':'Out'}</button>`:''):'';
   $('#who').innerHTML=attBtn+(r&&(navOk('fu')||navOk('docs'))&&S.D?`<button class="btn sm bell${dueN?' has':''}" data-act="fudue" title="${LANG==='ta'?'நினைவூட்டல்கள்: customers, ஆவணங்கள்':'Reminders: customers, documents'}">🔔${dueN?`<b>${dueN}</b>`:''}</button>`:'')+(r?`<button class="btn sm gs-btn" data-act="gsearch" aria-label="Search">${ic('search')}</button>`:'')+`<button class="btn sm skin-btn" data-act="skin" title="${LANG==='ta'?'மெனு நிறம்: வெளிர் / இருண்ட':'Menu colour: light / dark'}">${SKIN==='light'?'🌙':'☀️'}</button>`+(r&&NAV.some(([k])=>navOk(k)&&!['dash','entry','cust','cyl'].includes(k))?`<button class="btn sm menu-btn" data-act="morenav" aria-label="Menu">${ic('list')}<span>${LANG==='ta'?'மெனு':'Menu'}</span></button>`:'')+'<span id="sync-slot" class="sync-slot"></span>'+(INSTALL?`<button class="btn sm primary" data-act="install">${ic('dl')}${LANG==='ta'?'App நிறுவு':'Install app'}</button>`:'')+(window.FBC?'<button class="btn sm ghost signout" onclick="FBC.signOut()">Sign out</button>':'')+`<button class="btn sm" data-act="lang" lang="${LANG==='ta'?'en':'ta'}">${LANG==='ta'?'English':'தமிழ்'}</button>`+(me?`<div class="who">${me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:''}<span>${esc(me.name||'You')}</span>${r?`<span class="role-pill">${esc(r==='owner'?'Owner':r==='manager'?'Manager':r==='staff'?'Staff · '+brName(myBranch()):'Viewer')}${r!=='owner'&&viewOnly()?' · '+(LANG==='ta'?'பார்வை மட்டும்':'View only'):''}</span>`:''}</div>`:'');
   paintSync();
@@ -776,7 +782,7 @@ setInterval(()=>{$$('.ph-clock').forEach(el=>{el.innerHTML=phClock()})},1000);
 setInterval(()=>{const c=document.getElementById('sb-clock');if(c)c.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
 function paintStatus(){const el=$('#statusbar');if(!el||!S.D)return;const [k,label]=syncState();const ta=LANG==='ta';
   el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span class="kb">⌨ F2 DC · F3 MT · F9 Entries · Ctrl+K ${ta?'தேடல்':'Search'}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
-    <span class="sb-r"><span class="clock">🕐 <b id="sb-clock">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})}</b></span><span>${ta?'சிலிண்டர் வெளியே':'Out'}: <b>${Object.values(S.D.state).filter(x=>x.st==='out').length}</b></span><span>${ta?'வாடிக்கையாளர்':'Customers'}: <b>${Object.keys(S.cust).length}</b></span><span>${ta?'இன்று':'Today'}: <b>${fmtD(todayISO())}</b></span></span>`}
+    <span class="sb-r"><span class="clock">🕐 <b id="sb-clock">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})}</b></span><span>${ta?'சிலிண்டர் வெளியே':'Out'}: <b>${Object.values(S.D.state).filter(x=>x.st==='out'&&inScCyl(x)).length}</b></span><span>${ta?'வாடிக்கையாளர்':'Customers'}: <b>${Object.keys(S.cust).filter(inScCust).length}</b></span><span>${ta?'இன்று':'Today'}: <b>${fmtD(todayISO())}</b></span></span>`}
 function paintSync(){
   paintStatus();
   const el=$('#sync-slot');if(!el)return;
@@ -922,9 +928,9 @@ VIEWS.dash={
     ${tOver||tSoon?`<div class="notice warn">${ic('warn')}<div><b>${tOver} cylinder${tOver===1?' is':'s are'} past the hydro-test date${tSoon?`, ${tSoon} due within 3 months`:''}.</b> Do not send overdue cylinders for filling. <button class="btn sm" data-act="testfilter" style="margin-left:6px">See list</button></div></div>`:''}
     ${canManage()&&(S.company.lastBackup||'')<t.slice(0,7)?`<div class="notice info">${ic('dl')}<div><b>This month's backup is not downloaded yet.</b> Keep one copy every month. <button class="btn sm" data-act="backupnow" style="margin-left:6px">Download backup</button></div></div>`:''}
     ${(()=>{let hid=false;try{hid=!!localStorage.getItem('cd-inst-hide')}catch(e){}const standalone=window.matchMedia&&matchMedia('(display-mode: standalone)').matches;return INSTALL&&!hid&&!standalone?`<div class="notice info" id="inst-banner">📲<div style="flex:1"><b>${LANG==='ta'?'இதை app-ஆக நிறுவலாம்':'Install this as an app'}</b> — ${LANG==='ta'?'home screen / desktop-இல் icon, browser bar இல்லாமல் திறக்கும்.':'icon on your home screen / desktop, opens without the browser bar.'} <button class="btn sm primary" data-act="installnow">${LANG==='ta'?'நிறுவு':'Install'}</button> <button class="btn sm" data-act="installhide">${LANG==='ta'?'வேண்டாம்':'Not now'}</button></div></div>`:''})()}
-    ${(()=>{const P=S.D.pend||[];if(!P.length||!navOk('mism'))return '';const last=S.company.pendRemAt||'';if(last&&daysSince(last)<10)return '';const ta=LANG==='ta';
+    ${(()=>{const P=(S.D.pend||[]).filter(x=>inScCyl(S.D.state[x.id]));if(!P.length||!navOk('mism'))return '';const last=S.company.pendRemAt||'';if(last&&daysSince(last)<10)return '';const ta=LANG==='ta';
       return `<div class="notice warn">🏭<div style="flex:1"><b>${P.length} ${ta?'சிலிண்டர்கள் factory-இல் நிரப்பப்பட்டன, ஆனால் அவற்றின் DC / MT இன்னும் போடப்படவில்லை.':'cylinders were filled at the factory but their DC / MT is not entered yet.'}</b> ${ta?'Krishnagiri போன்ற கிளைகளிலிருந்து paper வந்தவுடன் போடவும். (10 நாளுக்கு ஒரு முறை நினைவூட்டும்)':'Enter them when the paper arrives from the branches. (Reminds every 10 days)'} <button class="btn sm" data-act="nav" data-v="mism">${ta?'பார்':'Open'}</button>${canManage()?` <button class="btn sm" data-act="pendok">✓ ${ta?'பார்த்தேன்':'Noted'}</button>`:''}</div></div>`})()}
-    ${(()=>{const n=Object.keys(S.D.holding).filter(remDue).length;return n&&navOk('fu')?`<div class="notice warn">🔔<div><b>${n} ${LANG==='ta'?'customer-களுக்கு நினைவூட்ட வேண்டும்':'customers are due for a reminder'}</b> (${LANG==='ta'?'ஒவ்வொரு':'every'} ${remEvery()} ${LANG==='ta'?'நாள்':'days'}). <button class="btn sm" data-act="fudue">${LANG==='ta'?'பார்':'Open'}</button></div></div>`:''})()}
+    ${(()=>{const n=Object.keys(S.D.holding).filter(ck=>remDue(ck)&&inScCust(ck)).length;return n&&navOk('fu')?`<div class="notice warn">🔔<div><b>${n} ${LANG==='ta'?'customer-களுக்கு நினைவூட்ட வேண்டும்':'customers are due for a reminder'}</b> (${LANG==='ta'?'ஒவ்வொரு':'every'} ${remEvery()} ${LANG==='ta'?'நாள்':'days'}). <button class="btn sm" data-act="fudue">${LANG==='ta'?'பார்':'Open'}</button></div></div>`:''})()}
     ${(()=>{const g=[];['DC','MT'].forEach(ty=>{const n=gaps(ty,'ALL').length;if(n)g.push(n+' '+ty)});return g.length?`<div class="notice warn">${ic('warn')}<div><b>Missing numbers:</b> ${esc(g.join(', '))}. <button class="btn sm" data-act="nav" data-v="reg" style="margin-left:6px">Open registers</button></div></div>`:''})()}
     <div class="stats">
       <div class="stat click" ${cylGo('out')}><span><i style="background:var(--info)"></i>With customers</span><b>${cnt.out}</b></div>
@@ -956,11 +962,11 @@ function custDue(ck){let t=0;for(const b of Object.values(S.bill||{}))for(const 
 /* the day an entry was typed into the app (staff often enter older paper DCs today) */
 const entD=r=>r.at?localD(r.at):r.d;
 function daySummary(){
-  const t=S.D.today;const ta=LANG==='ta';const recs=S.D.recs.filter(r=>!r.del&&entD(r)===t);
+  const t=S.D.today;const ta=LANG==='ta';const recs=S.D.recs.filter(r=>!r.del&&inScRec(r)&&entD(r)===t);
   const by=k=>recs.filter(r=>r.t===k);const cyl=a=>a.reduce((x,r)=>x+r.cy.length,0);
   const dc=by('DC'),mt=by('MT'),full=mt.filter(r=>r.full);
-  const newMism=S.D.mism.filter(m=>!m.vf&&m.d===t).length,openMism=S.D.mism.filter(m=>!m.vf).length;
-  const over=Object.values(S.D.state).filter(x=>x.st==='out'&&x.days>90);
+  const newMism=S.D.mism.filter(m=>inScMism(m)&&!m.vf&&m.d===t).length,openMism=S.D.mism.filter(m=>inScMism(m)&&!m.vf).length;
+  const over=Object.values(S.D.state).filter(x=>x.st==='out'&&x.days>90&&inScCyl(x));
   const topC=Object.entries(over.reduce((a,x)=>{a[x.ck]=(a[x.ck]||0)+1;return a},{})).sort((a,b)=>b[1]-a[1]).slice(0,3);
   const brs=S.company.branches.map(b=>[b,cyl(dc.filter(r=>r.br===b)),cyl(mt.filter(r=>r.br===b))]);
   const lines=[
@@ -1151,7 +1157,7 @@ VIEWS.entry={
     const ci=$('#f-cust'),dd=$('#f-cust-dd');let sel=0;
     const showDD=()=>{
       const q=ci.value.trim().toLowerCase();
-      const all=Object.entries(S.cust).filter(([k,c])=>!c.off);
+      const all=Object.entries(S.cust).filter(([k,c])=>!c.off&&inScCust(k));
       const sameBr=k=>{const b=custBr(k).br;return b===f.br||b==='BOTH'?0:1};
       if(!q){const rc=recentCusts();if(rc.length){
         const html=`<div class="dd-sec">${LANG==='ta'?'சமீபத்தியவை':'Recent'}</div>`+rc.map((k,i)=>{const c=S.cust[k];return `<button type="button" role="option" data-ck="${esc(k)}" aria-selected="${i===sel}"><span class="cn">${esc(c.n)}</span>${brTag(k)}${custTown(c)?`<span class="town">${esc(custTown(c))}</span>`:''}<span class="sub num">${(S.D.holding[k]||[]).length} holding</span><span class="ed" data-ed="${esc(k)}" title="Edit">${ic('edit')}</span></button>`}).join('');
@@ -1448,8 +1454,8 @@ VIEWS.entries={
     /* branch = the customer's branch when it is set, otherwise the branch chosen on the entry */
     const brOf=r=>{const cb=isCust(r.t)&&r.ck&&custBr(r.ck).br;return cb&&cb!=='BOTH'?cb:r.br};
     const other=r=>(u.entBr==='all'||brOf(r)===u.entBr)&&(u.entType==='all'||r.t===u.entType)&&(!q||recTitle(r).toLowerCase().includes(q)||(String(r.dc).toLowerCase()===q||(isNum(q)&&isNum(r.dc)&&+q===+r.dc))||r.cy.includes(qc)||(r.dr||'').toLowerCase().includes(q)||(r.vh||'').toLowerCase().includes(q));
-    const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&other(r));
-    const outside=S.D.recs.filter(r=>!r.del&&other(r)&&((u.entFrom&&r.d<u.entFrom)||(u.entTo&&r.d>u.entTo))).length;
+    const rs=S.D.recs.filter(r=>(!u.entFrom||r.d>=u.entFrom)&&(!u.entTo||r.d<=u.entTo)&&inScRec(r)&&other(r));
+    const outside=S.D.recs.filter(r=>!r.del&&inScRec(r)&&other(r)&&((u.entFrom&&r.d<u.entFrom)||(u.entTo&&r.d>u.entTo))).length;
     const ta=LANG==='ta';const allBtn=outside?`<div class="notice info" style="margin-bottom:10px">${ic('info')}<div style="flex:1">${ta?`இந்தத் தேதிகளுக்கு வெளியே <b>${outside}</b> பதிவுகள் பொருந்துகின்றன.`:`<b>${outside}</b> more matching entries on other dates.`} <button class="btn sm" type="button" data-act="entall">${ta?'எல்லா தேதிகளையும் காட்டு':'Show all dates'}</button></div></div>`:'';
     if(!rs.length){$('#e-list').innerHTML=allBtn+`<div class="empty"><b>No entries in this range</b>${S.D.recs.length?'Change the dates or search.':'New DC and MT entries will be listed here once staff start saving them.'}</div>`;return}
     let html=allBtn,day='';const live=rs.filter(r=>!r.del);
@@ -1483,7 +1489,7 @@ VIEWS.cyl={
     $('#c-q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const id=normCyl(e.target.value);if(S.D.state[id]){openDrawer({k:'cyl',v:id});e.target.select()}}});
     this.update()},
   rows(){const u=S.ui;const q=u.cylQ.trim();const qc=normCyl(q),ql=q.toLowerCase();
-    return Object.values(S.D.state).filter(s=>s.known&&(u.cylGas==='all'||s.g===u.cylGas)&&(u.cylSt==='all'||s.st===u.cylSt)&&(u.cylBr==='all'||s.b===u.cylBr)&&(u.cylAge==='all'||(s.st==='out'&&bucket(s.days)===u.cylAge))&&(u.cylTest==='all'||s.tdue===u.cylTest)&&(!q||s.id.includes(qc)||(s.ck&&custName(s.ck).toLowerCase().includes(ql))))
+    return Object.values(S.D.state).filter(s=>s.known&&inScCyl(s)&&(u.cylGas==='all'||s.g===u.cylGas)&&(u.cylSt==='all'||s.st===u.cylSt)&&(u.cylBr==='all'||s.b===u.cylBr)&&(u.cylAge==='all'||(s.st==='out'&&bucket(s.days)===u.cylAge))&&(u.cylTest==='all'||s.tdue===u.cylTest)&&(!q||s.id.includes(qc)||(s.ck&&custName(s.ck).toLowerCase().includes(ql))))
       .sort((a,b)=>{if(qc&&a.id===qc)return -1;if(qc&&b.id===qc)return 1;return (b.st==='out')-(a.st==='out')||(b.days??-1)-(a.days??-1)||a.id.localeCompare(b.id,undefined,{numeric:true})})},
   update(){const u=S.ui;const rs=this.rows();const per=100;const pages=Math.max(1,Math.ceil(rs.length/per));if(u.cylPage>=pages)u.cylPage=pages-1;
     const page=rs.slice(u.cylPage*per,(u.cylPage+1)*per);
@@ -1502,7 +1508,7 @@ VIEWS.cust={
   after(){$('#k-q').addEventListener('input',e=>{S.ui.custQ=e.target.value;this.update()});this.update()},
   update(){const u=S.ui;const q=u.custQ.trim().toLowerCase();
     $('#k-sort').innerHTML=[['hold','Holding'],['old','Over 90 days'],['name','Name']].map(([k,l])=>`<button data-act="ksort" data-v="${k}" aria-pressed="${u.custSort===k}">${l}</button>`).join('');
-    const rows=Object.entries(S.cust).filter(([k,c])=>!q||c.n.toLowerCase().includes(q)).map(([k,c])=>{const h=S.D.holding[k]||[];return {k,c,h:h.length,o:h.filter(s=>s.days>90).length,last:S.D.lastMove[k]||'',rent:openRent(k)}});
+    const rows=Object.entries(S.cust).filter(([k,c])=>inScCust(k)&&(!q||c.n.toLowerCase().includes(q))).map(([k,c])=>{const h=S.D.holding[k]||[];return {k,c,h:h.length,o:h.filter(s=>s.days>90).length,last:S.D.lastMove[k]||'',rent:openRent(k)}});
     rows.sort(u.custSort==='name'?(a,b)=>a.c.n.localeCompare(b.c.n):u.custSort==='old'?(a,b)=>b.o-a.o||b.h-a.h:(a,b)=>b.h-a.h||b.last.localeCompare(a.last));
     const anyRent=can('money')&&rows.some(r=>r.rent>0);
     $('#k-list').innerHTML=rows.length?`<div class="panel-head"><h3>${rows.length} customers</h3><span class="muted">${rows.reduce((a,r)=>a+r.h,0)} cylinders out</span></div><div class="tbl-wrap"><table><thead><tr><th>Customer</th><th>Type</th><th class="r">Holding</th><th class="r">Over 90 days</th>${anyRent?'<th class="r">Rent so far</th>':''}<th class="r">Last movement</th>${canManage()?'<th></th>':''}</tr></thead><tbody>
@@ -1555,7 +1561,7 @@ VIEWS.fu={
     const q=(u.fuQ||'').trim().toLowerCase();
     const cyls=[];
     for(const [ck,h] of Object.entries(S.D.holding)){
-      if(u.fuDue&&!remDue(ck))continue;
+      if(!inScCust(ck))continue;if(u.fuDue&&!remDue(ck))continue;
       if(u.fuBr&&u.fuBr!=='all'){const b=custBr(ck).br;if(b!==u.fuBr&&b!=='BOTH')continue}
       const cn=custName(ck).toLowerCase();
       for(const x of h){if(x.days==null)continue;if(x.days<mn||x.days>mx)continue;if(f&&x.d<f)continue;if(t&&x.d>t)continue;
@@ -1563,7 +1569,7 @@ VIEWS.fu={
     return cyls},
   update(){const u=S.ui;const ta=LANG==='ta';const cyls=this.filt();
     const P=[['1-30','1–30'],['31-60','31–60'],['61-90','61–90'],['91-180','91–180'],['181-','180+'],['1-','All']];
-    const dueN=Object.keys(S.D.holding).filter(remDue).length;
+    const dueN=Object.keys(S.D.holding).filter(ck=>remDue(ck)&&inScCust(ck)).length;
     const preH=P.map(([v,l])=>`<button type="button" data-pr="${v}" aria-pressed="${!u.fuDue&&(u.fuMin+'-'+u.fuMax)===v}">${l} ${ta?'நாள்':'days'}</button>`).join('')+
       `<button type="button" data-pr="due" aria-pressed="${!!u.fuDue}">🔔 ${ta?'நினைவூட்ட வேண்டியவர்கள்':'Reminder due'} <span class="n">${dueN}</span></button><button type="button" data-pr="clear" class="clr">✕ ${ta?'அழி':'Clear'}</button>`;
     /* only redraw the buttons when they change, so a click is not lost while a date box is being left */
@@ -1645,7 +1651,7 @@ VIEWS.insp={
     const q=(u.inQ||'').trim().toLowerCase();const brOk=ck=>{if(!u.inBr||u.inBr==='all')return true;const b=custBr(ck).br;return b===u.inBr||b==='BOTH'};
     const last={};recs.forEach(r=>{if(!last[r.ck])last[r.ck]=r});
     if(u.inTab==='cust'){
-      const rows=Object.keys(S.cust).filter(ck=>(S.D.holding[ck]||[]).length&&brOk(ck)&&(!q||custName(ck).toLowerCase().includes(q)));
+      const rows=Object.keys(S.cust).filter(ck=>(S.D.holding[ck]||[]).length&&brOk(ck)&&inScCust(ck)&&(!q||custName(ck).toLowerCase().includes(q)));
       const today=todayISO();const done=ck=>last[ck]&&last[ck].d===today;
       rows.sort((a,b)=>(done(a)?1:0)-(done(b)?1:0)||((last[a]||{}).d||'').localeCompare((last[b]||{}).d||'')||(S.D.holding[b].length-S.D.holding[a].length));
       const todo=rows.filter(ck=>!done(ck)),fin=rows.filter(done);
@@ -2336,7 +2342,7 @@ function taskCard(d){const ta=LANG==='ta';const st=docState(d);const dd=d.at.sli
     ${canDocs()?`<div class="row" style="gap:6px;flex-wrap:nowrap">${st.k!=='done'?`<button class="btn sm ok" data-act="taskdone" data-v="${esc(d.id)}">✓ ${ta?'முடிந்தது':'Done'}</button>`:''}<button class="btn sm ghost" data-act="docedit" data-v="${esc(d.id)}">${ic('edit')}</button></div>`:''}</div>`}
 /* ---- bell ---- */
 function bellPanel(){const ta=LANG==='ta';const R=navOk('docs')?renDue():[],T=navOk('tasks')?taskDue():[];
-  const cn=navOk('fu')&&S.D?Object.keys(S.D.holding).filter(remDue).length:0;
+  const cn=navOk('fu')&&S.D?Object.keys(S.D.holding).filter(ck=>remDue(ck)&&inScCust(ck)).length:0;
   openDrawer({k:'form',render:()=>[`<h3>🔔 ${ta?'நினைவூட்டல்கள்':'Reminders'}</h3>`,
     `${navOk('docs')?`<div class="bl-sec"><div class="eyebrow">🛡️ ${ta?'காப்பீடு & உரிமம் renew':'Insurance & licences to renew'} · ${R.length}</div>${R.length?`<div class="rn-grid one">${R.map(renCard).join('')}</div>`:`<div class="muted small">${ta?'எதுவும் இல்லை':'Nothing due'}</div>`}<button class="btn sm" data-act="nav" data-v="docs" style="margin-top:8px">${ta?'எல்லாம் பார்':'See all'}</button></div>`:''}
      ${navOk('tasks')?`<div class="bl-sec"><div class="eyebrow">⏰ ${ta?'நினைவூட்டல்கள்':'Reminders'} · ${T.length}</div>${T.length?T.map(taskCard).join(''):`<div class="muted small">${ta?'எதுவும் இல்லை':'Nothing due'}</div>`}<button class="btn sm" data-act="nav" data-v="tasks" style="margin-top:8px">${ta?'எல்லாம் பார்':'See all'}</button></div>`:''}
@@ -2401,10 +2407,10 @@ VIEWS.mism={
     </div><div class="panel" id="m-pend"></div><div class="panel" id="m-list"></div>`},
   after(){this.update()},
   update(){const u=S.ui;
-    {const P=S.D.pend.slice().sort((a,b)=>a.fillD<b.fillD?-1:1);const ta=LANG==='ta';const el=$('#m-pend');
+    {const P=S.D.pend.filter(x=>inScCyl(S.D.state[x.id])).slice().sort((a,b)=>a.fillD<b.fillD?-1:1);const ta=LANG==='ta';const el=$('#m-pend');
       if(el){el.hidden=!P.length;el.innerHTML=P.length?`<div class="panel-head"><h3>🟡 ${ta?'Entry நிலுவை — factory-இல் நிரப்பப்பட்டவை':'Entry pending — filled at the factory'} · ${P.length}</h3><span class="muted small">${ta?`DC/MT paper வரும் வரை காத்திருக்கும்; ${S.D.PEND_DAYS} நாளுக்குள் வராவிட்டால் mismatch ஆகும்`:`Waiting for late DC / MT paper; becomes a mismatch after ${S.D.PEND_DAYS} days`}</span></div>
         <div class="tbl-wrap"><table><thead><tr><th>${ta?'சிலிண்டர்':'Cylinder'}</th><th>${ta?'என்ன நிலுவை':'Waiting for'}</th><th>Customer</th><th>${ta?'நிரப்பிய தேதி':'Filled on'}</th><th class="r">${ta?'மீதி நாள்':'Days left'}</th></tr></thead><tbody>${P.map(x=>{const left=S.D.PEND_DAYS-daysSince(x.fillD);return `<tr><td><button class="cyl" data-act="opencyl" data-v="${esc(x.id)}">${esc(x.id)}</button></td><td>${x.kind==='nomt'?(ta?`MT வரவில்லை (DC ${esc(x.dcNo)} · ${fmtD(x.dcD)})`:`MT not entered (DC ${esc(x.dcNo)} · ${fmtD(x.dcD)})`):`<span class="small">${esc(TSHORT[x.t]||x.t)} ${x.dc?'#'+esc(x.dc):''} · ${fmtD(x.d)} — ${esc(x.flag)}</span>`}</td><td>${x.ck?`<a href="#" data-act="opencust" data-v="${esc(x.ck)}">${esc(custName(x.ck))}</a>`:'—'}</td><td class="num">${fmtD(x.fillD)}</td><td class="r"><span class="pill ${left<=10?'crit':'warn'} num">${left}</span></td></tr>`}).join('')}</tbody></table></div>`:''}}
-    const all=S.D.mism.slice().sort((a,b)=>a.d<b.d?1:-1);const open=all.filter(m=>!m.vf);
+    const all=S.D.mism.filter(inScMism).slice().sort((a,b)=>a.d<b.d?1:-1);const open=all.filter(m=>!m.vf);
     $('#m-seg').innerHTML=[['open','To check · '+open.length],['all','All · '+all.length]].map(([k,l])=>`<button data-act="mmseg" data-v="${k}" aria-pressed="${u.mmShow===k}">${l}</button>`).join('');
     const rs=u.mmShow==='open'?open:all;
     $('#m-list').innerHTML=rs.length?`<div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Cylinder</th><th>Entry</th><th>Problem</th><th>${LANG==='ta'?'இப்போது எங்கே':'Where now'}</th><th></th></tr></thead><tbody>${rs.map(m=>`<tr>
