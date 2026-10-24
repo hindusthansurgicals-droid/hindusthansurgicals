@@ -847,7 +847,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.4.0"></script>
+<script src="fb.js?v=4.4.1"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -882,7 +882,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.4.0';
+const APP_VERSION=window.CD_VERSION||'4.4.1';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
@@ -1632,7 +1632,7 @@ function phClock(){const n=new Date();return `<b>${n.toLocaleTimeString('en-IN',
 setInterval(()=>{$$('.ph-clock').forEach(el=>{el.innerHTML=phClock()})},1000);
 setInterval(()=>{const c=document.getElementById('sb-clock');if(c)c.textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
 function paintStatus(){const el=$('#statusbar');if(!el||!S.D)return;const [k,label]=syncState();const ta=LANG==='ta';
-  el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span class="kb">⌨ F2 DC · F3 MT · F9 Entries · Ctrl+K ${ta?'தேடல்':'Search'}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
+  el.innerHTML=`<span><b>HSAP Cylinder Desk</b> v${esc(APP_VERSION)}</span><span class="${k==='ok'?'ok':k==='crit'?'bad':''}">● ${esc(label)}</span><span class="kb">⌨ F2 DC · F3 MT · F9 Entries · Ctrl+F ${ta?"Customer":"Customer"} · Ctrl+K ${ta?'தேடல்':'Search'}</span><span>${ta?'பயனர்':'User'}: <b>${esc(personName(S.uid))}</b> · ${esc(role()==='owner'?'Owner':role()||'')}</span>
     <span class="sb-r"><span class="clock">🕐 <b id="sb-clock">${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})}</b></span><span>${ta?'சிலிண்டர் வெளியே':'Out'}: <b>${Object.values(S.D.state).filter(x=>x.st==='out'&&inScCyl(x)).length}</b></span><span>${ta?'வாடிக்கையாளர்':'Customers'}: <b>${Object.keys(S.cust).filter(inScCust).length}</b></span><span>${ta?'இன்று':'Today'}: <b>${fmtD(todayISO())}</b></span></span>`}
 function paintSync(){
   paintStatus();
@@ -4192,6 +4192,11 @@ document.addEventListener('keydown',e=>{
   document.addEventListener('click',e=>{const m=e.target.closest&&e.target.closest('.swipe-more');if(m){const c=m.closest('.entry-card');c&&c.classList.toggle('swiped')}});
 })();
 /* PC keyboard: F2 new DC, F3 new MT, Ctrl+K (or F4) search, F6 customers, F7 cylinders, F8 follow-up */
+/* New entry page: Ctrl+F jumps to the customer box (instead of the browser's find box) */
+document.addEventListener('keydown',e=>{
+  if(!(e.ctrlKey&&!e.altKey&&!e.shiftKey&&(e.key==='f'||e.key==='F'))||S.view!=='entry'||S.drawer)return;
+  const c=$('#f-cust')||$('#f-pl');if(!c||!c.offsetParent)return;
+  e.preventDefault();c.focus();c.select()});
 document.addEventListener('keydown',e=>{
   if(e.key==='F2'||e.key==='F3'){if(!canEnter())return;e.preventDefault();A.quick({dataset:{v:e.key==='F2'?'DC':'MT'}});return}
   if((e.ctrlKey&&(e.key==='k'||e.key==='K'))||e.key==='F4'){e.preventDefault();const g=$('#gq');if(g&&g.offsetParent){g.focus();g.select()}else A.gsearch();return}
