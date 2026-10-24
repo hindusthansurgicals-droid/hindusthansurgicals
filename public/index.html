@@ -847,7 +847,7 @@ img,video,canvas{max-width:100%}
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="fb.js?v=4.4.1"></script>
+<script src="fb.js?v=4.4.2"></script>
 <script>
 document.body.classList.add('pro');
 /* always the normal (light) colours, even when the phone itself is in dark mode */
@@ -882,7 +882,7 @@ const recTitle=r=>r.t==='FS'?'Sent for filling · '+(r.pl||''):r.t==='FR'?'Recei
 const fmtM=ym=>ym?ym.slice(5,7)+'-'+ym.slice(0,4):'—';
 const addMonths=(ym,n)=>{let y=+ym.slice(0,4),m=+ym.slice(5,7)+n;while(m>12){m-=12;y++}return y+'-'+pad(m)};
 /* ---------------- version ---------------- */
-const APP_VERSION=window.CD_VERSION||'4.4.1';
+const APP_VERSION=window.CD_VERSION||'4.4.2';
 const APP_BUILD=window.CD_BUILD||'2026-10-20';
 const CHANGELOG=[
  ['4.3.0','2026-10-23',['Insurance & licences: “Fill from PDF / photo” reads the policy or licence and fills type, name, number, issued and expiry dates; check the yellow boxes and save — the file goes to Drive too','Scans: ✕ to remove a file (also moved to Drive trash); only one upload at a time, so no more copies']],
@@ -1133,7 +1133,7 @@ function derive(){
   fills.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.at||'').localeCompare(a.at||''));
   moves.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:numCmp(a,b));
   for(const m of moves){if(!tl[m.cyl])tl[m.cyl]=[];tl[m.cyl].push(m)}
-  const state={};const mism=[];const holding={};const lastMove={};
+  const state={};const mism=[];const holding={};const lastMove={};const strayMap={};
   const ST={DC:'out',MT:'empty',FS:'filling',FR:'full',FL:'full'};
   /* A factory filling shows the cylinder is back with us. DC / MT paper from far branches comes late,
      so anything that does not match before a filling waits as "entry pending" (45 days) instead of a mismatch. */
@@ -1153,17 +1153,34 @@ function derive(){
        if(!e0.d||(e0.t!=='DC'&&e0.t!=='MT')){evs.push(e0);open=e0.t==='DC'||e0.t==='FS';i++;continue}
        let j=i;while(j<evsRaw.length&&evsRaw[j].d===e0.d&&(evsRaw[j].t==='DC'||evsRaw[j].t==='MT'))j++;
        const grp=evsRaw.slice(i,j);
+       /* Same day: a cylinder must come back (MT) before it can go out again (DC).
+          Only when the DC and the MT are for the SAME customer is it a same-day round trip (DC first). */
+       const sameCust=grp.some(a=>a.t==='DC'&&grp.some(b=>b.t==='MT'&&b.ck===a.ck));
        while(grp.length){
-         const want=open?'MT':'DC';
+         const want=open?'MT':(sameCust?'DC':(grp.some(x=>x.t==='MT')?'MT':'DC'));
          let k=grp.findIndex(x=>x.t===want);if(k<0)k=0;
          const e=grp.splice(k,1)[0];evs.push(e);open=e.t==='DC';
        }
        i=j;
      }}
-    tl[id]=evs;   /* keep the corrected order for the Journey and every other screen */
+    /* ALIGN BY CUSTOMER. A DC to customer A is closed by the MT from customer A. Another customer's DC or MT that sits
+       in between (usually a wrong cylinder number typed on that entry) is set aside as a "stray": it is not part of the
+       cylinder's line, it is reported on its own, and it no longer spoils the real DC → MT pair. */
+    const main=[],strays=[];
+    {let open=null;
+     const later=(ix,ck)=>{for(let k=ix+1;k<evs.length;k++)if(evs[k].t==='MT'&&evs[k].ck===ck)return evs[k];return null};
+     for(let ix=0;ix<evs.length;ix++){const e=evs[ix];
+       if(e.t==='DC'&&open){const lm=later(ix,open.ck);
+         if(lm&&e.ck!==open.ck){e.stray='dc';e.flag=('DC to '+custName(e.ck)+' — but this cylinder was with '+custName(open.ck)+' (DC '+(open.dc||fmtD(open.d))+') and came back from them on '+fmtD(lm.d)+'. Wrong cylinder number on this entry?');strays.push(e);continue}}
+       if(e.t==='MT'&&open&&e.ck!==open.ck){const lm=later(ix,open.ck);
+         if(lm){e.stray='mt';e.flag=('MT from '+custName(e.ck)+' — but this cylinder was sent to '+custName(open.ck)+' (DC '+(open.dc||fmtD(open.d))+') and came back from them on '+fmtD(lm.d)+'. Wrong cylinder number on this entry?');strays.push(e);continue}}
+       if(e.t==='DC')open=e;else if(e.t==='MT'||e.t==='FS'||e.t==='FR'||e.t==='FL')open=null;
+       main.push(e)}}
+    tl[id]=main;   /* the clean line, in the corrected order, for the Journey and every other screen */
+    if(strays.length){strayMap[id]=strays;for(const e of strays){if(e.src==='new'&&!e.vf)mism.push(Object.assign({id},e))}}
     let prev=null,lastCk='',lastPl='';
     const fillsAfter=d=>evs.filter(x=>x.t==='FL'&&x.d&&d&&x.d>=d).map(x=>x.d);
-    for(const ev of evs){
+    for(const ev of main){
       if(ev.t==='FD')continue;   /* our rental cylinder filled for a dealer: history only, it stays with the dealer */
       if(ev.src==='fill'){
         if(prev&&prev.t==='DC'){const due=daysSince(ev.d)>PEND_DAYS;const it={id,kind:'nomt',ck:prev.ck,dcD:prev.d,dcNo:prev.dc||'',fillD:ev.d,due};
@@ -1192,14 +1209,14 @@ function derive(){
     if(r==='MISSING')st='missing';else if(r==='SOLD')st='sold';
     const days=daysSince(d);
     const td=c.td||'';const tdue=!td?'none':td<tm?'over':td<=soon?'soon':'ok';
-    state[id]={id,st,ck,d,days,g:c.g||'?',b:c.b||'',r:c.r||'',known:!!S.cyl[id],n:evs.length,td,tdue,pl:st==='filling'?lastPl:''};
+    state[id]={id,st,ck,d,days,g:c.g||'?',b:c.b||'',r:c.r||'',known:!!S.cyl[id],n:evs.length+strays.length,td,tdue,pl:st==='filling'?lastPl:''};
     if(st==='out'){(holding[ck]=holding[ck]||[]).push(state[id])}
   }
   const custMoves={};
-  for(const [id,evs] of Object.entries(tl)){for(const ev of evs){if(!ev.ck)continue;(custMoves[ev.ck]=custMoves[ev.ck]||[]).push(Object.assign({id},ev))}}
+  for(const [id,evs] of Object.entries(tl)){for(const ev of evs.concat(strayMap[id]||[])){if(!ev.ck)continue;(custMoves[ev.ck]=custMoves[ev.ck]||[]).push(Object.assign({id},ev))}}
   for(const k in holding)holding[k].sort((a,b)=>(b.days??-1)-(a.days??-1));
   recs.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:-numCmp(a,b));
-  S.D={tl,state,mism,holding,custMoves,recs,lastMove,today,pend,fills,PEND_DAYS};
+  S.D={tl,strays:strayMap,state,mism,holding,custMoves,recs,lastMove,today,pend,fills,PEND_DAYS};
 }
 
 /* ---------------- db wiring ---------------- */
@@ -1366,6 +1383,7 @@ function brPanel(){
       draw();$('#bp-q').focus()}});
 }
 /* DC: how many of its cylinders came back. MT: which DCs those cylinders went out on. */
+const evFind=(c,rid)=>(S.D.tl[c]||[]).find(e=>e.rid===rid&&e.cyl===c)||((S.D.strays||{})[c]||[]).find(e=>e.rid===rid&&e.cyl===c);
 function recFollow(r){
   const ta=LANG==='ta';const back=[],out=[],from={};
   for(const c of r.cy){const ev=S.D.tl[c]||[];const i=ev.findIndex(e=>e.rid===r.rid&&e.cyl===c);if(i<0)continue;
@@ -2265,7 +2283,7 @@ VIEWS.entry={
     {const my=S.D.recs.filter(r=>!r.del&&r.by===S.uid&&r.at&&new Date(r.at).toDateString()===new Date().toDateString());const n=t=>my.filter(r=>r.t===t);const c=a=>a.reduce((x,r)=>x+r.cy.length+ownN(r),0);const ta=LANG==='ta';
       const el=$('#f-mine');if(el)el.innerHTML=my.length?`<b>${ta?'இன்று நீங்கள்':'You today'}:</b> <span class="t-dc">${n('DC').length} DC</span> · ${c(n('DC'))} ${ta?'சிலிண்டர்':'cyl'} · <span class="t-mt">${n('MT').length} MT</span> · ${c(n('MT'))} ${ta?'சிலிண்டர்':'cyl'}`:''}
     $('#f-today-n').textContent=mine.length?`${mine.reduce((a,r)=>a+r.cy.length+ownN(r),0)} cylinders in ${mine.length} entries`:'';
-    const why=r=>r.cy.map(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf?{c,f:ev.flag}:null}).filter(Boolean);
+    const why=r=>r.cy.map(c=>{const ev=evFind(c,r.rid);return ev&&ev.flag&&!ev.vf?{c,f:ev.flag}:null}).filter(Boolean);
     /* search + quick filters */
     const tf=S.ui.tf||'all',tq=(S.ui.tq||'').trim().toLowerCase();const ta=LANG==='ta';
     const FL=[['all',ta?'எல்லாம்':'All'],['DC','DC'],['MT','MT'],['bad',ta?'சரிபார்க்க':'To check'],['ok',ta?'சரியானவை':'OK'],['me',ta?'என்னுடையவை':'Mine'],['ed',ta?'திருத்தியவை':'Edited']];
@@ -2347,7 +2365,7 @@ function canEditRec(r){if(!['owner','manager','staff'].includes(role())||S.readO
 /* One entry in full: each cylinder, where it is now, whether it came back */
 function recDrawer(rid){const r=(S.D.recs||[]).find(x=>x.rid===rid);if(!r)return;const ta=LANG==='ta';
   const st2=c=>{const st=S.D.state[c]||{};return st.st==='out'?(ta?'அவரிடம்: ':'With ')+esc(custName(st.ck))+(st.days!=null?` · ${st.days}d`:''):st.st==='full'?(ta?'குடோன் · full':'Godown · full'):st.st==='empty'?(ta?'குடோன் · காலி':'Godown · empty'):st.st==='filling'?(ta?'நிரப்ப சென்றது':'At filling'):st.st==='missing'?(ta?'காணவில்லை':'Missing'):st.st==='sold'?(ta?'விற்றது':'Sold'):'—'};
-  const rows=r.cy.map(c=>{const ev=S.D.tl[c]||[];const i=ev.findIndex(e=>e.rid===r.rid&&e.cyl===c);const me=ev[i]||{};let link='—';
+  const rows=r.cy.map(c=>{const ev=S.D.tl[c]||[];const i=ev.findIndex(e=>e.rid===r.rid&&e.cyl===c);const me=ev[i]||evFind(c,r.rid)||{};let link='—';
     if(r.t==='DC'&&i>=0){const nx=ev.slice(i+1).find(e=>e.t==='MT'||e.t==='DC'||e.t==='FL');link=nx&&nx.t==='MT'?`<span class="pill ok">${ta?'திரும்பியது':'Back'}</span> MT ${esc(nx.dc||'')} · ${fmtD(nx.d)}${nx.ck&&nx.ck!==r.ck?` · <span style="color:var(--crit)">${esc(custName(nx.ck))}</span>`:''}`:nx&&nx.t==='FL'?`<span class="pill ok">🏭 ${ta?'நிரப்பப்பட்டது':'Filled'}</span> ${fmtD(nx.d)}`:`<span class="pill ${daysSince(r.d)>90?'crit':'warn'}">${ta?'இன்னும் வரவில்லை':'Not back yet'} · ${daysSince(r.d)}d</span>`}
     else if(r.t==='MT'&&i>=0){const pv=ev.slice(0,i).reverse().find(e=>e.t==='DC'||e.t==='MT');link=pv&&pv.t==='DC'?`DC ${esc(pv.dc||'')} · ${fmtD(pv.d)}${pv.ck!==r.ck?` · <span style="color:var(--crit)">${esc(custName(pv.ck))}</span>`:''} · ${Math.max(0,Math.round((new Date(r.d)-new Date(pv.d))/864e5))}d`:`<span class="pill warn">${ta?'DC இல்லை':'No DC'}</span>`}
     const g=(S.cyl[c]||{}).g||'';
@@ -2365,7 +2383,7 @@ function gasChips(cy){if(!cy||!cy.length)return '';const cnt={};cy.forEach(id=>{
   const GC={O2:'#2563EB',CO2:'#EA580C',N2:'#7C3AED',Argon:'#0D9488',DURO:'#A16207'};
   return `<span class="ec-gas">${Object.entries(cnt).map(([g,n])=>`<span class="gc" style="--gc:${GC[g.split(' ')[0]]||'#64748B'}">${esc(g)}: <b>${n}</b></span>`).join('')}<span class="gc tot">${LANG==='ta'?'மொத்தம்':'Total'}: <b>${cy.length}</b></span></span>`}
 function entryCard(r){
-  const flags=r.cy.filter(c=>{const ev=(S.D.tl[c]||[]).find(e=>e.rid===r.rid&&e.cyl===c);return ev&&ev.flag&&!ev.vf});
+  const flags=r.cy.filter(c=>{const ev=evFind(c,r.rid);return ev&&ev.flag&&!ev.vf});
   return `<div class="entry-card ${r.del?'del':''}" data-rec="${esc(r.rid)}" tabindex="0" title="${LANG==='ta'?'விவரம் பார்க்க அழுத்தவும்':'Click for details'}"><div class="tcol ${r.t.toLowerCase()}">${TSHORT[r.t]}</div>
   <div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div>${isCust(r.t)&&r.ck?`<a href="#" class="ec-name" data-act="opencust" data-v="${esc(r.ck)}">${esc(recTitle(r))}</a>`:`<b>${esc(recTitle(r))}</b>`} ${isCust(r.t)&&r.ck?brTag(r.ck):''} ${r.dc?`<span class="muted mono small">#${esc(r.dc)}</span>`:''}${gasChips(r.cy)}</div>
   <button type="button" class="swipe-more" aria-label="More">⋯</button>
@@ -3711,6 +3729,13 @@ function cylDrawer(id){
       ${e.src==='new'&&e.rid&&(()=>{const r=S.logs[e.docId]&&S.logs[e.docId].recs&&S.logs[e.docId].recs[e.rid];return r&&canEditRec(Object.assign({},r,{docId:e.docId,rid:e.rid}))})()?`<div style="margin-top:4px"><button class="btn sm ghost" data-act="editrec" data-doc="${esc(e.docId)}" data-rid="${esc(e.rid)}">${ic('edit')}${LANG==='ta'?'முழுதும் திருத்து':'Edit entry'}</button></div>`:''}</div></div>`).join('');
   }
   body+=`</div>`;
+  {const sy=(S.D.strays||{})[id]||[];
+   if(sy.length)body+=`<div class="panel" style="border-left:4px solid var(--warn)"><div class="panel-head"><h3>⚠ ${LANG==='ta'?'சரிபார்க்க வேண்டிய பதிவுகள்':'Entries to check'}</h3><span class="muted">${LANG==='ta'?'மேலே உள்ள DC → MT வரிசையில் சேரவில்லை':'not part of the DC → MT line above'}</span></div>
+     ${sy.slice().reverse().map(e=>`<div class="trip" style="padding:8px 0;border-top:1px solid var(--line)"><div class="body"><div><span style="color:${e.t==='DC'?'var(--info)':'var(--mt)'};font-weight:700">${e.t==='DC'?'DC · sent to':'MT · back from'}</span> <b>${e.ck?`<a href="#" data-act="opencust" data-v="${esc(e.ck)}">${esc(custName(e.ck))}</a>`:''}</b></div>
+       <div class="small muted">${fmtD(e.d)}${e.src==='old'?' · old Excel':''}${e.dc?' · #'+esc(e.dc):''}</div>
+       <div style="margin-top:4px">${e.vf?`<span class="pill ok">Verified</span> <span class="small muted">${esc(e.vf.note||'')}</span>`:`<span class="pill warn">${esc(e.flag)}</span>`}</div>
+       ${e.src==='new'&&e.rid&&(()=>{const r=S.logs[e.docId]&&S.logs[e.docId].recs&&S.logs[e.docId].recs[e.rid];return r&&canEditRec(Object.assign({},r,{docId:e.docId,rid:e.rid}))})()?`<div style="margin-top:4px"><button class="btn sm" data-act="editrec" data-doc="${esc(e.docId)}" data-rid="${esc(e.rid)}">${ic('edit')}${LANG==='ta'?'எண்ணைத் திருத்து':'Fix this entry'}</button></div>`:''}
+       ${e.src==='old'&&S.isOwner&&e.ci!=null?`<div style="margin-top:4px"><button class="btn sm ghost" data-act="histed" data-ci="${e.ci}" data-pos="${e.pos}">${ic('edit')}${LANG==='ta'?'திருத்து':'Edit'}</button></div>`:''}</div></div>`).join('')}</div>`}
   if(trips.length){body+=`<div class="panel"><div class="panel-head"><h3>Trips</h3></div><div class="tbl-wrap"><table><thead><tr><th>Sent</th><th>Customer</th><th>Back</th><th class="r">Days</th></tr></thead><tbody>${trips.slice().reverse().map(t=>`<tr><td class="num">${fmtD(t.e.d)}</td><td>${esc(custName(t.e.ck))}</td><td class="num">${t.back?fmtD(t.back.d):t.open?'<span class="pill out">Still there</span>':'<span class="pill warn">MT missing</span>'}</td><td class="r num">${t.days??'—'}</td></tr>`).join('')}</tbody></table></div></div>`}
   return [head,body];
 }

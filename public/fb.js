@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='4.4.1';window.CD_BUILD='2026-10-24';
+window.CD_VERSION='4.4.2';window.CD_BUILD='2026-10-24';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
