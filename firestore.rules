@@ -40,6 +40,17 @@ service cloud.firestore {
     }
 
     // Each person keeps their own name card; anyone signed in may read names.
+    // Single-device session marker. A signed-in user can update only their own
+    // currentSession marker; other users cannot read or overwrite it.
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['currentSession', 'sessionUpdatedAt'])
+        && request.resource.data.currentSession is string
+        && request.resource.data.currentSession.size() >= 16;
+      allow delete: if false;
+    }
+
     match /profiles/{uid} {
       allow read: if signedIn();
       allow write: if signedIn() && request.auth.uid == uid;

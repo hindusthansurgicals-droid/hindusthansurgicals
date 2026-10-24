@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='4.3.0';window.CD_BUILD='2026-10-21';
+window.CD_VERSION='4.3.1';window.CD_BUILD='2026-10-24';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -139,6 +139,36 @@ function signInScreen(msg){
 
 let resolveUser;const userReady=new Promise(r=>resolveUser=r);
 let firstUid=null;
+// Single-active-session lock. A new login replaces users/{uid}.currentSession.
+// This listener signs out an older device when another device claims the account.
+let sessionUnsub=null, activeSessionId=null, sessionLockUid=null;
+function startSessionLock(u){
+  if(sessionLockUid===u.uid && sessionUnsub) return;
+  if(sessionUnsub){try{sessionUnsub()}catch(e){}}
+  sessionLockUid=u.uid;
+  activeSessionId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(''+Date.now()+'-'+Math.random().toString(36).slice(2));
+  try{localStorage.setItem('hs-session-'+u.uid,activeSessionId)}catch(e){}
+  const ref=fs.doc('users/'+u.uid);
+  ref.set({currentSession:activeSessionId,sessionUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{
+    if(sessionLockUid!==u.uid)return;
+    sessionUnsub=ref.onSnapshot(s=>{
+      if(!s.exists)return;
+      const current=(s.data()||{}).currentSession;
+      if(current && current!==activeSessionId){
+        alert('இந்தக் கணக்கு மற்றொரு சாதனத்தில் உள்நுழைந்துள்ளது. பாதுகாப்புக்காக இச்சாதனத்திலிருந்து வெளியேற்றப்படுகிறீர்கள்.');
+        if(sessionUnsub){try{sessionUnsub()}catch(e){}sessionUnsub=null;}
+        sessionLockUid=null;
+        auth.signOut().catch(()=>{});
+      }
+    },e=>console.warn('Session lock listener error:',e));
+  }).catch(e=>{
+    console.error('Session lock could not be established:',e);
+    // Fail closed: don't pretend the lock is active if Firestore denies the write.
+    alert('சாதன அமர்வு பாதுகாப்பைச் செயல்படுத்த முடியவில்லை. நிர்வாகியிடம் Firestore விதிகளைச் சரிபார்க்கச் சொல்லவும்.');
+    auth.signOut().catch(()=>{});
+  });
+}
+
 auth.getRedirectResult().catch(e=>signInScreen('Sign-in failed ('+(e&&e.code||'error')+').'));
 auth.onAuthStateChanged(async u=>{
   if(!u){
@@ -147,6 +177,7 @@ auth.onAuthStateChanged(async u=>{
   }
   if(firstUid&&firstUid!==u.uid){location.reload();return}
   firstUid=u.uid;
+  startSessionLock(u);
   const el=document.getElementById('fb-signin');if(el)el.remove();
   const email=(u.email||'').toLowerCase();
   const me={id:u.uid,name:u.displayName||email||'You',email,avatarUrl:u.photoURL||'',
