@@ -4,7 +4,7 @@
 (function(){
 'use strict';
 /* App version — change this on every update (all files show it). */
-window.CD_VERSION='4.3.1';window.CD_BUILD='2026-10-24';
+window.CD_VERSION='4.3.0';window.CD_BUILD='2026-10-21';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAALg0moWjoEqNGN1X8N0LpVrEWv6G96_Q",
@@ -151,42 +151,6 @@ auth.onAuthStateChanged(async u=>{
   const email=(u.email||'').toLowerCase();
   const me={id:u.uid,name:u.displayName||email||'You',email,avatarUrl:u.photoURL||'',
     isOwner:!!u.emailVerified&&OWNER_EMAILS.includes(email)};
-  /* Single active session: each successful auth replaces the previous device's token. */
-  let sessionId='';
-  try {
-    sessionId=(crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
-    localStorage.setItem('hs-session-id',sessionId);
-    const sessionRef=fs.doc('users/'+u.uid);
-    await sessionRef.set({currentSession:sessionId,currentSessionAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-    sessionRef.onSnapshot(snap=>{
-      if(!snap.exists)return;
-      const active=snap.data()&&snap.data().currentSession;
-      if(active && active!==sessionId && auth.currentUser && auth.currentUser.uid===u.uid){
-        alert('This account was signed in on another device. This device will be signed out.');
-        auth.signOut().catch(()=>{});
-      }
-    },err=>console.warn('Session listener:',err));
-  } catch (e) {
-  console.error('SESSION LOCK ERROR:', e.code, e.message, e);
-  alert(
-    'Session error: ' +
-    (e.code || 'unknown') +
-    '\n' +
-    (e.message || 'Unknown error')
-  );
-}
-  /* Branch comes from the existing roles settings first, then the user profile. */
-  try {
-    const [rolesSnap, profileSnap]=await Promise.all([fs.doc('settings/roles').get(),fs.doc('profiles/'+u.uid).get()]);
-    const roleData=rolesSnap.exists?((rolesSnap.data().users||{})[u.uid]||{}):{};
-    const profileData=profileSnap.exists?profileSnap.data():{};
-    me.branch=roleData.branch||roleData.br||profileData.branch||profileData.br||'';
-    me.role=roleData.role||'';
-    if(window.HSBranch){
-      const chosen=localStorage.getItem('hs-branch-override')||me.branch;
-      if(chosen)window.HSBranch.apply(chosen);
-    }
-  } catch(e) { console.warn('Branch profile lookup:',e); }
   await persist;
   /* Save this person's name so the owner can recognise them in Settings. */
   try{
@@ -239,18 +203,6 @@ async function backupAll(source,opts){
   out._backup={app:'Cylinder Desk',version:window.CD_VERSION||'',at:new Date().toISOString(),project:firebaseConfig.projectId,missing};
   return out;
 }
-
-/* Branch selector is intentionally a UI preference; authorization is enforced by Firestore rules. */
-function installBranchSelector(){
-  const host=document.querySelector('.top-right'); if(!host||document.getElementById('hs-branch-switch'))return;
-  const select=document.createElement('select');select.id='hs-branch-switch';select.setAttribute('aria-label','Branch');
-  select.innerHTML='<option value="dharmapuri">Dharmapuri</option><option value="krishnagiri">Krishnagiri</option>';
-  let current='';try{current=localStorage.getItem('hs-branch-override')||''}catch(e){}
-  if(current)select.value=current;
-  select.addEventListener('change',()=>{if(window.HSBranch)window.HSBranch.apply(select.value);window.dispatchEvent(new CustomEvent('hs-branch-change',{detail:{branch:select.value}}));});
-  host.insertBefore(select,host.firstChild);
-}
-new MutationObserver(installBranchSelector).observe(document.documentElement,{childList:true,subtree:true});
 
 window.FBC={
   use:async name=>{
