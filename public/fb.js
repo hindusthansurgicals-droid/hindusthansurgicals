@@ -139,36 +139,6 @@ function signInScreen(msg){
 
 let resolveUser;const userReady=new Promise(r=>resolveUser=r);
 let firstUid=null;
-// Single-active-session lock. A new login replaces users/{uid}.currentSession.
-// This listener signs out an older device when another device claims the account.
-let sessionUnsub=null, activeSessionId=null, sessionLockUid=null;
-function startSessionLock(u){
-  if(sessionLockUid===u.uid && sessionUnsub) return;
-  if(sessionUnsub){try{sessionUnsub()}catch(e){}}
-  sessionLockUid=u.uid;
-  activeSessionId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(''+Date.now()+'-'+Math.random().toString(36).slice(2));
-  try{localStorage.setItem('hs-session-'+u.uid,activeSessionId)}catch(e){}
-  const ref=fs.doc('users/'+u.uid);
-  ref.set({currentSession:activeSessionId,sessionUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{
-    if(sessionLockUid!==u.uid)return;
-    sessionUnsub=ref.onSnapshot(s=>{
-      if(!s.exists)return;
-      const current=(s.data()||{}).currentSession;
-      if(current && current!==activeSessionId){
-        alert('இந்தக் கணக்கு மற்றொரு சாதனத்தில் உள்நுழைந்துள்ளது. பாதுகாப்புக்காக இச்சாதனத்திலிருந்து வெளியேற்றப்படுகிறீர்கள்.');
-        if(sessionUnsub){try{sessionUnsub()}catch(e){}sessionUnsub=null;}
-        sessionLockUid=null;
-        auth.signOut().catch(()=>{});
-      }
-    },e=>console.warn('Session lock listener error:',e));
-  }).catch(e=>{
-    console.error('Session lock could not be established:',e);
-    // Fail closed: don't pretend the lock is active if Firestore denies the write.
-    alert('சாதன அமர்வு பாதுகாப்பைச் செயல்படுத்த முடியவில்லை. நிர்வாகியிடம் Firestore விதிகளைச் சரிபார்க்கச் சொல்லவும்.');
-    auth.signOut().catch(()=>{});
-  });
-}
-
 auth.getRedirectResult().catch(e=>signInScreen('Sign-in failed ('+(e&&e.code||'error')+').'));
 auth.onAuthStateChanged(async u=>{
   if(!u){
@@ -177,11 +147,46 @@ auth.onAuthStateChanged(async u=>{
   }
   if(firstUid&&firstUid!==u.uid){location.reload();return}
   firstUid=u.uid;
-  startSessionLock(u);
   const el=document.getElementById('fb-signin');if(el)el.remove();
   const email=(u.email||'').toLowerCase();
   const me={id:u.uid,name:u.displayName||email||'You',email,avatarUrl:u.photoURL||'',
     isOwner:!!u.emailVerified&&OWNER_EMAILS.includes(email)};
+  /* Single active session: each successful auth replaces the previous device's token. */
+  let sessionId='';
+  try {
+    sessionId=(crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+    localStorage.setItem('hs-session-id',sessionId);
+    const sessionRef=fs.doc('users/'+u.uid);
+    await sessionRef.set({currentSession:sessionId,currentSessionAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    sessionRef.onSnapshot(snap=>{
+      if(!snap.exists)return;
+      const active=snap.data()&&snap.data().currentSession;
+      if(active && active!==sessionId && auth.currentUser && auth.currentUser.uid===u.uid){
+        alert('This account was signed in on another device. This device will be signed out.');
+        auth.signOut().catch(()=>{});
+      }
+    },err=>console.warn('Session listener:',err));
+  } catch (e) {
+  console.error('SESSION LOCK ERROR:', e.code, e.message, e);
+  alert(
+    'Session error: ' +
+    (e.code || 'unknown') +
+    '\n' +
+    (e.message || 'Unknown error')
+  );
+}
+  /* Branch comes from the existing roles settings first, then the user profile. */
+  try {
+    const [rolesSnap, profileSnap]=await Promise.all([fs.doc('settings/roles').get(),fs.doc('profiles/'+u.uid).get()]);
+    const roleData=rolesSnap.exists?((rolesSnap.data().users||{})[u.uid]||{}):{};
+    const profileData=profileSnap.exists?profileSnap.data():{};
+    me.branch=roleData.branch||roleData.br||profileData.branch||profileData.br||'';
+    me.role=roleData.role||'';
+    if(window.HSBranch){
+      const chosen=localStorage.getItem('hs-branch-override')||me.branch;
+      if(chosen)window.HSBranch.apply(chosen);
+    }
+  } catch(e) { console.warn('Branch profile lookup:',e); }
   await persist;
   /* Save this person's name so the owner can recognise them in Settings. */
   try{
@@ -234,6 +239,18 @@ async function backupAll(source,opts){
   out._backup={app:'Cylinder Desk',version:window.CD_VERSION||'',at:new Date().toISOString(),project:firebaseConfig.projectId,missing};
   return out;
 }
+
+/* Branch selector is intentionally a UI preference; authorization is enforced by Firestore rules. */
+function installBranchSelector(){
+  const host=document.querySelector('.top-right'); if(!host||document.getElementById('hs-branch-switch'))return;
+  const select=document.createElement('select');select.id='hs-branch-switch';select.setAttribute('aria-label','Branch');
+  select.innerHTML='<option value="dharmapuri">Dharmapuri</option><option value="krishnagiri">Krishnagiri</option>';
+  let current='';try{current=localStorage.getItem('hs-branch-override')||''}catch(e){}
+  if(current)select.value=current;
+  select.addEventListener('change',()=>{if(window.HSBranch)window.HSBranch.apply(select.value);window.dispatchEvent(new CustomEvent('hs-branch-change',{detail:{branch:select.value}}));});
+  host.insertBefore(select,host.firstChild);
+}
+new MutationObserver(installBranchSelector).observe(document.documentElement,{childList:true,subtree:true});
 
 window.FBC={
   use:async name=>{
